@@ -1,0 +1,14 @@
+{
+  "name": "@stackql/provider-utils",
+  "version": "0.1.0",
+  "exports": "./src/mod.ts",
+  "tasks": {
+    "test": "deno test --allow-read --allow-write --allow-net test/",
+    "fmt": "deno fmt",
+    "lint": "deno lint"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true
+  }
+}

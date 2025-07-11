@@ -1,3 +1,11 @@
+# stackql
+.stackql/
+stackql
+stackql-zip
+stackql-*-cloud-shell.sh
+.env
+nohup.out
+
 # Logs
 logs
 *.log
