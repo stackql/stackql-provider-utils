@@ -6,6 +6,9 @@ stackql-*-cloud-shell.sh
 .env
 nohup.out
 
+# Ignore test-output directory and its contents
+tests/docgen/test-output/
+
 # Logs
 logs
 *.log
