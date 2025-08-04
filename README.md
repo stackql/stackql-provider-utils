@@ -1,6 +1,6 @@
 # StackQL Provider Utils
 
-A comprehensive toolkit for transforming OpenAPI specs into StackQL providers. Includes parsing, mapping, validation, testing, and documentation generation utilities. Compatible with both Node.js and Deno.
+A comprehensive toolkit for transforming OpenAPI specs into StackQL providers. Includes parsing, mapping, validation, testing, and documentation generation utilities.
 
 ## Table of Contents
 
@@ -8,7 +8,6 @@ A comprehensive toolkit for transforming OpenAPI specs into StackQL providers. I
 - [Installation](#installation)
 - [Local Development Setup](#local-development-setup)
 - [Testing with Node.js](#testing-with-nodejs)
-- [Testing with Deno](#testing-with-deno)
 - [Using the Documentation Generator](#using-the-documentation-generator)
 - [API Reference](#api-reference)
 - [Contributing](#contributing)
@@ -18,10 +17,6 @@ A comprehensive toolkit for transforming OpenAPI specs into StackQL providers. I
 ### For Node.js
 - Node.js >= 20
 - npm or yarn
-- StackQL server (for documentation generation)
-
-### For Deno
-- Deno >= 1.30.0
 - StackQL server (for documentation generation)
 
 ### Installing StackQL
@@ -47,12 +42,6 @@ curl -L https://bit.ly/stackql-zip -O && unzip stackql-zip
 npm install @stackql/provider-utils
 # or
 yarn add @stackql/provider-utils
-```
-
-### For Deno Projects
-
-```typescript
-import { docgen } from "https://deno.land/x/stackql_provider_utils/mod.ts";
 ```
 
 ## Local Development Setup
@@ -181,48 +170,8 @@ stackql srv \
 ### 4. Run the Test
 
 ```bash
-node test-docgen.js
-```
-
-## Testing with Deno
-
-### 1. Create a Test Script
-
-Create a file `test-docgen.ts`:
-
-```typescript
-import { docgen } from './src/mod.ts';
-
-// Test the documentation generator
-async function testDocGen() {
-    try {
-        const result = await docgen.generateDocs({
-            providerName: 'myservice',
-            providerDir: './test-data/output/src/myservice/v00.00.00000',
-            outputDir: './test-output',
-            providerDataDir: './test-data/provider-data',
-            stackqlConfig: {
-                host: 'localhost',
-                port: 5444,
-                user: 'stackql',
-                database: 'stackql'
-            }
-        });
-        
-        console.log('Documentation generated successfully:', result);
-    } catch (error) {
-        console.error('Error generating documentation:', error);
-    }
-}
-
-testDocGen();
-```
-
-### 2. Run the Test
-
-```bash
-# With permissions
-deno run --allow-read --allow-write --allow-net test-docgen.ts
+sh start-stackql-server.sh tests/docgen
+node tests/docgen/test-docgen.js
 ```
 
 ## Using the Documentation Generator
@@ -302,18 +251,6 @@ docs/{provider}-docs/
             ├── index.md
             └── {resource}/
                 └── index.md
-```
-
-## Running Tests
-
-### Node.js
-```bash
-npm test
-```
-
-### Deno
-```bash
-deno task test
 ```
 
 ## Troubleshooting

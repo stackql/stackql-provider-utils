@@ -1,3 +1,5 @@
+// src/docgen/generator.js
+
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -11,12 +13,12 @@ export async function generateDocs(options) {
         providerDir,        // e.g., 'output/src/heroku/v00.00.00000'
         outputDir,          // e.g., 'docs'
         providerDataDir,    // e.g., 'config/provider-data'
-        stackqlConfig = {
-            host: 'localhost',
-            port: 5444,
-            user: 'stackql',
-            database: 'stackql'
-        }
+        // stackqlConfig = {
+        //     host: 'localhost',
+        //     port: 5444,
+        //     user: 'stackql',
+        //     database: 'stackql'
+        // }
     } = options;
 
     console.log(`documenting ${providerName}...`);
@@ -62,12 +64,12 @@ try {
 
     for (const file of serviceFiles) {
         const serviceName = path.basename(file, '.yaml').replace(/-/g, '_');
-        console.log(`Processing ${serviceName}`);
+        console.log(`Processing service: ${serviceName}`);
         servicesForIndex.push(serviceName);
         const filePath = path.join(serviceDir, file);
         totalServicesCount++;
         const serviceFolder = `${docsDir}/providers/${providerName}/${serviceName}`;
-        await createDocsForService(filePath, providerName, serviceName, serviceFolder, stackqlConfig);
+        await createDocsForService(filePath, providerName, serviceName, serviceFolder);
     }
 
     console.log(`Processed ${totalServicesCount} services`);
@@ -133,7 +135,7 @@ ${servicesToMarkdown(providerName, secondColumnServices)}
 }
 
 // Process each service sequentially
-async function createDocsForService(yamlFilePath, providerName, serviceName, serviceFolder, stackqlConfig) {
+async function createDocsForService(yamlFilePath, providerName, serviceName, serviceFolder) {
 
     const data = yaml.load(fs.readFileSync(yamlFilePath, 'utf8'));
 
@@ -156,9 +158,6 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
     }
 
     const resourcesObj = data.components['x-stackQL-resources'];
-    const componentsSchemas = data.components.schemas;
-    const componentsRequestBodies = data?.components?.requestBodies || {};
-    const paths = data.paths;
 
     if (!resourcesObj) {
         console.warn(`No resources found in ${yamlFilePath}`);
@@ -167,8 +166,6 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
 
     const resources = [];
     for (let resourceName in resourcesObj) {
-        // Skip resources that start with "vw_"
-        if (resourceName.startsWith('vw_')) continue;
     
         let resourceData = resourcesObj[resourceName];
         if (!resourceData.id) {
@@ -176,17 +173,9 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
             continue;
         }
     
-        // Check if there's a corresponding "vw_" resource
-        const vwResourceName = `vw_${resourceName}`;
-        const hasVwResource = vwResourceName in resourcesObj;
-    
         resources.push({
             name: resourceName,
-            vwResourceName: hasVwResource ? vwResourceName : hasVwResource,
             resourceData,
-            paths,
-            componentsSchemas,
-            componentsRequestBodies,
             dereferencedAPI
         });
     }    
@@ -203,18 +192,18 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
 
     // Process each resource in first column
     for (const resource of firstColumn) {
-        await processResource(providerName, serviceFolder, serviceName, resource, stackqlConfig);
+        await processResource(providerName, serviceFolder, serviceName, resource);
     }
 
     // Process each resource in second column
     for (const resource of secondColumn) {
-        await processResource(providerName, serviceFolder, serviceName, resource, stackqlConfig);
+        await processResource(providerName, serviceFolder, serviceName, resource);
     }
 
     console.log(`Generated documentation for ${serviceName}`);
 }
 
-async function processResource(providerName, serviceFolder, serviceName, resource, stackqlConfig) {
+async function processResource(providerName, serviceFolder, serviceName, resource) {
     console.log(`Processing resource: ${resource.name}`);
     
     const resourceFolder = path.join(serviceFolder, resource.name);
@@ -227,13 +216,8 @@ async function processResource(providerName, serviceFolder, serviceName, resourc
         providerName, 
         serviceName, 
         resource.name, 
-        resource.vwResourceName, 
         resource.resourceData, 
-        resource.paths, 
-        resource.componentsSchemas, 
-        resource.componentsRequestBodies,
         resource.dereferencedAPI,
-        stackqlConfig
     );
     fs.writeFileSync(resourceIndexPath, resourceIndexContent);
 

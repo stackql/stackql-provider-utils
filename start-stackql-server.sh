@@ -1,5 +1,9 @@
-PROVIDER_REGISTRY_ROOT_DIR="$(pwd)"
-REG='{"url": "file://'${PROVIDER_REGISTRY_ROOT_DIR}/providers'", "localDocRoot": "'${PROVIDER_REGISTRY_ROOT_DIR}/providers'", "verifyConfig": {"nopVerify": true}}'
+#!/bin/bash
+
+# Use first argument as provider root dir, default to current directory if not supplied
+PROVIDER_REGISTRY_ROOT_DIR="${1:-$(pwd)}"
+
+REG='{"url": "file://'${PROVIDER_REGISTRY_ROOT_DIR}'", "localDocRoot": "'${PROVIDER_REGISTRY_ROOT_DIR}'", "verifyConfig": {"nopVerify": true}}'
 
 # start server if not running
 echo "checking if server is running"

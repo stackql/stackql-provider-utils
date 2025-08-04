@@ -5,9 +5,9 @@ async function testDocGen() {
     try {
         const result = await docgen.generateDocs({
             providerName: 'snowflake',
-            providerDir: './src/snowflake/v00.00.00000',
-            outputDir: './test-output',
-            providerDataDir: './provider-data/snowflake',
+            providerDir: 'tests/docgen/src/snowflake/v00.00.00000',
+            outputDir: 'tests/docgen/test-output',
+            providerDataDir: 'tests/docgen/provider-data/snowflake',
             stackqlConfig: {
                 host: 'localhost',
                 port: 5444,
