@@ -265,6 +265,29 @@ function escapeHtml(text) {
         .replace(/'/g, '&#039;');
 }
 
+export function sanitizeHtml(text) {
+  const masked = text
+    // Fix unquoted hrefs in <a ...> tags
+    .replace(/<a\s+href=([^"\s>]+)>/g, '<a href="$1">')
+    
+    // Mask <a ...>...</a> blocks
+    .replace(/<a\b[^>]*>.*?<\/a>/gs, match => `%%ANCHOR%%${btoa(match)}%%ENDANCHOR%%`)
+    
+    // Mask inline <code>...</code> blocks
+    .replace(/<code>.*?<\/code>/gs, match => `%%CODE%%${btoa(match)}%%ENDCODE%%`);
+
+  const escaped = masked
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  const restored = escaped
+    .replace(/%%ANCHOR%%(.*?)%%ENDANCHOR%%/g, (_, encoded) => atob(encoded))
+    .replace(/%%CODE%%(.*?)%%ENDCODE%%/g, (_, encoded) => atob(encoded));
+
+  return restored;
+}
+
+
 function getRequiredServerVars(dereferencedAPI) {
     const serverVars = {};
     
@@ -473,14 +496,11 @@ function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
         
         let additionalDescriptionParts = [];
         
-        // Process additional fields from the schema
         for (const [fieldName, fieldValue] of Object.entries(param.schema)) {
-            // Skip the fields we're handling separately
-            if (fieldName === 'type' || fieldName === 'format' || fieldName === 'description') {
+            if (fieldName === 'type' || fieldName === 'format' || fieldName === 'description' || fieldName === 'pattern') {
                 continue;
             }
-            
-            // Format the field value based on its type
+
             let formattedValue;
             if (Array.isArray(fieldValue)) {
                 formattedValue = `[${fieldValue.join(', ')}]`;
@@ -489,10 +509,14 @@ function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
             } else {
                 formattedValue = String(fieldValue);
             }
-            
-            additionalDescriptionParts.push(`${fieldName}: ${formattedValue}`);
+
+            // if (fieldName === 'pattern') {
+            //     additionalDescriptionParts.push(`pattern: <code>${formattedValue}</code>`);
+            // } else {
+            //     additionalDescriptionParts.push(`${fieldName}: ${formattedValue}`);
+            // }
         }
-        
+
         // Add any fields from the parameter itself that might contain metadata
         for (const [fieldName, fieldValue] of Object.entries(param)) {
             // Skip fields we've already processed or don't need
@@ -535,75 +559,6 @@ function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
             optionalParams[param.name] = paramDetails;
         }
     }
-    
-    // // Handle request body parameters if present
-    // const requestBody = dereferencedAPI.paths[path][httpVerb].requestBody;
-    // if (requestBody && requestBody.content) {
-    //     // Find the first available content type
-    //     const contentType = Object.keys(requestBody.content)[0];
-    //     if (contentType && requestBody.content[contentType].schema) {
-    //         const schema = requestBody.content[contentType].schema;
-            
-    //         // If the schema has properties, process each one
-    //         if (schema.properties) {
-    //             // Get the list of required properties if specified
-    //             const requiredProps = schema.required || [];
-                
-    //             for (const [propName, propSchema] of Object.entries(schema.properties)) {
-    //                 // Format the type string
-    //                 let typeString = propSchema.type || '';
-    //                 if (propSchema.format) {
-    //                     typeString += ` (${propSchema.format})`;
-    //                 }
-                    
-    //                 // Get the base description and clean it up
-    //                 let description = propSchema.description || '';
-    //                 // Replace newlines with spaces to avoid string concatenation in output
-    //                 description = description.replace(/\n/g, ' ');
-                    
-    //                 let additionalDescriptionParts = [];
-                    
-    //                 // Process additional fields
-    //                 for (const [fieldName, fieldValue] of Object.entries(propSchema)) {
-    //                     // Skip the fields we're handling separately
-    //                     if (fieldName === 'type' || fieldName === 'format' || fieldName === 'description') {
-    //                         continue;
-    //                     }
-                        
-    //                     // Format the field value based on its type
-    //                     let formattedValue;
-    //                     if (Array.isArray(fieldValue)) {
-    //                         formattedValue = `[${fieldValue.join(', ')}]`;
-    //                     } else if (typeof fieldValue === 'object' && fieldValue !== null) {
-    //                         formattedValue = JSON.stringify(fieldValue);
-    //                     } else {
-    //                         formattedValue = String(fieldValue);
-    //                     }
-                        
-    //                     additionalDescriptionParts.push(`${fieldName}: ${formattedValue}`);
-    //                 }
-                    
-    //                 // Add additional description parts in parentheses if there are any
-    //                 if (additionalDescriptionParts.length > 0) {
-    //                     description += ` (${additionalDescriptionParts.join(', ')})`;
-    //                 }
-                    
-    //                 // Create the parameter details object
-    //                 const paramDetails = {
-    //                     type: typeString,
-    //                     description: description // Apply escapeHtml here if needed
-    //                 };
-                    
-    //                 // Add to the appropriate category based on required flag
-    //                 if (requiredProps.includes(propName)) {
-    //                     requiredParams[propName] = paramDetails;
-    //                 } else {
-    //                     optionalParams[propName] = paramDetails;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
     
     // Get server variables and merge them into requiredParams
     const serverVars = getRequiredServerVars(dereferencedAPI);

@@ -1,7 +1,8 @@
 // src/docgen/resource/methods.js
 import { 
     cleanDescription, 
-    getSqlMethodsWithOrderedFields
+    getSqlMethodsWithOrderedFields,
+    sanitizeHtml
 } from '../helpers.js';
 
 export function createMethodsSection(resourceData, dereferencedAPI) {
@@ -56,7 +57,7 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
     <td><CopyableCode code="${accessType}" /></td>
     <td>${requiredParamsStr}</td>
     <td>${optionalParamsStr}</td>
-    <td>${methodDetails.opDescription}</td>
+    <td>${sanitizeHtml(methodDetails.opDescription)}</td>
 </tr>`;
         }
     };

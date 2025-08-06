@@ -1,12 +1,13 @@
 // src/docgen/resource/parameters.js
 import { 
-    getSqlMethodsWithOrderedFields, 
+    getSqlMethodsWithOrderedFields,
+    sanitizeHtml 
 } from '../helpers.js';
 
 const mdCodeAnchor = "`";
 
 export function createParamsSection(resourceData, dereferencedAPI) {
-    let content = '## Parameters\n\n';
+    let content = '\n\n## Parameters\n\n';
 
     content += 'Parameters can be passed in the `WHERE` clause of a query. ' +
                'Check the [Methods](#methods) section to see which parameters are required or optional for each operation.\n\n';
@@ -55,7 +56,7 @@ export function createParamsSection(resourceData, dereferencedAPI) {
 <tr id="parameter-${paramName}">
     <td><CopyableCode code="${paramName}" /></td>
     <td><code>${paramDetails.type || ''}</code></td>
-    <td>${paramDetails.description || ''}</td>
+    <td>${sanitizeHtml(paramDetails.description) || ''}</td>
 </tr>`;
         }
     };
