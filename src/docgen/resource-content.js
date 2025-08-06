@@ -3,6 +3,7 @@
 import { createOverviewSection } from './resource/overview.js';
 import { createFieldsSection } from './resource/fields.js';
 import { createMethodsSection } from './resource/methods.js';
+import { createParamsSection } from './resource/parameters.js';
 import { createExamplesSection } from './resource/examples.js';
  
 export async function createResourceIndexContent(
@@ -15,12 +16,14 @@ export async function createResourceIndexContent(
     // Generate each section of the documentation
     const overviewContent = createOverviewSection(resourceName, providerName, serviceName);
     const fieldsContent = createFieldsSection(resourceData, dereferencedAPI);
-    // const methodsContent = createMethodsSection(providerName, serviceName, resourceName, vwResourceName, dereferencedAPI);
+    const methodsContent = createMethodsSection(resourceData, dereferencedAPI);
+    const paramsContent = createParamsSection(resourceData, dereferencedAPI);
+
     // const examplesContent = createExamplesSection(providerName, serviceName, resourceName, resourceData, dereferencedAPI);
 
     // Combine all sections into the final content
     // return `${overviewContent}${fieldsContent}${methodsContent}${examplesContent}`;
-    return `${overviewContent}${fieldsContent}`;
+    return `${overviewContent}${fieldsContent}${methodsContent}${paramsContent}`;
 }
 
 // overview
