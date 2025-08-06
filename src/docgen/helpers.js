@@ -111,7 +111,7 @@ export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sq
                 }
 
                 // Get response and params using the same function as for SQL verbs
-                const { respProps, respDescription, opDescription } = getHttpOperationResponse(
+                const { respProps, respDescription, opDescription, requestBody } = getHttpOperationInfo(
                     dereferencedAPI, 
                     resolvedPath, 
                     resolvedVerb, 
@@ -133,6 +133,7 @@ export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sq
                     properties: {},
                     requiredParams: requiredParams || {},
                     optionalParams: optionalParams || {},
+                    requestBody: requestBody || {},
                 };
                 
                 // Format and sort the properties using our helper functions
@@ -152,7 +153,7 @@ export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sq
 
     for (const thisMethod of resourceData.sqlVerbs[sqlVerb]) {
         const {path, httpVerb, mediaType, openAPIDocKey, objectKey, methodName} = getHttpOperationForSqlVerb(thisMethod.$ref, resourceData);
-        const {respProps, respDescription, opDescription} = getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, openAPIDocKey, objectKey);
+        const {respProps, respDescription, opDescription, requestBody} = getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAPIDocKey, objectKey);
         const {requiredParams, optionalParams} = getHttpOperationParams(dereferencedAPI, path, httpVerb);
 
         // Initialize the method object with description and params
@@ -162,6 +163,7 @@ export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sq
             properties: {},
             requiredParams: requiredParams || {},
             optionalParams: optionalParams || {},
+            requestBody: requestBody || {},
         };
         
         // Format and sort the properties using our helper functions
@@ -348,7 +350,7 @@ function getHttpOperationForSqlVerb(sqlVerbRef, resourceData){
     }
 }
 
-function getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, openAPIDocKey, objectKey) {
+function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAPIDocKey, objectKey) {
     console.log(`Getting response for ${path}/${httpVerb}...`);
     
     // Check if the path exists in the dereferencedAPI
@@ -360,10 +362,40 @@ function getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, op
     if (!dereferencedAPI.paths[path][httpVerb]) {
         throw new Error(`HTTP verb '${httpVerb}' not found for path '${path}'`);
     }
-
+    
     // get op description
     const opDescription = dereferencedAPI.paths[path][httpVerb].description || '';
-
+    
+    // Extract request body if it exists
+    let requestBody = {};
+    if (dereferencedAPI.paths[path][httpVerb].requestBody && 
+        dereferencedAPI.paths[path][httpVerb].requestBody.content) {
+        
+        // Get first content type available in requestBody
+        const contentTypes = Object.keys(dereferencedAPI.paths[path][httpVerb].requestBody.content);
+        if (contentTypes.length > 0) {
+            const firstContentType = contentTypes[0];
+            const reqBodySchema = dereferencedAPI.paths[path][httpVerb].requestBody.content[firstContentType].schema;
+            if (reqBodySchema) {
+                // If schema is a reference, use it directly
+                if (reqBodySchema.$ref) {
+                    requestBody = reqBodySchema;
+                } 
+                // If schema is an object with properties, get them
+                else if (reqBodySchema.properties) {
+                    requestBody = {
+                        properties: reqBodySchema.properties,
+                        required: reqBodySchema.required || []
+                    };
+                }
+                // If schema is something else, use it as is
+                else {
+                    requestBody = reqBodySchema;
+                }
+            }
+        }
+    }
+    
     // Check if the response exists
     if (!dereferencedAPI.paths[path][httpVerb].responses || 
         !dereferencedAPI.paths[path][httpVerb].responses[openAPIDocKey]) {
@@ -371,7 +403,8 @@ function getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, op
         return {
             respProps: {},
             respDescription: '',
-            opDescription
+            opDescription,
+            requestBody
         };
     }
     
@@ -383,7 +416,8 @@ function getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, op
         return {
             respProps: {},
             respDescription: responseObj.description || '',
-            opDescription
+            opDescription,
+            requestBody
         };
     }
     
@@ -393,20 +427,23 @@ function getHttpOperationResponse(dereferencedAPI, path, httpVerb, mediaType, op
         return {
             respProps: schema.items.properties || {},
             respDescription: schema.items.description || responseObj.description || '',
-            opDescription
+            opDescription,
+            requestBody
         };
     } else if (schema.type === 'object') {
         return {
             respProps: schema.properties || {},
             respDescription: schema.description || responseObj.description || '',
-            opDescription
+            opDescription,
+            requestBody
         };
     } else {
         // For primitive types or when schema structure is unexpected
         return {
             respProps: {},
             respDescription: schema.description || responseObj.description || '',
-            opDescription
+            opDescription,
+            requestBody
         };
     }
 }

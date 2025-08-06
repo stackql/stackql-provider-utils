@@ -33,34 +33,6 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
     console.dir(selectMethods, { depth: null, colors: true });
 
     // Helper function to add methods to the table
-//     const addMethodsToTable = (methods, accessType) => {
-//         for (const [methodName, methodDetails] of Object.entries(methods)) {
-//             console.info(`Adding ${accessType} method to table: ${methodName}`);
-            
-//             // Format required params as comma-delimited list
-//             const requiredParamsArr = Object.keys(methodDetails.requiredParams || {});
-//             const requiredParamsStr = requiredParamsArr.length > 0 
-//                 ? requiredParamsArr.join(', ') 
-//                 : '';
-            
-//             // Format optional params as comma-delimited list
-//             const optionalParamsArr = Object.keys(methodDetails.optionalParams || {});
-//             const optionalParamsStr = optionalParamsArr.length > 0 
-//                 ? optionalParamsArr.join(', ') 
-//                 : '';
-            
-//             // Add the method row to the table
-//             content += `
-// <tr>
-//     <td><a href="#${methodName}"><CopyableCode code="${methodName}" /></a></td>
-//     <td><CopyableCode code="${accessType}" /></td>
-//     <td>${requiredParamsStr ? `${requiredParamsStr}` : ''}</td>
-//     <td>${optionalParamsStr ? `${optionalParamsStr}` : ''}</td>
-//     <td>${methodDetails.opDescription}</td>
-// </tr>`;
-//         }
-//     };
-
     const addMethodsToTable = (methods, accessType) => {
         for (const [methodName, methodDetails] of Object.entries(methods)) {
             console.info(`Adding ${accessType} method to table: ${methodName}`);

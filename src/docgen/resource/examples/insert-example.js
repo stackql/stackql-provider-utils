@@ -1,237 +1,329 @@
+// // src/docgen/resource/examples/insert-example.js
+// import { 
+//     getSqlMethodsWithOrderedFields, 
+// } from '../../helpers.js';
+
+// export function createInsertExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
+//     const insertMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'insert');
+
+//     // if there are no insert methods, return empty content
+//     if (Object.keys(insertMethods).length === 0) {
+//         return '';
+//     }
+
+//     let content = '\n\n## `INSERT` examples\n\n';
+
+//     // Create tab structure with values array
+//     content += '<Tabs\n    defaultValue="' + Object.keys(insertMethods)[0] + '"\n    values={[\n';
+    
+//     // Add each method as a tab option
+//     Object.keys(insertMethods).forEach((methodName, index) => {
+//         content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+//         if (index < Object.keys(insertMethods).length - 1 || true) { // Always add comma for manifest tab
+//             content += ',\n';
+//         }
+//     });
+    
+//     // Add manifest tab
+//     content += '        { label: \'Manifest\', value: \'manifest\' }\n';
+//     content += '    ]}\n>\n';
+    
+//     // Create each method tab content
+//     Object.entries(insertMethods).forEach(([methodName, methodDetails]) => {
+//         content += '<TabItem value="' + methodName + '">\n\n';
+//         content += methodDetails.opDescription || 'No description available.';
+        
+//         // Create SQL example
+//         content += '\n\n```sql\nINSERT INTO ' + providerName + '.' + serviceName + '.' + resourceName + ' (\n';
+        
+//         // Add requestBody fields prefixed with data__
+//         const reqBodyProps = methodDetails.requestBody?.properties ? Object.keys(methodDetails.requestBody.properties) : [];
+//         const dataProps = reqBodyProps.map(prop => 'data__' + prop);
+        
+//         // Combine data props with params
+//         const requiredParams = Object.keys(methodDetails.requiredParams || {});
+//         const optionalParams = Object.keys(methodDetails.optionalParams || {});
+//         const allFields = [...dataProps, ...requiredParams, ...optionalParams];
+        
+//         // Add fields to INSERT
+//         content += allFields.join(',\n');
+        
+//         // Start SELECT statement
+//         content += '\n)\nSELECT \n';
+        
+//         // Add values placeholders
+//         const valueLines = allFields.map(field => {
+//             const isDataField = field.startsWith('data__');
+//             const paramName = isDataField ? field.substring(6) : field;
+            
+//             // Check if it's a number type
+//             const isNumber = isDataField && 
+//                 methodDetails.requestBody?.properties?.[paramName]?.type === 'number' || 
+//                 methodDetails.requestBody?.properties?.[paramName]?.type === 'integer';
+            
+//             if (isNumber) {
+//                 return '{{ ' + paramName + ' }}';
+//             } else {
+//                 return '\'{{ ' + paramName + ' }}\'';
+//             }
+//         });
+        
+//         content += valueLines.join(',\n');
+//         content += '\n;\n```\n</TabItem>\n';
+//     });
+    
+//     // Create manifest tab
+//     content += '<TabItem value="manifest">\n\n';
+//     content += '```yaml\n# Description fields are for documentation purposes\n- name: ' + resourceName + '\n  props:\n';
+    
+//     // Collect all unique params and request body props across all methods
+//     const allParams = {};
+//     const allRequestBodyProps = {};
+    
+//     Object.values(insertMethods).forEach(method => {
+//         // Add required params
+//         Object.entries(method.requiredParams || {}).forEach(([name, details]) => {
+//             allParams[name] = { ...details, required: true };
+//         });
+        
+//         // Add optional params
+//         Object.entries(method.optionalParams || {}).forEach(([name, details]) => {
+//             if (!allParams[name]) {
+//                 allParams[name] = { ...details, required: false };
+//             }
+//         });
+        
+//         // Add request body props
+//         if (method.requestBody && method.requestBody.properties) {
+//             Object.entries(method.requestBody.properties).forEach(([name, details]) => {
+//                 allRequestBodyProps[name] = details;
+//             });
+//         }
+//     });
+    
+//     // Add required params first
+//     Object.entries(allParams)
+//         .filter(([_, details]) => details.required)
+//         .forEach(([name, details]) => {
+//             const type = details.type || 'string';
+//             content += '    - name: ' + name + '\n';
+//             content += '      value: ' + type + '\n';
+//             content += '      description: Required parameter for the ' + resourceName + ' resource.\n';
+//         });
+    
+//     // Add request body props
+//     Object.entries(allRequestBodyProps).forEach(([name, details]) => {
+//         const type = details.type || 'string';
+//         const description = details.description || '';
+//         content += '    - name: ' + name + '\n';
+//         content += '      value: ' + type + '\n';
+        
+//         if (description) {
+//             // Format multi-line descriptions
+//             const wrappedDesc = description.replace(/(.{1,80})(\\s+|$)/g, '$1\n        ');
+//             content += '      description: >\n        ' + wrappedDesc + '\n';
+//         }
+        
+//         // Add enum values if available
+//         if (details.enum) {
+//             content += '      valid_values: [\'' + details.enum.join('\', \'') + '\']\n';
+//         }
+        
+//         // Add default value if available
+//         if (details.default !== undefined) {
+//             content += '      default: ' + details.default + '\n';
+//         }
+//     });
+    
+//     // Add optional params last
+//     Object.entries(allParams)
+//         .filter(([_, details]) => !details.required)
+//         .forEach(([name, details]) => {
+//             const type = details.type || 'string';
+//             const description = details.description || '';
+//             content += '    - name: ' + name + '\n';
+//             content += '      value: ' + type + '\n';
+            
+//             if (description) {
+//                 content += '      description: ' + description + '\n\n';
+//             }
+//         });
+    
+//     content += '```\n</TabItem>\n';
+    
+//     // Close tabs
+//     content += '</Tabs>\n';
+    
+//     return content;
+// }
+
 // src/docgen/resource/examples/insert-example.js
+import { 
+    getSqlMethodsWithOrderedFields, 
+} from '../../helpers.js';
 
-export function createInsertExample(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    // Skip if no resource data or methods
-    if (!resourceData || !resourceData.methods) {
+export function createInsertExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
+    const insertMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'insert');
+
+    // if there are no insert methods, return empty content
+    if (Object.keys(insertMethods).length === 0) {
         return '';
     }
-    
-    // Get the methods for INSERT operations
-    const insertMethods = getInsertMethods(resourceData);
-    if (insertMethods.length === 0) {
-        return '';
-    }
-    
-    // We'll just use the first INSERT method for the example
-    const method = insertMethods[0];
-    
-    // Start building the INSERT example content
-    let content = '\n## `INSERT` example\n\n';
-    content += `${method.operation.description || ''}\n\n`;
-    
-    // Create tabs for different ways to show the INSERT
-    content += '<Tabs\n';
-    content += '    defaultValue="all"\n';
-    content += '    values={[\n';
-    content += '        { label: \'Required Properties\', value: \'required\' },\n';
-    content += '        { label: \'All Properties\', value: \'all\', },\n';
-    content += '        { label: \'Manifest\', value: \'manifest\', },\n';
-    content += '    ]}\n';
-    content += '>\n';
-    
-    // All properties tab
-    content += '<TabItem value="all">\n\n';
-    content += '```sql\n';
-    content += generateInsertSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI, false);
-    content += '```\n';
-    content += '</TabItem>\n\n';
-    
-    // Required properties tab
-    content += '<TabItem value="required">\n\n';
-    content += '```sql\n';
-    content += generateInsertSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI, true);
-    content += '```\n';
-    content += '</TabItem>\n\n';
-    
-    // Manifest tab
-    content += '<TabItem value="manifest">\n\n';
-    content += '```yaml\n';
-    content += generateManifestYaml(method, resourceName, resourceData, dereferencedAPI);
-    content += '```\n';
-    content += '</TabItem>\n';
-    content += '</Tabs>\n';
-    
-    return content;
-}
 
-function getInsertMethods(resourceData) {
-    // Extract INSERT methods from sqlVerbs
-    const insertMethods = [];
-    
-    if (resourceData.sqlVerbs && resourceData.sqlVerbs.insert) {
-        for (const methodRef of resourceData.sqlVerbs.insert) {
-            // Extract method name from reference
-            const methodName = methodRef.$ref.split('/').pop();
-            if (resourceData.methods[methodName]) {
-                insertMethods.push({
-                    name: methodName,
-                    ...resourceData.methods[methodName]
-                });
-            }
-        }
-    }
-    
-    return insertMethods;
-}
+    let content = '\n\n## `INSERT` examples\n\n';
 
-function generateInsertSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI, requiredOnly) {
-    const { operation } = method;
+    // Create tab structure with values array
+    content += '<Tabs\n    defaultValue="' + Object.keys(insertMethods)[0] + '"\n    values={[\n';
     
-    // Get properties for the INSERT
-    const properties = getInsertProperties(operation, requiredOnly);
-    if (properties.length === 0) {
-        return '-- No properties found for INSERT';
-    }
-    
-    // Generate INSERT statement
-    let sql = '/*+ create */\n';
-    sql += `INSERT INTO ${providerName}.${serviceName}.${resourceName} (\n`;
-    
-    // Add column names (with data__ prefix for request body fields)
-    sql += properties.map(prop => {
-        if (prop.in === 'body') {
-            return `data__${prop.name}`;
+    // Add each method as a tab option
+    Object.keys(insertMethods).forEach((methodName, index) => {
+        content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+        if (index < Object.keys(insertMethods).length - 1 || true) { // Always add comma for manifest tab
+            content += ',\n';
         }
-        return prop.name;
-    }).join(',\n');
-    sql += '\n)\n';
+    });
     
-    // Add SELECT statement with values
-    sql += 'SELECT \n';
-    sql += properties.map(prop => {
-        return `'{{ ${prop.name} }}'`;
-    }).join(',\n');
-    sql += ',\n';
-    sql += "'{{ endpoint }}'";
-    sql += '\n;\n';
+    // Add manifest tab
+    content += '        { label: \'Manifest\', value: \'manifest\' }\n';
+    content += '    ]}\n>\n';
     
-    return sql;
-}
-
-function getInsertProperties(operation, requiredOnly) {
-    const properties = [];
-    
-    // Process path parameters
-    if (operation.parameters) {
-        for (const param of operation.parameters) {
-            if (param.name !== 'endpoint' && (!requiredOnly || param.required)) {
-                properties.push({
-                    name: param.name,
-                    required: param.required,
-                    in: 'path',
-                    type: param.schema ? param.schema.type : 'string',
-                    description: param.description || ''
-                });
-            }
-        }
-    }
-    
-    // Process request body properties
-    if (operation.requestBody && operation.requestBody.content && 
-        operation.requestBody.content['application/json'] && 
-        operation.requestBody.content['application/json'].schema) {
+    // Create each method tab content
+    Object.entries(insertMethods).forEach(([methodName, methodDetails]) => {
+        content += '<TabItem value="' + methodName + '">\n\n';
+        content += methodDetails.opDescription || 'No description available.';
         
-        const schema = operation.requestBody.content['application/json'].schema;
+        // Create SQL example
+        content += '\n\n```sql\nINSERT INTO ' + providerName + '.' + serviceName + '.' + resourceName + ' (\n';
         
-        if (schema.properties) {
-            for (const [propName, propValue] of Object.entries(schema.properties)) {
-                // Skip endpoint
-                if (propName === 'endpoint') continue;
-                
-                const isRequired = schema.required && schema.required.includes(propName);
-                
-                if (!requiredOnly || isRequired) {
-                    properties.push({
-                        name: propName,
-                        required: isRequired,
-                        in: 'body',
-                        type: propValue.type || 'object',
-                        description: propValue.description || ''
-                    });
-                }
+        // Add requestBody fields prefixed with data__ (excluding read-only props)
+        const reqBodyProps = methodDetails.requestBody?.properties 
+            ? Object.entries(methodDetails.requestBody.properties)
+                .filter(([_, propDetails]) => propDetails.readOnly !== true)
+                .map(([propName]) => propName)
+            : [];
+            
+        const dataProps = reqBodyProps.map(prop => 'data__' + prop);
+        
+        // Combine data props with params
+        const requiredParams = Object.keys(methodDetails.requiredParams || {});
+        const optionalParams = Object.keys(methodDetails.optionalParams || {});
+        const allFields = [...dataProps, ...requiredParams, ...optionalParams];
+        
+        // Add fields to INSERT
+        content += allFields.join(',\n');
+        
+        // Start SELECT statement
+        content += '\n)\nSELECT \n';
+        
+        // Add values placeholders
+        const valueLines = allFields.map(field => {
+            const isDataField = field.startsWith('data__');
+            const paramName = isDataField ? field.substring(6) : field;
+            
+            // Check if it's a number or boolean type
+            let isNumber = false;
+            let isBoolean = false;
+            
+            if (isDataField && methodDetails.requestBody?.properties?.[paramName]) {
+                const propType = methodDetails.requestBody.properties[paramName].type;
+                isNumber = propType === 'number' || propType === 'integer';
+                isBoolean = propType === 'boolean';
             }
-        }
-    }
-    
-    // Always add name for the resource (if not already included)
-    if (!properties.some(p => p.name === 'name')) {
-        properties.push({
-            name: 'name',
-            required: true,
-            in: 'body',
-            type: 'string',
-            description: 'Resource name'
+            
+            if (isNumber || isBoolean) {
+                return '{{ ' + paramName + ' }}';
+            } else {
+                return '\'{{ ' + paramName + ' }}\'';
+            }
         });
-    }
-    
-    return properties;
-}
-
-function generateManifestYaml(method, resourceName, resourceData, dereferencedAPI) {
-    // Get all properties for the manifest
-    const properties = getInsertProperties(method.operation, false);
-    
-    let yaml = '# Description fields below are for documentation purposes only and are not required in the manifest\n';
-    yaml += `- name: ${resourceName}\n`;
-    yaml += '  props:\n';
-    
-    // Add endpoint parameter
-    yaml += '    - name: endpoint\n';
-    yaml += '      value: string\n';
-    yaml += `      description: Required parameter for the ${resourceName} resource.\n`;
-    
-    // Add all other properties
-    for (const prop of properties) {
-        yaml += `    - name: ${prop.name}\n`;
-        yaml += `      value: ${prop.type}\n`;
         
-        // Add description with required note if applicable
-        let description = prop.description || '';
-        if (prop.required) {
-            description += description ? ` (Required parameter for the ${resourceName} resource.)` : `Required parameter for the ${resourceName} resource.`;
+        content += valueLines.join(',\n');
+        content += '\n;\n```\n</TabItem>\n';
+    });
+    
+    // Create manifest tab
+    content += '<TabItem value="manifest">\n\n';
+    content += '```yaml\n# Description fields are for documentation purposes\n- name: ' + resourceName + '\n  props:\n';
+    
+    // Collect all unique params and request body props across all methods
+    const allParams = {};
+    const allRequestBodyProps = {};
+    
+    Object.values(insertMethods).forEach(method => {
+        // Add required params
+        Object.entries(method.requiredParams || {}).forEach(([name, details]) => {
+            allParams[name] = { ...details, required: true };
+        });
+        
+        // Add optional params
+        Object.entries(method.optionalParams || {}).forEach(([name, details]) => {
+            if (!allParams[name]) {
+                allParams[name] = { ...details, required: false };
+            }
+        });
+        
+        // Add request body props (excluding read-only props)
+        if (method.requestBody && method.requestBody.properties) {
+            Object.entries(method.requestBody.properties)
+                .filter(([_, propDetails]) => propDetails.readOnly !== true)
+                .forEach(([name, details]) => {
+                    allRequestBodyProps[name] = details;
+                });
         }
+    });
+    
+    // Add required params first
+    Object.entries(allParams)
+        .filter(([_, details]) => details.required)
+        .forEach(([name, details]) => {
+            const type = details.type || 'string';
+            content += '    - name: ' + name + '\n';
+            content += '      value: ' + type + '\n';
+            content += '      description: Required parameter for the ' + resourceName + ' resource.\n';
+        });
+    
+    // Add request body props
+    Object.entries(allRequestBodyProps).forEach(([name, details]) => {
+        const type = details.type || 'string';
+        const description = details.description || '';
+        content += '    - name: ' + name + '\n';
+        content += '      value: ' + type + '\n';
         
         if (description) {
-            // Format multi-line descriptions properly
-            const descLines = wordWrap(description, 70);
-            yaml += '      description: >';
-            for (let i = 0; i < descLines.length; i++) {
-                if (i === 0) {
-                    yaml += `-\n        ${descLines[i]}\n`;
-                } else {
-                    yaml += `        ${descLines[i]}\n`;
-                }
-            }
+            // Format multi-line descriptions
+            const wrappedDesc = description.replace(/(.{1,80})(\\s+|$)/g, '$1\n        ');
+            content += '      description: >\n        ' + wrappedDesc + '\n';
+        }
+        
+        // Add enum values if available
+        if (details.enum) {
+            content += '      valid_values: [\'' + details.enum.join('\', \'') + '\']\n';
         }
         
         // Add default value if available
-        if (prop.default !== undefined) {
-            yaml += `      default: ${prop.default}\n`;
+        if (details.default !== undefined) {
+            content += '      default: ' + details.default + '\n';
         }
-    }
+    });
     
-    return yaml;
-}
-
-function wordWrap(text, maxLineLength) {
-    if (!text) return [''];
+    // Add optional params last
+    Object.entries(allParams)
+        .filter(([_, details]) => !details.required)
+        .forEach(([name, details]) => {
+            const type = details.type || 'string';
+            const description = details.description || '';
+            content += '    - name: ' + name + '\n';
+            content += '      value: ' + type + '\n';
+            
+            if (description) {
+                content += '      description: ' + description + '\n';
+            }
+        });
     
-    const words = text.split(' ');
-    const lines = [];
-    let currentLine = '';
+    content += '```\n</TabItem>\n';
     
-    for (const word of words) {
-        if (currentLine.length + word.length + 1 <= maxLineLength) {
-            currentLine += (currentLine.length > 0 ? ' ' : '') + word;
-        } else {
-            lines.push(currentLine);
-            currentLine = word;
-        }
-    }
+    // Close tabs
+    content += '</Tabs>\n';
     
-    if (currentLine.length > 0) {
-        lines.push(currentLine);
-    }
-    
-    return lines;
+    return content;
 }

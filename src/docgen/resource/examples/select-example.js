@@ -1,177 +1,73 @@
 // src/docgen/resource/examples/select-example.js
+import { 
+    getSqlMethodsWithOrderedFields, 
+} from '../../helpers.js';
 
 export function createSelectExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    // Skip if no resource data or methods
-    if (!resourceData || !resourceData.methods) {
+    const selectMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'select');
+    
+    // if there are no select methods, return empty content
+    if (Object.keys(selectMethods).length === 0) {
         return '';
     }
     
-    // Get the methods for SELECT operations
-    const selectMethods = getSelectMethods(resourceData);
-    if (selectMethods.length === 0) {
-        return '';
-    }
+    let content = '\n\n## `SELECT` examples\n\n';
     
-    // Start building the SELECT examples content
-    let content = '\n## `SELECT` examples\n\n';
-    content += '<Tabs\n';
-    content += `    defaultValue="${selectMethods[0].name}"\n`;
-    content += '    values={[\n';
+    // Create tab structure with values array
+    content += '<Tabs\n    defaultValue="' + Object.keys(selectMethods)[0] + '"\n    values={[\n';
     
-    // Create the tab values
-    for (const method of selectMethods) {
-        content += `        { label: '${method.name}', value: '${method.name}' }${method !== selectMethods[selectMethods.length - 1] ? ',' : ''}\n`;
-    }
+    // Add each method as a tab option
+    Object.keys(selectMethods).forEach((methodName, index, arr) => {
+        content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+        content += index < arr.length - 1 ? ',\n' : '\n';
+    });
     
-    content += '    ]}\n';
-    content += '>\n';
+    content += '    ]}\n>\n';
     
-    // Create tab content for each SELECT method
-    for (const method of selectMethods) {
-        content += createSelectMethodTab(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI);
-    }
+    // Create each tab content
+    Object.entries(selectMethods).forEach(([methodName, methodDetails]) => {
+        content += '<TabItem value="' + methodName + '">\n\n';
+        content += methodDetails.opDescription || 'No description available.';
+        
+        // Create SQL example
+        content += '\n\n```sql\nSELECT\n';
+        
+        // Add fields
+        const fieldNames = Object.keys(methodDetails.properties || {});
+        if (fieldNames.length > 0) {
+            content += fieldNames.join(',\n');
+        } else {
+            content += '*';
+        }
+        
+        // Add FROM clause
+        content += '\nFROM ' + providerName + '.' + serviceName + '.' + resourceName;
+        
+        // Add WHERE clause with parameters
+        const requiredParams = Object.keys(methodDetails.requiredParams || {});
+        const optionalParams = Object.keys(methodDetails.optionalParams || {});
+        
+        if (requiredParams.length > 0 || optionalParams.length > 0) {
+            content += '\nWHERE ';
+            
+            // Add required parameters
+            requiredParams.forEach((param, index) => {
+                content += param + ' = \'{{ ' + param + ' }}\' -- required';
+                content += index < requiredParams.length - 1 || optionalParams.length > 0 ? '\nAND ' : '';
+            });
+            
+            // Add optional parameters
+            optionalParams.forEach((param, index) => {
+                content += param + ' = \'{{ ' + param + ' }}\'';
+                content += index < optionalParams.length - 1 ? '\nAND ' : '';
+            });
+        }
+        
+        content += ';\n```\n</TabItem>\n';
+    });
     
+    // Close tabs
     content += '</Tabs>\n';
     
     return content;
-}
-
-function getSelectMethods(resourceData) {
-    // Extract SELECT methods from sqlVerbs
-    const selectMethods = [];
-    
-    if (resourceData.sqlVerbs && resourceData.sqlVerbs.select) {
-        for (const methodRef of resourceData.sqlVerbs.select) {
-            // Extract method name from reference
-            const methodName = methodRef.$ref.split('/').pop();
-            if (resourceData.methods[methodName]) {
-                selectMethods.push({
-                    name: methodName,
-                    ...resourceData.methods[methodName]
-                });
-            }
-        }
-    }
-    
-    return selectMethods;
-}
-
-function createSelectMethodTab(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    const { name, operation } = method;
-    const description = operation.description || '';
-    
-    let content = `<TabItem value="${name}">\n\n`;
-    content += `${description}\n\n`;
-    content += '```sql\n';
-    content += generateSelectSql(name, providerName, serviceName, resourceName, resourceData, dereferencedAPI);
-    content += '```\n';
-    content += '</TabItem>\n';
-    
-    return content;
-}
-
-function generateSelectSql(methodName, providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    // Find the method's operation
-    const method = resourceData.methods[methodName];
-    if (!method || !method.operation) {
-        return '-- Method operation not found';
-    }
-    
-    // Get fields that would be returned
-    const fields = getResourceFields(resourceData, dereferencedAPI);
-    
-    // Generate SELECT statement
-    let sql = 'SELECT\n';
-    
-    // Add fields
-    if (fields.length > 0) {
-        sql += fields.map(field => field.name).join(',\n');
-        sql += '\n';
-    } else {
-        sql += '*\n';
-    }
-    
-    // Add FROM clause
-    sql += `FROM ${providerName}.${serviceName}.${resourceName}\n`;
-    
-    // Add WHERE clause with required parameters
-    const requiredParams = getRequiredParams(method.operation);
-    
-    if (requiredParams.length > 0) {
-        sql += 'WHERE ';
-        sql += requiredParams.map(param => {
-            // Handle "endpoint" specially since it's common
-            if (param === 'endpoint') {
-                return `${param} = '{{ ${param} }}'`;
-            }
-            
-            // For path parameters, use the name directly
-            if (method.operation.parameters && method.operation.parameters.some(p => p.name === param)) {
-                return `${param} = '{{ ${param} }}'`;
-            }
-            
-            // For data parameters, strip the "data__" prefix
-            if (param.startsWith('data__')) {
-                const actualParam = param.substring(6);
-                return `${actualParam} = '{{ ${actualParam} }}'`;
-            }
-            
-            return `${param} = '{{ ${param} }}'`;
-        }).join('\nAND ');
-        sql += ';';
-    }
-    
-    return sql;
-}
-
-function getResourceFields(resourceData, dereferencedAPI) {
-    // Extract fields from the first method with a response schema
-    const methods = Object.values(resourceData.methods);
-    
-    for (const method of methods) {
-        if (method.response && method.response.mediaType === 'application/json' && method.operation) {
-            const responseDoc = method.operation.responses && method.operation.responses[method.response.openAPIDocKey];
-            
-            if (responseDoc && responseDoc.content && responseDoc.content['application/json'] && responseDoc.content['application/json'].schema) {
-                return extractFieldsFromSchema(responseDoc.content['application/json'].schema);
-            }
-        }
-    }
-    
-    return [];
-}
-
-function extractFieldsFromSchema(schema) {
-    // Handle array responses
-    if (schema.type === 'array' && schema.items) {
-        if (schema.items.properties) {
-            return extractFieldsFromProperties(schema.items.properties);
-        }
-    }
-    
-    // Handle direct object responses
-    if (schema.properties) {
-        return extractFieldsFromProperties(schema.properties);
-    }
-    
-    return [];
-}
-
-function extractFieldsFromProperties(properties) {
-    return Object.keys(properties).map(name => ({ name }));
-}
-
-function getRequiredParams(operation) {
-    const requiredParams = [];
-    
-    // Process path parameters
-    if (operation.parameters) {
-        for (const param of operation.parameters) {
-            if (param.required) {
-                requiredParams.push(param.name);
-            }
-        }
-    }
-    
-    return requiredParams;
 }

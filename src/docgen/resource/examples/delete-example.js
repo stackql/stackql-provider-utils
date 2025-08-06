@@ -1,84 +1,74 @@
 // src/docgen/resource/examples/delete-example.js
+import { 
+    getSqlMethodsWithOrderedFields, 
+} from '../../helpers.js';
 
-export function createDeleteExample(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    // Skip if no resource data or methods
-    if (!resourceData || !resourceData.methods) {
+export function createDeleteExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
+    const deleteMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'delete');
+
+    // if there are no delete methods, return empty content
+    if (Object.keys(deleteMethods).length === 0) {
         return '';
     }
+
+    let content = '\n\n## `DELETE` examples\n\n';
+
+    // Create tab structure with values array
+    content += '<Tabs\n    defaultValue="' + Object.keys(deleteMethods)[0] + '"\n    values={[\n';
     
-    // Get the methods for DELETE operations
-    const deleteMethods = getDeleteMethods(resourceData);
-    if (deleteMethods.length === 0) {
-        return '';
-    }
+    // Add each method as a tab option
+    Object.keys(deleteMethods).forEach((methodName, index, arr) => {
+        content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+        content += index < arr.length - 1 ? ',\n' : '\n';
+    });
     
-    // We'll just use the first DELETE method for the example
-    const method = deleteMethods[0];
+    content += '    ]}\n>\n';
     
-    // Start building the DELETE example content
-    let content = '\n## `DELETE` example\n\n';
-    content += `${method.operation.description || ''}\n\n`;
-    content += '```sql\n';
-    content += generateDeleteSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI);
-    content += '```\n';
+    // Create each method tab content
+    Object.entries(deleteMethods).forEach(([methodName, methodDetails]) => {
+        content += '<TabItem value="' + methodName + '">\n\n';
+        
+        // Add method description
+        content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        
+        // Create SQL example
+        content += '\n\n```sql\nDELETE FROM ' + providerName + '.' + serviceName + '.' + resourceName;
+        
+        // Add WHERE clause with parameters
+        const requiredParams = Object.keys(methodDetails.requiredParams || {});
+        const optionalParams = Object.keys(methodDetails.optionalParams || {});
+        
+        if (requiredParams.length > 0 || optionalParams.length > 0) {
+            content += '\nWHERE ';
+            
+            // Add required parameters
+            requiredParams.forEach((param, index) => {
+                content += param + ' = \'{{ ' + param + ' }}\' --required';
+                content += index < requiredParams.length - 1 || optionalParams.length > 0 ? '\nAND ' : '';
+            });
+            
+            // Add optional parameters
+            optionalParams.forEach((param, index) => {
+                // For boolean parameters, we can add a comment about their default value
+                const paramDetails = methodDetails.optionalParams[param];
+                const isBoolean = paramDetails.type === 'boolean';
+                const defaultValue = paramDetails.default;
+                
+                content += param + ' = \'{{ ' + param + ' }}\'';
+                
+                if (isBoolean && defaultValue !== undefined) {
+                    content += ' -- default: ' + defaultValue;
+                }
+                
+                content += index < optionalParams.length - 1 ? '\nAND ' : '';
+            });
+        }
+        
+        content += ';\n```\n</TabItem>\n';
+    });
+    
+    // Close tabs
+    content += '</Tabs>\n';
     
     return content;
-}
-
-function getDeleteMethods(resourceData) {
-    // Extract DELETE methods from sqlVerbs
-    const deleteMethods = [];
-    
-    if (resourceData.sqlVerbs && resourceData.sqlVerbs.delete) {
-        for (const methodRef of resourceData.sqlVerbs.delete) {
-            // Extract method name from reference
-            const methodName = methodRef.$ref.split('/').pop();
-            if (resourceData.methods[methodName]) {
-                deleteMethods.push({
-                    name: methodName,
-                    ...resourceData.methods[methodName]
-                });
-            }
-        }
-    }
-    
-    return deleteMethods;
-}
-
-function generateDeleteSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    const { operation } = method;
-    
-    // Generate DELETE statement
-    let sql = '/*+ delete */\n';
-    sql += `DELETE FROM ${providerName}.${serviceName}.${resourceName}\n`;
-    
-    // Add WHERE clause with primary keys and required parameters
-    const whereConditions = getWhereConditions(operation);
-    if (whereConditions.length > 0) {
-        sql += 'WHERE ';
-        sql += whereConditions.map(condition => {
-            return `${condition} = '{{ ${condition} }}'`;
-        }).join('\nAND ');
-        sql += ';';
-    }
-    
-    return sql;
-}
-
-function getWhereConditions(operation) {
-    const conditions = [];
-    
-    // Process required parameters
-    if (operation.parameters) {
-        for (const param of operation.parameters) {
-            if (param.required && param.name !== 'endpoint') {
-                conditions.push(param.name);
-            }
-        }
-    }
-    
-    // Always add endpoint
-    conditions.push('endpoint');
-    
-    return conditions;
 }

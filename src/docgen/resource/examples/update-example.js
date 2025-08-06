@@ -1,135 +1,257 @@
-// src/docgen/resource/examples/update-example.js
+// // src/docgen/resource/examples/update-example.js
+// import { 
+//     getSqlMethodsWithOrderedFields, 
+// } from '../../helpers.js';
 
-export function createUpdateExample(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    // Skip if no resource data or methods
-    if (!resourceData || !resourceData.methods) {
+// export function createUpdateExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI, isReplace = false) {
+//     const updateMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, isReplace ? 'replace' : 'update');
+    
+//     // if there are no update methods, return empty content
+//     if (Object.keys(updateMethods).length === 0) {
+//         return '';
+//     }
+    
+//     let content = '';
+//     if (isReplace) {
+//         content += '\n\n## `REPLACE` examples\n\n';
+//     } else {
+//         content += '\n\n## `UPDATE` examples\n\n';
+//     }
+    
+//     // Create tab structure with values array
+//     content += '<Tabs\n    defaultValue="' + Object.keys(updateMethods)[0] + '"\n    values={[\n';
+    
+//     // Add each method as a tab option
+//     Object.keys(updateMethods).forEach((methodName, index, arr) => {
+//         content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+//         content += index < arr.length - 1 ? ',\n' : '\n';
+//     });
+    
+//     content += '    ]}\n>\n';
+    
+//     // Create each method tab content
+//     Object.entries(updateMethods).forEach(([methodName, methodDetails]) => {
+//         content += '<TabItem value="' + methodName + '">\n\n';
+        
+//         // Add method description
+//         content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        
+//         // Create SQL example
+//         content += '\n\n```sql\n';
+//         content += (isReplace ? 'REPLACE ' : 'UPDATE ') + providerName + '.' + serviceName + '.' + resourceName;
+        
+//         // Add SET clause with requestBody fields
+//         content += '\nSET \n';
+        
+//         // Get request body fields
+//         const reqBodyProps = methodDetails.requestBody?.properties ? Object.keys(methodDetails.requestBody.properties) : [];
+        
+//         // Add data__ prefixed fields to SET clause
+//         if (reqBodyProps.length > 0) {
+//             const setLines = reqBodyProps.map(prop => {
+//                 const propDetails = methodDetails.requestBody.properties[prop];
+//                 const isNumber = propDetails.type === 'number' || propDetails.type === 'integer';
+                
+//                 if (isNumber) {
+//                     return 'data__' + prop + ' = {{ ' + prop + ' }}';
+//                 } else {
+//                     return 'data__' + prop + ' = \'{{ ' + prop + ' }}\'';
+//                 }
+//             });
+            
+//             content += setLines.join(',\n');
+//         } else {
+//             content += '-- No updatable properties';
+//         }
+        
+//         // Add WHERE clause with parameters
+//         const requiredParams = Object.keys(methodDetails.requiredParams || {});
+//         const optionalParams = Object.keys(methodDetails.optionalParams || {});
+//         const requiredBodyProps = methodDetails.requestBody?.required || [];
+        
+//         content += '\nWHERE \n';
+        
+//         // Add required parameters
+//         let clauseCount = 0;
+        
+//         // Add required query/path/header params
+//         requiredParams.forEach(param => {
+//             if (clauseCount > 0) content += '\nAND ';
+//             content += param + ' = \'{{ ' + param + ' }}\' --required';
+//             clauseCount++;
+//         });
+        
+//         // Add required body params
+//         requiredBodyProps.forEach(prop => {
+//             if (clauseCount > 0) content += '\nAND ';
+//             content += 'data__' + prop + ' = \'{{ ' + prop + ' }}\' --required';
+//             clauseCount++;
+//         });
+        
+//         // Add optional parameters
+//         optionalParams.forEach(param => {
+//             if (clauseCount > 0) content += '\nAND ';
+            
+//             // For boolean parameters, we can add a comment about their default value
+//             const paramDetails = methodDetails.optionalParams[param];
+//             const isBoolean = paramDetails.type === 'boolean';
+//             const defaultValue = paramDetails.default;
+            
+//             content += param + ' = \'{{ ' + param + '}}\'';
+            
+//             if (isBoolean && defaultValue !== undefined) {
+//                 content += ' -- default: ' + defaultValue;
+//             }
+            
+//             clauseCount++;
+//         });
+        
+//         content += ';\n```\n</TabItem>\n';
+//     });
+    
+//     // Close tabs
+//     content += '</Tabs>\n';
+    
+//     return content;
+// }
+
+// src/docgen/resource/examples/update-example.js
+import { 
+    getSqlMethodsWithOrderedFields, 
+} from '../../helpers.js';
+
+export function createUpdateExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI, isReplace = false) {
+    const updateMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, isReplace ? 'replace' : 'update');
+    
+    // if there are no update methods, return empty content
+    if (Object.keys(updateMethods).length === 0) {
         return '';
     }
     
-    // Get the methods for REPLACE/UPDATE operations
-    const replaceMethods = getReplaceMethods(resourceData);
-    if (replaceMethods.length === 0) {
-        return '';
+    let content = '';
+    if (isReplace) {
+        content += '\n\n## `REPLACE` examples\n\n';
+    } else {
+        content += '\n\n## `UPDATE` examples\n\n';
     }
     
-    // We'll just use the first REPLACE method for the example
-    const method = replaceMethods[0];
+    // Create tab structure with values array
+    content += '<Tabs\n    defaultValue="' + Object.keys(updateMethods)[0] + '"\n    values={[\n';
     
-    // Start building the REPLACE example content
-    let content = '\n## `REPLACE` example\n\n';
-    content += `${method.operation.description || ''}\n\n`;
-    content += '```sql\n';
-    content += generateUpdateSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI);
-    content += '```\n';
+    // Add each method as a tab option
+    Object.keys(updateMethods).forEach((methodName, index, arr) => {
+        content += '        { label: \'' + methodName + '\', value: \'' + methodName + '\' }';
+        content += index < arr.length - 1 ? ',\n' : '\n';
+    });
+    
+    content += '    ]}\n>\n';
+    
+    // Create each method tab content
+    Object.entries(updateMethods).forEach(([methodName, methodDetails]) => {
+        content += '<TabItem value="' + methodName + '">\n\n';
+        
+        // Add method description
+        content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        
+        // Create SQL example
+        content += '\n\n```sql\n';
+        content += (isReplace ? 'REPLACE ' : 'UPDATE ') + providerName + '.' + serviceName + '.' + resourceName;
+        
+        // Add SET clause with requestBody fields (excluding read-only props)
+        content += '\nSET \n';
+        
+        // Get request body fields (excluding read-only props)
+        const reqBodyProps = methodDetails.requestBody?.properties 
+            ? Object.entries(methodDetails.requestBody.properties)
+                .filter(([_, propDetails]) => propDetails.readOnly !== true)
+                .map(([propName]) => propName)
+            : [];
+        
+        // Add data__ prefixed fields to SET clause
+        if (reqBodyProps.length > 0) {
+            const setLines = reqBodyProps.map(prop => {
+                const propDetails = methodDetails.requestBody.properties[prop];
+                const isNumber = propDetails.type === 'number' || propDetails.type === 'integer';
+                const isBoolean = propDetails.type === 'boolean';
+                
+                if (isNumber || isBoolean) {
+                    return 'data__' + prop + ' = {{ ' + prop + ' }}';
+                } else {
+                    return 'data__' + prop + ' = \'{{ ' + prop + ' }}\'';
+                }
+            });
+            
+            content += setLines.join(',\n');
+        } else {
+            content += '-- No updatable properties';
+        }
+        
+        // Add WHERE clause with parameters
+        const requiredParams = Object.keys(methodDetails.requiredParams || {});
+        const optionalParams = Object.keys(methodDetails.optionalParams || {});
+        
+        // Get required body props (excluding read-only props)
+        const requiredBodyProps = methodDetails.requestBody?.required 
+            ? methodDetails.requestBody.required.filter(prop => 
+                methodDetails.requestBody.properties[prop] && 
+                methodDetails.requestBody.properties[prop].readOnly !== true)
+            : [];
+        
+        content += '\nWHERE \n';
+        
+        // Add required parameters
+        let clauseCount = 0;
+        
+        // Add required query/path/header params
+        requiredParams.forEach(param => {
+            if (clauseCount > 0) content += '\nAND ';
+            content += param + ' = \'{{ ' + param + ' }}\' --required';
+            clauseCount++;
+        });
+        
+        // Add required body params (only non-readonly ones)
+        requiredBodyProps.forEach(prop => {
+            if (clauseCount > 0) content += '\nAND ';
+            
+            const propDetails = methodDetails.requestBody.properties[prop];
+            const isBoolean = propDetails.type === 'boolean';
+            
+            if (isBoolean) {
+                content += 'data__' + prop + ' = {{ ' + prop + ' }} --required';
+            } else {
+                content += 'data__' + prop + ' = \'{{ ' + prop + ' }}\' --required';
+            }
+            
+            clauseCount++;
+        });
+        
+        // Add optional parameters
+        optionalParams.forEach(param => {
+            if (clauseCount > 0) content += '\nAND ';
+            
+            // For boolean parameters, we can add a comment about their default value
+            const paramDetails = methodDetails.optionalParams[param];
+            const isBoolean = paramDetails.type === 'boolean';
+            const defaultValue = paramDetails.default;
+            
+            if (isBoolean) {
+                content += param + ' = {{ ' + param + '}}';
+            } else {
+                content += param + ' = \'{{ ' + param + '}}\'';
+            }
+            
+            if (isBoolean && defaultValue !== undefined) {
+                content += ' -- default: ' + defaultValue;
+            }
+            
+            clauseCount++;
+        });
+        
+        content += ';\n```\n</TabItem>\n';
+    });
+    
+    // Close tabs
+    content += '</Tabs>\n';
     
     return content;
-}
-
-function getReplaceMethods(resourceData) {
-    // Extract REPLACE methods from sqlVerbs
-    const replaceMethods = [];
-    
-    if (resourceData.sqlVerbs && resourceData.sqlVerbs.replace) {
-        for (const methodRef of resourceData.sqlVerbs.replace) {
-            // Extract method name from reference
-            const methodName = methodRef.$ref.split('/').pop();
-            if (resourceData.methods[methodName]) {
-                replaceMethods.push({
-                    name: methodName,
-                    ...resourceData.methods[methodName]
-                });
-            }
-        }
-    }
-    
-    return replaceMethods;
-}
-
-function generateUpdateSql(method, providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
-    const { operation } = method;
-    
-    // Get properties for the UPDATE
-    const properties = getUpdateProperties(operation);
-    if (properties.length === 0) {
-        return '-- No properties found for REPLACE';
-    }
-    
-    // Generate REPLACE statement
-    let sql = '/*+ update */\n';
-    sql += `REPLACE ${providerName}.${serviceName}.${resourceName}\n`;
-    
-    // Add SET clause with properties
-    sql += 'SET \n';
-    sql += properties.map(prop => {
-        return `${prop.name} = '{{ ${prop.name} }}'`;
-    }).join(',\n');
-    sql += '\n';
-    
-    // Add WHERE clause with primary keys
-    const primaryKeys = getPrimaryKeys(operation);
-    if (primaryKeys.length > 0) {
-        sql += 'WHERE \n';
-        sql += primaryKeys.map(key => {
-            return `${key} = '{{ ${key} }}'`;
-        }).join('\nAND ');
-        sql += '\n';
-    }
-    
-    // Add data__name for APIs that require it
-    if (resourceData.methods[method.name].operation.requestBody) {
-        sql += 'AND data__name = \'{{ data__name }}\'\n';
-    }
-    
-    // Add endpoint
-    sql += 'AND endpoint = \'{{ endpoint }}\';';
-    
-    return sql;
-}
-
-function getUpdateProperties(operation) {
-    const properties = [];
-    
-    // Process request body properties
-    if (operation.requestBody && operation.requestBody.content && 
-        operation.requestBody.content['application/json'] && 
-        operation.requestBody.content['application/json'].schema) {
-        
-        const schema = operation.requestBody.content['application/json'].schema;
-        
-        if (schema.properties) {
-            for (const [propName, propValue] of Object.entries(schema.properties)) {
-                // Skip endpoint
-                if (propName === 'endpoint') continue;
-                
-                properties.push({
-                    name: propName,
-                    required: schema.required && schema.required.includes(propName),
-                    type: propValue.type || 'object',
-                    description: propValue.description || ''
-                });
-            }
-        }
-    }
-    
-    return properties;
-}
-
-function getPrimaryKeys(operation) {
-    const primaryKeys = [];
-    
-    // Look for parameters that are used in the path - these are usually primary keys
-    if (operation.parameters) {
-        for (const param of operation.parameters) {
-            if (param.in === 'path' && param.name !== 'endpoint') {
-                primaryKeys.push(param.name);
-            }
-        }
-    }
-    
-    // If no path parameters, assume 'name' is the primary key
-    if (primaryKeys.length === 0) {
-        primaryKeys.push('name');
-    }
-    
-    return primaryKeys;
 }

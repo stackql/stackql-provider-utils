@@ -18,20 +18,8 @@ export async function createResourceIndexContent(
     const fieldsContent = createFieldsSection(resourceData, dereferencedAPI);
     const methodsContent = createMethodsSection(resourceData, dereferencedAPI);
     const paramsContent = createParamsSection(resourceData, dereferencedAPI);
-
-    // const examplesContent = createExamplesSection(providerName, serviceName, resourceName, resourceData, dereferencedAPI);
+    const examplesContent = createExamplesSection(providerName, serviceName, resourceName, resourceData, dereferencedAPI);
 
     // Combine all sections into the final content
-    // return `${overviewContent}${fieldsContent}${methodsContent}${examplesContent}`;
-    return `${overviewContent}${fieldsContent}${methodsContent}${paramsContent}`;
+    return `${overviewContent}${fieldsContent}${methodsContent}${paramsContent}${examplesContent}`;
 }
-
-// overview
-// fields
-// methods
-// optional param details
-// select examples
-// insert examples (field manifest)
-// update example
-// replace examples
-// delete examples

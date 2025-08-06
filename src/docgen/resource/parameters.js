@@ -45,21 +45,6 @@ export function createParamsSection(resourceData, dereferencedAPI) {
 <tbody>`;            
 
     // Helper function to add parameter rows
-//     const addParamRows = (params) => {
-//         // Sort parameters alphabetically for better readability
-//         const sortedParamNames = Object.keys(params).sort();
-        
-//         for (const paramName of sortedParamNames) {
-//             const paramDetails = params[paramName];
-//             content += `
-// <tr>
-//     <td><CopyableCode code="${paramName}" /></td>
-//     <td><code>${paramDetails.type || ''}</code></td>
-//     <td>${paramDetails.description || ''}</td>
-// </tr>`;
-//         }
-//     };
-
     const addParamRows = (params) => {
         // Sort parameters alphabetically for better readability
         const sortedParamNames = Object.keys(params).sort();
