@@ -41,13 +41,13 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
             // Format required params as comma-delimited list with hyperlinks
             const requiredParamsArr = Object.keys(methodDetails.requiredParams || {});
             const requiredParamsStr = requiredParamsArr.length > 0 
-                ? requiredParamsArr.map(param => `<a href="#parameter-${param}">${param}</a>`).join(', ') 
+                ? requiredParamsArr.map(param => `<a href="#parameter-${param}"><code>${param}</code></a>`).join(', ') 
                 : '';
             
             // Format optional params as comma-delimited list with hyperlinks
             const optionalParamsArr = Object.keys(methodDetails.optionalParams || {});
             const optionalParamsStr = optionalParamsArr.length > 0 
-                ? optionalParamsArr.map(param => `<a href="#parameter-${param}">${param}</a>`).join(', ') 
+                ? optionalParamsArr.map(param => `<a href="#parameter-${param}"><code>${param}</code></a>`).join(', ') 
                 : '';
             
             // Add the method row to the table

@@ -266,27 +266,29 @@ function escapeHtml(text) {
 }
 
 export function sanitizeHtml(text) {
-  const masked = text
-    // Fix unquoted hrefs in <a ...> tags
-    .replace(/<a\s+href=([^"\s>]+)>/g, '<a href="$1">')
-    
-    // Mask <a ...>...</a> blocks
-    .replace(/<a\b[^>]*>.*?<\/a>/gs, match => `%%ANCHOR%%${btoa(match)}%%ENDANCHOR%%`)
-    
-    // Mask inline <code>...</code> blocks
-    .replace(/<code>.*?<\/code>/gs, match => `%%CODE%%${btoa(match)}%%ENDCODE%%`);
-
-  const escaped = masked
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-
-  const restored = escaped
-    .replace(/%%ANCHOR%%(.*?)%%ENDANCHOR%%/g, (_, encoded) => atob(encoded))
-    .replace(/%%CODE%%(.*?)%%ENDCODE%%/g, (_, encoded) => atob(encoded));
-
-  return restored;
+  return text
+    // Replace "<" unless it's followed by "a", "/a", "b", "/b", "strong", or "/strong"
+    .replace(/<(?!\/?(?:a|b|strong)\b)/gi, '&lt;')
+    // Replace ">" unless it's preceded by "</a", "<a ...>", "</b", "<b ...>", "</strong", or "<strong ...>"
+    .replace(/(?<!<\/?(?:a|b|strong)[^>]*)>/gi, '&gt;')
+    // Add quotes around unquoted href values (within <a ...>)
+    .replace(/(<a\b[^>]*?)href=([^"' \t\r\n>]+)/gi, '$1href="$2"')
+    // Wrap backticked text with <code>
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // Replace { and }
+    .replace(/{/g, '&#123;')
+    .replace(/}/g, '&#125;')
+    // Escape backslash
+    .replace(/\\/g, '\\\\')
+    // Replace " with &quot; UNLESS inside <code>...</code> OR inside an href="...".
+    // The alternation matches either a whole <code>...</code> block, an href="...",
+    // or a bare " to replace.
+    .replace(/(<code>[\s\S]*?<\/code>)|(\bhref="[^"]*")|"/gi, (m, code, href) => {
+      if (code) return code;          // keep code blocks untouched
+      if (href) return href;          // keep href="..." quotes untouched
+      return '&quot;';                // everything else: replace "
+    });
 }
-
 
 function getRequiredServerVars(dereferencedAPI) {
     const serverVars = {};
