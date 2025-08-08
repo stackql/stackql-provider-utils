@@ -1,18 +1,23 @@
 {
   "name": "@stackql/provider-utils",
-  "version": "0.1.0",
-  "description": "Utilities for building StackQL providers from OpenAPI specifications. Works with Node.js and Deno.",
+  "version": "0.1.1",
+  "description": "Utilities for building StackQL providers from OpenAPI specifications.",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
     ".": {
-      "deno": "./src/mod.ts",
       "import": "./src/index.js"
     },
     "./docgen": {
       "import": "./src/docgen/index.js"
     }
   },
+  "files": [
+    "src/",
+    "LICENSE",
+    "README.md",
+    ".npmrc"
+  ],
   "scripts": {
     "test": "jest",
     "lint": "eslint src"
@@ -43,6 +48,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stackql/stackql-provider-utils.git"
+    "url": "git+https://github.com/stackql/stackql-provider-utils.git"
   }
 }

@@ -13,12 +13,6 @@ export async function generateDocs(options) {
         providerDir,        // e.g., 'output/src/heroku/v00.00.00000'
         outputDir,          // e.g., 'docs'
         providerDataDir,    // e.g., 'config/provider-data'
-        // stackqlConfig = {
-        //     host: 'localhost',
-        //     port: 5444,
-        //     user: 'stackql',
-        //     database: 'stackql'
-        // }
     } = options;
 
     console.log(`documenting ${providerName}...`);

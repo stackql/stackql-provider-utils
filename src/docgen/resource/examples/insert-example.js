@@ -42,6 +42,8 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
                 .filter(([_, propDetails]) => propDetails.readOnly !== true)
                 .map(([propName]) => propName)
             : [];
+
+        const requiredBodyProps = methodDetails.requestBody?.required ? methodDetails.requestBody.required : [];
             
         const dataProps = reqBodyProps.map(prop => 'data__' + prop);
         
@@ -61,6 +63,14 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
             const isDataField = field.startsWith('data__');
             const paramName = isDataField ? field.substring(6) : field;
             
+            // Check for required body props
+            let isRequiredBodyParam = false;
+            if(isDataField){
+                if (requiredBodyProps.includes(paramName)) {
+                    isRequiredBodyParam = true;
+                }
+            }
+
             // Check if it's a number or boolean type
             let isNumber = false;
             let isBoolean = false;
@@ -72,9 +82,9 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
             }
             
             if (isNumber || isBoolean) {
-                return '{{ ' + paramName + ' }}';
+                return '{{ ' + paramName + ' }}' + (isRequiredBodyParam ? ' --required' : '');
             } else {
-                return '\'{{ ' + paramName + ' }}\'';
+                return '\'{{ ' + paramName + ' }}\'' + (isRequiredBodyParam ? ' --required' : '');
             }
         });
         

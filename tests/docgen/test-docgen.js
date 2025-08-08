@@ -8,12 +8,6 @@ async function testDocGen() {
             providerDir: 'tests/docgen/src/snowflake/v00.00.00000',
             outputDir: 'tests/docgen/test-output',
             providerDataDir: 'tests/docgen/provider-data/snowflake',
-            stackqlConfig: {
-                host: 'localhost',
-                port: 5444,
-                user: 'stackql',
-                database: 'stackql'
-            }
         });
         
         console.log('Documentation generated successfully:', result);
