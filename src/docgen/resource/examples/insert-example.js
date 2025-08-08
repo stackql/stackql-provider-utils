@@ -79,9 +79,40 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
         });
         
         content += valueLines.join(',\n');
+
+        // returning clause if properties exist
+        if (methodDetails.properties && Object.keys(methodDetails.properties).length > 0) {
+            content += '\nRETURNING\n';
+            const keys = Object.keys(methodDetails.properties);
+            keys.forEach((key, index) => {
+                if (index === keys.length - 1) {
+                    // For the last item, don't add a newline after it
+                    content += `${key}`;
+                } else {
+                    content += `${key},\n`;
+                }
+            });
+        }
+
         content += '\n;\n```\n</TabItem>\n';
     });
+
     
+// {
+//     "code": {
+//         "type": "string",
+//         "description": " (example: 000123)"
+//     },
+//     "createdOn": {
+//         "type": "integer (int64)",
+//         "description": "Timestamp that specifies when the statement execution started.‌ The timestamp is expressed in milliseconds since the epoch.‌"
+//     },
+//     "data": {
+//         "type": "array",
+//         "description": "Result set data."
+//     },
+// }
+
     // Create manifest tab
     content += '<TabItem value="manifest">\n\n';
     content += '```yaml\n# Description fields are for documentation purposes\n- name: ' + resourceName + '\n  props:\n';

@@ -390,7 +390,7 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
     
     // get op description
     const opDescription = dereferencedAPI.paths[path][httpVerb].description || '';
-    
+   
     // Extract request body if it exists
     let requestBody = {};
     if (dereferencedAPI.paths[path][httpVerb].requestBody && 
@@ -420,7 +420,7 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
             }
         }
     }
-    
+
     // Check if the response exists
     if (!dereferencedAPI.paths[path][httpVerb].responses || 
         !dereferencedAPI.paths[path][httpVerb].responses[openAPIDocKey]) {
@@ -445,7 +445,7 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
             requestBody
         };
     }
-    
+
     const schema = responseObj.content[mediaType].schema;
     
     if (schema.type === 'array') {

@@ -31,7 +31,7 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
     const deleteMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'delete');
     const execMethods = getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, 'exec');
 
-    console.dir(selectMethods, { depth: null, colors: true });
+    // console.dir(selectMethods, { depth: null, colors: true });
 
     // Helper function to add methods to the table
     const addMethodsToTable = (methods, accessType) => {

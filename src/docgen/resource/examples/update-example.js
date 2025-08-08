@@ -130,6 +130,20 @@ export function createUpdateExamples(providerName, serviceName, resourceName, re
             clauseCount++;
         });
         
+        // returning clause if properties exist
+        if (methodDetails.properties && Object.keys(methodDetails.properties).length > 0) {
+            content += '\nRETURNING\n';
+            const keys = Object.keys(methodDetails.properties);
+            keys.forEach((key, index) => {
+                if (index === keys.length - 1) {
+                    // For the last item, don't add a newline after it
+                    content += `${key}`;
+                } else {
+                    content += `${key},\n`;
+                }
+            });
+        }
+
         content += ';\n```\n</TabItem>\n';
     });
     
