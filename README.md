@@ -74,12 +74,6 @@ async function testDocGen() {
             providerDir: './test-data/output/src/myservice/v00.00.00000',
             outputDir: './test-output',
             providerDataDir: './test-data/provider-data',
-            stackqlConfig: {
-                host: 'localhost',
-                port: 5444,
-                user: 'stackql',
-                database: 'stackql'
-            }
         });
         
         console.log('Documentation generated successfully:', result);
@@ -157,20 +151,9 @@ components:
           - $ref: '#/components/x-stackQL-resources/examples/methods/list'
 ```
 
-### 3. Start StackQL Server
+### 3. Run the Test
 
 ```bash
-# In a separate terminal
-stackql srv \
-  --pgsrv.port=5444 \
-  --pgsrv.tls=false \
-  --loglevel=INFO
-```
-
-### 4. Run the Test
-
-```bash
-sh start-stackql-server.sh tests/docgen
 node tests/docgen/test-docgen.js
 ```
 
@@ -186,12 +169,6 @@ const options = {
     providerDir: './output/src/github/v00.00.00000',
     outputDir: './docs',
     providerDataDir: './config/provider-data',
-    stackqlConfig: {
-        host: 'localhost',
-        port: 5444,
-        user: 'stackql',
-        database: 'stackql'
-    }
 };
 
 const result = await docgen.generateDocs(options);
@@ -207,18 +184,6 @@ console.log(`Output location: ${result.outputPath}`);
 | `providerDir` | string | Path to provider spec directory | Required |
 | `outputDir` | string | Directory for generated documentation | Required |
 | `providerDataDir` | string | Directory containing provider header files | Required |
-| `stackqlConfig` | object | StackQL server connection configuration | See below |
-
-#### StackQL Config Options
-
-```javascript
-{
-    host: 'localhost',  // StackQL server host
-    port: 5444,         // StackQL server port
-    user: 'stackql',    // Database user
-    database: 'stackql' // Database name
-}
-```
 
 ## Directory Structure Requirements
 
@@ -227,7 +192,6 @@ console.log(`Output location: ${result.outputPath}`);
 provider-data/
 ├── headerContent1.txt    # Provider introduction
 ├── headerContent2.txt    # Additional provider info
-└── stackql-provider-registry.mdx (optional)
 ```
 
 ### Provider Spec Directory
@@ -244,21 +208,13 @@ output/src/{provider}/v00.00.00000/
 ```
 docs/{provider}-docs/
 ├── index.md
-├── stackql-provider-registry.mdx
-└── providers/
-    └── {provider}/
-        └── {service}/
-            ├── index.md
-            └── {resource}/
-                └── index.md
+└── {service}/
+    ├── index.md
+    └── {resource}/
+        └── index.md
 ```
 
 ## Troubleshooting
-
-### StackQL Server Connection Issues
-- Ensure StackQL server is running: `stackql srv --pgsrv.port=5444`
-- Check if port 5444 is available
-- Verify connection settings in `stackqlConfig`
 
 ### Missing Provider Data
 - Ensure `headerContent1.txt` and `headerContent2.txt` exist in provider data directory
@@ -290,10 +246,6 @@ const result = await docgen.generateDocs({
     providerDir: './providers/src/aws/v00.00.00000',
     outputDir: './documentation',
     providerDataDir: './config/aws',
-    stackqlConfig: {
-        host: 'localhost',
-        port: 5444
-    }
 });
 ```
 

@@ -11,33 +11,29 @@ export async function generateDocs(options) {
     const {
         providerName,
         providerDir,        // e.g., 'output/src/heroku/v00.00.00000'
-        outputDir,          // e.g., 'docs'
+        outputDir,          // e.g., 'website'
         providerDataDir,    // e.g., 'config/provider-data'
     } = options;
 
     console.log(`documenting ${providerName}...`);
 
-    const docsDir = path.join(outputDir, `${providerName}-docs`);
+    const docsDir = path.join(outputDir, `docs`);
    
-    // Clean existing docs
-    fs.existsSync(`${docsDir}/index.md`) && fs.unlinkSync(`${docsDir}/index.md`);
-    fs.existsSync(`${docsDir}/providers`) && fs.rmSync(`${docsDir}/providers`, { recursive: true, force: true });
+    // Remove directory if it exists, then create it fresh
+    fs.existsSync(docsDir) && fs.rmSync(docsDir, { recursive: true, force: true });
+    fs.mkdirSync(docsDir, { recursive: true });
 
     // Check for provider data files
-console.log(providerDataDir);
-try {
-    const files = fs.readdirSync(providerDataDir);
-    console.log('Files in providerDataDir:', files);
-} catch (err) {
-    console.error('Error reading providerDataDir:', err.message);
-}
-
-
-
+    console.log(providerDataDir);
+    try {
+        const files = fs.readdirSync(providerDataDir);
+        console.log('Files in providerDataDir:', files);
+    } catch (err) {
+        console.error('Error reading providerDataDir:', err.message);
+    }
 
     const headerContent1Path = path.join(providerDataDir, 'headerContent1.txt');
     const headerContent2Path = path.join(providerDataDir, 'headerContent2.txt');
-    const mdxPath = path.join(providerDataDir, 'stackql-provider-registry.mdx');
 
     if (!fs.existsSync(headerContent1Path) || !fs.existsSync(headerContent2Path)) {
         throw new Error(`Missing headerContent1.txt or headerContent2.txt in ${providerDataDir}`);
@@ -62,16 +58,16 @@ try {
         servicesForIndex.push(serviceName);
         const filePath = path.join(serviceDir, file);
         totalServicesCount++;
-        const serviceFolder = `${docsDir}/providers/${providerName}/${serviceName}`;
+        const serviceFolder = `${docsDir}/${serviceName}`;
         await createDocsForService(filePath, providerName, serviceName, serviceFolder);
     }
 
     console.log(`Processed ${totalServicesCount} services`);
 
     // Count total resources
-    totalResourcesCount = fs.readdirSync(`${docsDir}/providers/${providerName}`, { withFileTypes: true })
+    totalResourcesCount = fs.readdirSync(`${docsDir}`, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
-        .map(dirent => fs.readdirSync(`${docsDir}/providers/${providerName}/${dirent.name}`).length)
+        .map(dirent => fs.readdirSync(`${docsDir}/${dirent.name}`).length)
         .reduce((a, b) => a + b, 0);
 
     console.log(`Processed ${totalResourcesCount} resources`);
@@ -86,14 +82,10 @@ try {
 
     const indexContent = `${headerContent1}
 
-:::info Provider Summary
+:::info[Provider Summary] 
 
-<div class="row">
-<div class="providerDocColumn">
-<span>total services:&nbsp;<b>${totalServicesCount}</b></span><br />
-<span>total resources:&nbsp;<b>${totalResourcesCount}</b></span><br />
-</div>
-</div>
+total services: __${totalServicesCount}__  
+total resources: __${totalResourcesCount}__  
 
 :::
 
@@ -114,12 +106,6 @@ ${servicesToMarkdown(providerName, secondColumnServices)}
     const indexPath = path.join(docsDir, 'index.md');
     fs.writeFileSync(indexPath, indexContent);
     console.log(`Index file created at ${indexPath}`);
-
-    // Copy MDX file if exists
-    if (fs.existsSync(mdxPath)) {
-        fs.copyFileSync(mdxPath, path.join(docsDir, 'stackql-provider-registry.mdx'));
-        console.log(`MDX file copied`);
-    }
 
     return {
         totalServices: totalServicesCount,
@@ -252,18 +238,14 @@ keywords:
   - cloud inventory
 description: Query, deploy and manage ${providerName} resources using SQL
 custom_edit_url: null
-image: /img/providers/${providerName}/stackql-${providerName}-provider-featured-image.png
+image: /img/stackql-${providerName}-provider-featured-image.png
 ---
 
 ${serviceName} service documentation.
 
-:::info Service Summary
+:::info[Service Summary]
 
-<div class="row">
-<div class="providerDocColumn">
-<span>total resources:&nbsp;<b>${totalResources}</b></span><br />
-</div>
-</div>
+total resources: __${totalResources}__  
 
 :::
 
@@ -281,12 +263,12 @@ ${secondColumnLinks}
 function generateResourceLinks(providerName, serviceName, resources) {
     // Generate resource links for the service index
     const resourceLinks = resources.map((resource) => {
-        return `<a href="/providers/${providerName}/${serviceName}/${resource.name}/">${resource.name}</a>`;
+        return `<a href="/${serviceName}/${resource.name}/">${resource.name}</a>`;
     });
     return resourceLinks.join('<br />\n');
 }
 
 // Function to convert services to markdown links
 function servicesToMarkdown(providerName, servicesList) {
-    return servicesList.map(service => `<a href="/providers/${providerName}/${service}/">${service}</a><br />`).join('\n');
+    return servicesList.map(service => `<a href="/${service}/">${service}</a><br />`).join('\n');
 }

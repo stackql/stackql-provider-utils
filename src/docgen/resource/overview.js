@@ -18,7 +18,7 @@ keywords:
   - cloud inventory
 description: Query, deploy and manage ${providerName} resources using SQL
 custom_edit_url: null
-image: /img/providers/${providerName}/stackql-${providerName}-provider-featured-image.png
+image: /img/stackql-${providerName}-provider-featured-image.png
 ---
 
 import CopyableCode from '@site/src/components/CopyableCode/CopyableCode';
