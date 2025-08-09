@@ -388,9 +388,9 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
         throw new Error(`HTTP verb '${httpVerb}' not found for path '${path}'`);
     }
     
-    // get op description
-    const opDescription = dereferencedAPI.paths[path][httpVerb].description || '';
-   
+    // Get operation description and replace curly braces with HTML entities
+    const opDescription = (dereferencedAPI.paths[path][httpVerb].description || '').replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+
     // Extract request body if it exists
     let requestBody = {};
     if (dereferencedAPI.paths[path][httpVerb].requestBody && 
