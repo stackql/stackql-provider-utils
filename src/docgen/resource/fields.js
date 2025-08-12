@@ -38,7 +38,7 @@ export function createFieldsSection(resourceData, dereferencedAPI) {
             content += `<TabItem value="${methodName}">\n\n`;
             
             // Add the method description if available
-            if (methodData.respDescription) {
+            if (methodData.respDescription && methodData.respDescription.trim().toUpperCase() !== 'OK') {
                 content += `${methodData.respDescription}\n\n`;
             }
             
