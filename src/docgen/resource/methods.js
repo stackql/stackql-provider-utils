@@ -1,6 +1,5 @@
 // src/docgen/resource/methods.js
 import { 
-    cleanDescription, 
     getSqlMethodsWithOrderedFields,
     sanitizeHtml
 } from '../helpers.js';

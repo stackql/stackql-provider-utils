@@ -1,6 +1,7 @@
 // src/docgen/resource/fields.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml,
 } from '../helpers.js';
 
 const mdCodeAnchor = "`";
@@ -39,7 +40,7 @@ export function createFieldsSection(resourceData, dereferencedAPI) {
             
             // Add the method description if available
             if (methodData.respDescription && methodData.respDescription.trim().toUpperCase() !== 'OK') {
-                content += `${methodData.respDescription}\n\n`;
+                content += `${sanitizeHtml(methodData.respDescription)}\n\n`;
             }
             
             // Add the table header
@@ -58,7 +59,7 @@ export function createFieldsSection(resourceData, dereferencedAPI) {
                 content += `\n<tr>
     <td><CopyableCode code="${propName}" /></td>
     <td><code>${propData.type}</code></td>
-    <td>${propData.description}</td>
+    <td>${sanitizeHtml(propData.description)}</td>
 </tr>`;
             }
             

@@ -1,6 +1,7 @@
 // src/docgen/resource/examples/exec-example.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml
 } from '../../helpers.js';
 
 export function createExecExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
@@ -29,7 +30,8 @@ export function createExecExamples(providerName, serviceName, resourceName, reso
         content += '<TabItem value="' + methodName + '">\n\n';
         
         // Add method description
-        content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        const opDescription = methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        content += sanitizeHtml(opDescription);
         
         // Create SQL example
         content += '\n\n```sql\nEXEC ' + providerName + '.' + serviceName + '.' + resourceName + '.' + methodName + ' \n';

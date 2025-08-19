@@ -126,7 +126,8 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
     let dereferencedAPI;
 
     try {
-        dereferencedAPI = await deno_openapi_dereferencer.dereferenceApi(api, "$", ignorePaths);
+        // dereferencedAPI = await deno_openapi_dereferencer.dereferenceApi(api, "$", ignorePaths);
+        dereferencedAPI = await SwaggerParser.dereference(api);
         dereferencedAPI = await deno_openapi_dereferencer.flattenAllOf(dereferencedAPI);
     } catch (error) {
         console.error("error in dereferencing or flattening:", error);

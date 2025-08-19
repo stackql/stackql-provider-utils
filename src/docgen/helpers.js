@@ -23,41 +23,14 @@ export function getIndefiniteArticle(resourceName) {
   return article;
 }
 
-export function cleanDescription(description) {
-    if (!description) return '';
-    
-    // Replace <a> tags with markdown equivalent
-    description = description.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:[^>]*?)>(.*?)<\/a>/gi, '[$2]($1)');
-
-    // Remove <p> tags and replace them with a single space
-    description = description.replace(/<\/?p>/gi, ' ');
-
-    // Replace <br> tags with a single space
-    description = description.replace(/<br\s*\/?>/gi, ' ');
-
-    // Replace <code> and <pre> tags with markdown code blocks
-    description = description.replace(/<(code|pre)>(.*?)<\/\1>/gi, '`$2`');
-
-    // Convert <ul> and <li> tags into a comma-separated list
-    description = description.replace(/<\/?ul>/gi, '');
-    description = description.replace(/<li>(.*?)<\/li>/gi, '$1, ');
-
-    // Remove <name>, <td>, <tr>, and <table> tags
-    description = description.replace(/<\/?(name|td|tr|table)>/gi, '');
-
-    // Replace multiple spaces with a single space
-    description = description.replace(/\s+/g, ' ');
-
-    // Escape pipe characters to prevent breaking markdown tables
-    description = description.replace(/\|/g, '\\|');
-
-    // Remove any trailing commas, spaces, and line breaks
-    description = description.replace(/,s*$/, '').trim();
-
-    description = description.replace(/</g, '{');
-    description = description.replace(/>/g, '}');
-
-    return description;
+export function sanitizeHtml(text) {
+  return text
+    .replace(/{/g, '&#123;')
+    .replace(/}/g, '&#125;')
+    .replace(/>/g, '&gt;')
+    .replace(/</g, '&lt;')
+    // edge case
+    .replace(/&#125;_&#123;/g, '&#125;&#95;&#123;')
 }
 
 export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sqlVerb) {
@@ -249,45 +222,11 @@ function formatProperties(respProps) {
         // Store formatted property details
         allProperties[propName] = {
             type: typeString,
-            description: escapeHtml(fullDescription),
+            // description: escapeHtml(fullDescription),
+            description: fullDescription
         };
     }
     return allProperties;
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-export function sanitizeHtml(text) {
-  return text
-    // Replace "<" unless it's followed by "a", "/a", "b", "/b", "strong", or "/strong"
-    .replace(/<(?!\/?(?:a|b|strong)\b)/gi, '&lt;')
-    // Replace ">" unless it's preceded by "</a", "<a ...>", "</b", "<b ...>", "</strong", or "<strong ...>"
-    .replace(/(?<!<\/?(?:a|b|strong)[^>]*)>/gi, '&gt;')
-    // Add quotes around unquoted href values (within <a ...>)
-    .replace(/(<a\b[^>]*?)href=([^"' \t\r\n>]+)/gi, '$1href="$2"')
-    // Wrap backticked text with <code>
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // Replace { and }
-    .replace(/{/g, '&#123;')
-    .replace(/}/g, '&#125;')
-    // Escape backslash
-    .replace(/\\/g, '\\\\')
-    // Replace " with &quot; UNLESS inside <code>...</code> OR inside an href="...".
-    // The alternation matches either a whole <code>...</code> block, an href="...",
-    // or a bare " to replace.
-    .replace(/(<code>[\s\S]*?<\/code>)|(\bhref="[^"]*")|"/gi, (m, code, href) => {
-      if (code) return code;          // keep code blocks untouched
-      if (href) return href;          // keep href="..." quotes untouched
-      return '&quot;';                // everything else: replace "
-    });
 }
 
 function getRequiredServerVars(dereferencedAPI) {
@@ -389,7 +328,7 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
     }
     
     // Get operation description and replace curly braces with HTML entities
-    const opDescription = (dereferencedAPI.paths[path][httpVerb].description || '').replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+    const opDescription = (dereferencedAPI.paths[path][httpVerb].description || '');   // .replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
 
     // Extract request body if it exists
     let requestBody = {};
@@ -498,26 +437,26 @@ function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
         
         let additionalDescriptionParts = [];
         
-        for (const [fieldName, fieldValue] of Object.entries(param.schema)) {
-            if (fieldName === 'type' || fieldName === 'format' || fieldName === 'description' || fieldName === 'pattern') {
-                continue;
-            }
+        // for (const [fieldName, fieldValue] of Object.entries(param.schema)) {
+        //     if (fieldName === 'type' || fieldName === 'format' || fieldName === 'description' || fieldName === 'pattern') {
+        //         continue;
+        //     }
 
-            let formattedValue;
-            if (Array.isArray(fieldValue)) {
-                formattedValue = `[${fieldValue.join(', ')}]`;
-            } else if (typeof fieldValue === 'object' && fieldValue !== null) {
-                formattedValue = JSON.stringify(fieldValue);
-            } else {
-                formattedValue = String(fieldValue);
-            }
+        //     let formattedValue;
+        //     if (Array.isArray(fieldValue)) {
+        //         formattedValue = `[${fieldValue.join(', ')}]`;
+        //     } else if (typeof fieldValue === 'object' && fieldValue !== null) {
+        //         formattedValue = JSON.stringify(fieldValue);
+        //     } else {
+        //         formattedValue = String(fieldValue);
+        //     }
 
-            // if (fieldName === 'pattern') {
-            //     additionalDescriptionParts.push(`pattern: <code>${formattedValue}</code>`);
-            // } else {
-            //     additionalDescriptionParts.push(`${fieldName}: ${formattedValue}`);
-            // }
-        }
+        //     if (fieldName === 'pattern') {
+        //         additionalDescriptionParts.push(`pattern: <code>${formattedValue}</code>`);
+        //     } else {
+        //         additionalDescriptionParts.push(`${fieldName}: ${formattedValue}`);
+        //     }
+        // }
 
         // Add any fields from the parameter itself that might contain metadata
         for (const [fieldName, fieldValue] of Object.entries(param)) {
@@ -551,7 +490,7 @@ function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
         // Create the parameter details object
         const paramDetails = {
             type: typeString,
-            description: description // Apply escapeHtml here if needed
+            description: description
         };
         
         // Add to the appropriate category based on required flag

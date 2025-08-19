@@ -1,6 +1,7 @@
 // src/docgen/resource/examples/select-example.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml
 } from '../../helpers.js';
 
 export function createSelectExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
@@ -27,8 +28,11 @@ export function createSelectExamples(providerName, serviceName, resourceName, re
     // Create each tab content
     Object.entries(selectMethods).forEach(([methodName, methodDetails]) => {
         content += '<TabItem value="' + methodName + '">\n\n';
-        content += methodDetails.opDescription || 'No description available.';
-        
+        // content += methodDetails.opDescription || 'No description available.';
+        // Add method description
+        const opDescription = methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        content += sanitizeHtml(opDescription);
+
         // Create SQL example
         content += '\n\n```sql\nSELECT\n';
         

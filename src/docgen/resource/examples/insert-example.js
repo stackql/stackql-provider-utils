@@ -1,6 +1,7 @@
 // src/docgen/resource/examples/insert-example.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml
 } from '../../helpers.js';
 
 export function createInsertExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
@@ -31,7 +32,11 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
     // Create each method tab content
     Object.entries(insertMethods).forEach(([methodName, methodDetails]) => {
         content += '<TabItem value="' + methodName + '">\n\n';
-        content += methodDetails.opDescription || 'No description available.';
+
+        // Add method description
+        const opDescription = methodDetails.opDescription || 'No description available.';
+        content += sanitizeHtml(opDescription);
+        // content += methodDetails.opDescription || 'No description available.';
         
         // Create SQL example
         content += '\n\n```sql\nINSERT INTO ' + providerName + '.' + serviceName + '.' + resourceName + ' (\n';
@@ -106,22 +111,6 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
 
         content += '\n;\n```\n</TabItem>\n';
     });
-
-    
-// {
-//     "code": {
-//         "type": "string",
-//         "description": " (example: 000123)"
-//     },
-//     "createdOn": {
-//         "type": "integer (int64)",
-//         "description": "Timestamp that specifies when the statement execution started.‌ The timestamp is expressed in milliseconds since the epoch.‌"
-//     },
-//     "data": {
-//         "type": "array",
-//         "description": "Result set data."
-//     },
-// }
 
     // Create manifest tab
     content += '<TabItem value="manifest">\n\n';

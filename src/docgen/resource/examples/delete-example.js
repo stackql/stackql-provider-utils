@@ -1,6 +1,7 @@
 // src/docgen/resource/examples/delete-example.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml,
 } from '../../helpers.js';
 
 export function createDeleteExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI) {
@@ -29,8 +30,9 @@ export function createDeleteExamples(providerName, serviceName, resourceName, re
         content += '<TabItem value="' + methodName + '">\n\n';
         
         // Add method description
-        content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
-        
+        const opDescription = methodDetails.opDescription || 'No description available.';
+        content += sanitizeHtml(opDescription);
+
         // Create SQL example
         content += '\n\n```sql\nDELETE FROM ' + providerName + '.' + serviceName + '.' + resourceName;
         

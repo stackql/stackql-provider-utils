@@ -1,6 +1,7 @@
 // src/docgen/resource/examples/update-example.js
 import { 
     getSqlMethodsWithOrderedFields, 
+    sanitizeHtml
 } from '../../helpers.js';
 
 export function createUpdateExamples(providerName, serviceName, resourceName, resourceData, dereferencedAPI, isReplace = false) {
@@ -33,8 +34,11 @@ export function createUpdateExamples(providerName, serviceName, resourceName, re
     Object.entries(updateMethods).forEach(([methodName, methodDetails]) => {
         content += '<TabItem value="' + methodName + '">\n\n';
         
+        // // Add method description
+        // content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
         // Add method description
-        content += methodDetails.opDescription || methodDetails.respDescription || 'No description available.';
+        const opDescription = methodDetails.opDescription || 'No description available.';
+        content += sanitizeHtml(opDescription);
         
         // Create SQL example
         content += '\n\n```sql\n';
