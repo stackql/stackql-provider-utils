@@ -1,0 +1,2039 @@
+openapi: 3.1.0
+info:
+  contact:
+    name: StackQL Studios
+    url: https://github.com/stackql/google-discovery-to-openapi
+    email: info@stackql.io
+  title: API Management API
+  description: >-
+    Enables users to discover shadow APIs in existing Google Cloud
+    infrastructure.
+  version: v1alpha
+  x-discovery-doc-revision: '20250813'
+  x-generated-date: '2025-08-21'
+externalDocs:
+  url: https://cloud.google.com/apigee/
+servers:
+  - url: https://apim.googleapis.com
+components:
+  securitySchemes:
+    Oauth2:
+      type: oauth2
+      description: Oauth 2.0 implicit authentication
+      flows:
+        implicit:
+          authorizationUrl: https://accounts.google.com/o/oauth2/auth
+          scopes: &ref_0
+            https://www.googleapis.com/auth/cloud-platform: >-
+              See, edit, configure, and delete your Google Cloud data and see
+              the email address for your Google Account.
+    Oauth2c:
+      type: oauth2
+      description: Oauth 2.0 authorization code authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/auth
+          tokenUrl: https://accounts.google.com/o/oauth2/token
+          scopes: *ref_0
+  schemas:
+    ListOperationsResponse:
+      id: ListOperationsResponse
+      description: The response message for Operations.ListOperations.
+      type: object
+      properties:
+        operations:
+          description: >-
+            A list of operations that matches the specified filter in the
+            request.
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+        nextPageToken:
+          description: The standard List next-page token.
+          type: string
+    Operation:
+      id: Operation
+      description: >-
+        This resource represents a long-running operation that is the result of
+        a network API call.
+      type: object
+      properties:
+        name:
+          description: >-
+            The server-assigned name, which is only unique within the same
+            service that originally returns it. If you use the default HTTP
+            mapping, the `name` should be a resource name ending with
+            `operations/{unique_id}`.
+          type: string
+        metadata:
+          description: >-
+            Service-specific metadata associated with the operation. It
+            typically contains progress information and common metadata such as
+            create time. Some services might not provide such metadata. Any
+            method that returns a long-running operation should document the
+            metadata type, if any.
+          type: object
+          additionalProperties:
+            type: any
+            description: Properties of the object. Contains field @type with type URL.
+        done:
+          description: >-
+            If the value is `false`, it means the operation is still in
+            progress. If `true`, the operation is completed, and either `error`
+            or `response` is available.
+          type: boolean
+        error:
+          description: >-
+            The error result of the operation in case of failure or
+            cancellation.
+          $ref: '#/components/schemas/Status'
+        response:
+          description: >-
+            The normal, successful response of the operation. If the original
+            method returns no data on success, such as `Delete`, the response is
+            `google.protobuf.Empty`. If the original method is standard
+            `Get`/`Create`/`Update`, the response should be the resource. For
+            other methods, the response should have the type `XxxResponse`,
+            where `Xxx` is the original method name. For example, if the
+            original method name is `TakeSnapshot()`, the inferred response type
+            is `TakeSnapshotResponse`.
+          type: object
+          additionalProperties:
+            type: any
+            description: Properties of the object. Contains field @type with type URL.
+    Status:
+      id: Status
+      description: >-
+        The `Status` type defines a logical error model that is suitable for
+        different programming environments, including REST APIs and RPC APIs. It
+        is used by [gRPC](https://github.com/grpc). Each `Status` message
+        contains three pieces of data: error code, error message, and error
+        details. You can find out more about this error model and how to work
+        with it in the [API Design
+        Guide](https://cloud.google.com/apis/design/errors).
+      type: object
+      properties:
+        code:
+          description: The status code, which should be an enum value of google.rpc.Code.
+          type: integer
+          format: int32
+        message:
+          description: >-
+            A developer-facing error message, which should be in English. Any
+            user-facing error message should be localized and sent in the
+            google.rpc.Status.details field, or localized by the client.
+          type: string
+        details:
+          description: >-
+            A list of messages that carry the error details. There is a common
+            set of message types for APIs to use.
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: any
+              description: Properties of the object. Contains field @type with type URL.
+    Empty:
+      id: Empty
+      description: >-
+        A generic empty message that you can re-use to avoid defining duplicated
+        empty messages in your APIs. A typical example is to use it as the
+        request or the response type of an API method. For instance: service Foo
+        { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }
+      type: object
+      properties: {}
+    CancelOperationRequest:
+      id: CancelOperationRequest
+      description: The request message for Operations.CancelOperation.
+      type: object
+      properties: {}
+    ObservationSource:
+      id: ObservationSource
+      description: Observation source configuration types
+      type: object
+      properties:
+        gclbObservationSource:
+          description: The GCLB observation source
+          $ref: '#/components/schemas/GclbObservationSource'
+        name:
+          description: >-
+            Identifier. name of resource For MVP, each region can only have 1
+            source.
+          type: string
+        state:
+          description: Output only. The observation source state
+          readOnly: true
+          type: string
+          enumDescriptions:
+            - Unspecified state
+            - Source is in the creating state
+            - Source has been created and is ready to use
+            - Source is being deleted
+            - Source is in an error state
+          enum:
+            - STATE_UNSPECIFIED
+            - CREATING
+            - CREATED
+            - DELETING
+            - ERROR
+        createTime:
+          description: Output only. [Output only] Create time stamp
+          readOnly: true
+          type: string
+          format: google-datetime
+        updateTime:
+          description: Output only. [Output only] Update time stamp
+          readOnly: true
+          type: string
+          format: google-datetime
+    GclbObservationSource:
+      id: GclbObservationSource
+      description: The GCLB observation source.
+      type: object
+      properties:
+        pscNetworkConfigs:
+          description: >-
+            Required. The VPC networks where traffic will be observed. All load
+            balancers within this network will be observed. Currently, this is
+            limited to only one network.
+          type: array
+          items:
+            $ref: '#/components/schemas/GclbObservationSourcePscNetworkConfig'
+    GclbObservationSourcePscNetworkConfig:
+      id: GclbObservationSourcePscNetworkConfig
+      description: Network information for setting up a PSC connection.
+      type: object
+      properties:
+        network:
+          description: >-
+            Required. The VPC network. Format:
+            `projects/{project_id}/global/networks/{network}`
+          type: string
+        subnetwork:
+          description: >-
+            Required. The subnetwork in the source region that will be used to
+            connect to the Cloud Load Balancers via PSC NEGs. Must belong to
+            `network`. Format:
+            projects/{project_id}/regions/{region}/subnetworks/{subnet}
+          type: string
+    ListObservationSourcesResponse:
+      id: ListObservationSourcesResponse
+      description: Message for response to listing ObservationSources
+      type: object
+      properties:
+        observationSources:
+          description: The ObservationSource from the specified project and location.
+          type: array
+          items:
+            $ref: '#/components/schemas/ObservationSource'
+        nextPageToken:
+          description: >-
+            A token, which can be sent as `page_token` to retrieve the next
+            page. If this field is omitted, there are no subsequent pages.
+          type: string
+        unreachable:
+          description: Locations that could not be reached.
+          type: array
+          items:
+            type: string
+    ObservationJob:
+      id: ObservationJob
+      description: Message describing ObservationJob object
+      type: object
+      properties:
+        name:
+          description: >-
+            Identifier. name of resource Format:
+            projects/{project}/locations/{location}/observationJobs/{observation_job}
+          type: string
+        state:
+          description: Output only. The observation job state
+          readOnly: true
+          type: string
+          enumDescriptions:
+            - Unspecified state
+            - Job is in the creating state
+            - Job is in the enabling state
+            - Job is enabled
+            - Job is in the disabling state
+            - Job is disabled
+            - Job is being deleted
+            - Job is in an error state
+          enum:
+            - STATE_UNSPECIFIED
+            - CREATING
+            - ENABLING
+            - ENABLED
+            - DISABLING
+            - DISABLED
+            - DELETING
+            - ERROR
+        sources:
+          description: Optional. These should be of the same kind of source.
+          type: array
+          items:
+            type: string
+        createTime:
+          description: Output only. [Output only] Create time stamp
+          readOnly: true
+          type: string
+          format: google-datetime
+        updateTime:
+          description: Output only. [Output only] Update time stamp
+          readOnly: true
+          type: string
+          format: google-datetime
+    ListObservationJobsResponse:
+      id: ListObservationJobsResponse
+      description: Message for response to listing ObservationJobs
+      type: object
+      properties:
+        observationJobs:
+          description: The ObservationJob from the specified project and location.
+          type: array
+          items:
+            $ref: '#/components/schemas/ObservationJob'
+        nextPageToken:
+          description: >-
+            A token, which can be sent as `page_token` to retrieve the next
+            page. If this field is omitted, there are no subsequent pages.
+          type: string
+        unreachable:
+          description: Locations that could not be reached.
+          type: array
+          items:
+            type: string
+    EnableObservationJobRequest:
+      id: EnableObservationJobRequest
+      description: Message for enabling an ObservationJob
+      type: object
+      properties: {}
+    DisableObservationJobRequest:
+      id: DisableObservationJobRequest
+      description: Message for disabling an ObservationJob
+      type: object
+      properties: {}
+    ApiObservation:
+      id: ApiObservation
+      description: Message describing ApiObservation object
+      type: object
+      properties:
+        name:
+          description: Identifier. Name of resource
+          type: string
+        style:
+          description: Style of ApiObservation
+          type: string
+          enumDescriptions:
+            - Unknown style
+            - Style is Rest API
+            - Style is Grpc API
+            - Style is GraphQL API
+          enum:
+            - STYLE_UNSPECIFIED
+            - REST
+            - GRPC
+            - GRAPHQL
+        serverIps:
+          description: >-
+            The IP address (IPv4 or IPv6) of the origin server that the request
+            was sent to. This field can include port information. Examples:
+            `"192.168.1.1"`, `"10.0.0.1:80"`, `"FE80::0202:B3FF:FE1E:8329"`.
+          type: array
+          items:
+            type: string
+        hostname:
+          description: The hostname of requests processed for this Observation.
+          type: string
+        sourceLocations:
+          description: >-
+            Location of the Observation Source, for example "us-central1" or
+            "europe-west1."
+          type: array
+          items:
+            type: string
+        tags:
+          description: User-defined tags to organize and sort
+          type: array
+          items:
+            type: string
+        apiOperationCount:
+          description: The number of observed API Operations.
+          type: string
+          format: int64
+        createTime:
+          description: Create time stamp
+          type: string
+          format: google-datetime
+        updateTime:
+          description: Update time stamp
+          type: string
+          format: google-datetime
+        lastEventDetectedTime:
+          description: Last event detected time stamp
+          type: string
+          format: google-datetime
+    ListApiObservationsResponse:
+      id: ListApiObservationsResponse
+      description: Message for response to listing ApiObservations
+      type: object
+      properties:
+        apiObservations:
+          description: >-
+            The ApiObservation from the specified project and location and
+            ObservationJobs.
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiObservation'
+        nextPageToken:
+          description: >-
+            A token, which can be sent as `page_token` to retrieve the next
+            page. If this field is omitted, there are no subsequent pages.
+          type: string
+    ApiOperation:
+      id: ApiOperation
+      description: Message describing ApiOperation object
+      type: object
+      properties:
+        httpOperation:
+          description: An HTTP Operation.
+          $ref: '#/components/schemas/HttpOperation'
+        name:
+          description: Identifier. Name of resource
+          type: string
+        firstSeenTime:
+          description: First seen time stamp
+          type: string
+          format: google-datetime
+        lastSeenTime:
+          description: Last seen time stamp
+          type: string
+          format: google-datetime
+        count:
+          description: The number of occurrences of this API Operation.
+          type: string
+          format: int64
+    HttpOperation:
+      id: HttpOperation
+      description: An HTTP-based API Operation, sometimes called a "REST" Operation.
+      type: object
+      properties:
+        path:
+          description: Path of the HTTP request.
+          type: string
+        pathParams:
+          description: Path params of HttpOperation
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpOperationPathParam'
+        queryParams:
+          description: Query params of HttpOperation
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HttpOperationQueryParam'
+        method:
+          description: HTTP Method.
+          type: string
+          enumDescriptions:
+            - Unspecified HTTP method
+            - GET HTTP method
+            - HEAD HTTP method
+            - POST HTTP method
+            - PUT HTTP method
+            - PATCH HTTP method
+            - DELETE HTTP method
+            - TRACE HTTP method
+            - OPTIONS HTTP method
+            - CONNECT HTTP method
+          enum:
+            - HTTP_METHOD_UNSPECIFIED
+            - GET
+            - HEAD
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - TRACE
+            - OPTIONS
+            - CONNECT
+        request:
+          description: Request metadata.
+          $ref: '#/components/schemas/HttpOperationHttpRequest'
+        response:
+          description: Response metadata.
+          $ref: '#/components/schemas/HttpOperationHttpResponse'
+    HttpOperationPathParam:
+      id: HttpOperationPathParam
+      description: HTTP Path parameter.
+      type: object
+      properties:
+        position:
+          description: Segment location in the path, 1-indexed
+          type: integer
+          format: int32
+        dataType:
+          description: Data type of path param
+          type: string
+          enumDescriptions:
+            - Unspecified data type
+            - Boolean data type
+            - Integer data type
+            - Float data type
+            - String data type
+            - UUID data type
+          enum:
+            - DATA_TYPE_UNSPECIFIED
+            - BOOL
+            - INTEGER
+            - FLOAT
+            - STRING
+            - UUID
+    HttpOperationQueryParam:
+      id: HttpOperationQueryParam
+      description: An aggregation of HTTP query parameter occurrences.
+      type: object
+      properties:
+        name:
+          description: Name of query param
+          type: string
+        count:
+          description: >-
+            The number of occurrences of this query parameter across
+            transactions.
+          type: string
+          format: int64
+        dataType:
+          description: Data type of path param
+          type: string
+          enumDescriptions:
+            - Unspecified data type
+            - Boolean data type
+            - Integer data type
+            - Float data type
+            - String data type
+            - UUID data type
+          enum:
+            - DATA_TYPE_UNSPECIFIED
+            - BOOL
+            - INTEGER
+            - FLOAT
+            - STRING
+            - UUID
+    HttpOperationHttpRequest:
+      id: HttpOperationHttpRequest
+      description: An aggregation of HTTP requests.
+      type: object
+      properties:
+        headers:
+          description: Unordered map from header name to header metadata
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HttpOperationHeader'
+    HttpOperationHeader:
+      id: HttpOperationHeader
+      description: An aggregation of HTTP header occurrences.
+      type: object
+      properties:
+        name:
+          description: Header name.
+          type: string
+        count:
+          description: The number of occurrences of this Header across transactions.
+          type: string
+          format: int64
+        dataType:
+          description: Data type of header
+          type: string
+          enumDescriptions:
+            - Unspecified data type
+            - Boolean data type
+            - Integer data type
+            - Float data type
+            - String data type
+            - UUID data type
+          enum:
+            - DATA_TYPE_UNSPECIFIED
+            - BOOL
+            - INTEGER
+            - FLOAT
+            - STRING
+            - UUID
+    HttpOperationHttpResponse:
+      id: HttpOperationHttpResponse
+      description: An aggregation of HTTP responses.
+      type: object
+      properties:
+        headers:
+          description: Unordered map from header name to header metadata
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HttpOperationHeader'
+        responseCodes:
+          description: Map of status code to observed count
+          type: object
+          additionalProperties:
+            type: string
+            format: int64
+    ListApiOperationsResponse:
+      id: ListApiOperationsResponse
+      description: Message for response to listing ApiOperations
+      type: object
+      properties:
+        apiOperations:
+          description: >-
+            The ApiOperations from the specified project and location and
+            ObservationJob and ApiObservation.
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiOperation'
+        nextPageToken:
+          description: >-
+            A token, which can be sent as `page_token` to retrieve the next
+            page. If this field is omitted, there are no subsequent pages.
+          type: string
+    BatchEditTagsApiObservationsRequest:
+      id: BatchEditTagsApiObservationsRequest
+      description: Message for requesting batch edit tags for ApiObservations
+      type: object
+      properties:
+        requests:
+          description: >-
+            Required. The request message specifying the resources to update. A
+            maximum of 1000 apiObservations can be modified in a batch.
+          type: array
+          items:
+            $ref: '#/components/schemas/EditTagsApiObservationsRequest'
+    EditTagsApiObservationsRequest:
+      id: EditTagsApiObservationsRequest
+      description: Message for requesting edit tags for ApiObservation
+      type: object
+      properties:
+        apiObservationId:
+          description: >-
+            Required. Identifier of ApiObservation need to be edit tags Format
+            example: "apigee.googleapis.com|us-west1|443"
+          type: string
+        tagActions:
+          description: Required. Tag actions to be applied
+          type: array
+          items:
+            $ref: '#/components/schemas/TagAction'
+    TagAction:
+      id: TagAction
+      description: Message for edit tag action
+      type: object
+      properties:
+        tag:
+          description: Required. Tag to be added or removed
+          type: string
+        action:
+          description: Required. Action to be applied
+          type: string
+          enumDescriptions:
+            - Unspecified.
+            - Addition of a Tag.
+            - Removal of a Tag.
+          enum:
+            - ACTION_UNSPECIFIED
+            - ADD
+            - REMOVE
+    BatchEditTagsApiObservationsResponse:
+      id: BatchEditTagsApiObservationsResponse
+      description: Message for response to edit Tags for ApiObservations
+      type: object
+      properties:
+        apiObservations:
+          description: ApiObservations that were changed
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiObservation'
+    ListApiObservationTagsResponse:
+      id: ListApiObservationTagsResponse
+      description: Message for response to listing tags
+      type: object
+      properties:
+        apiObservationTags:
+          description: The tags from the specified project
+          type: array
+          items:
+            type: string
+        nextPageToken:
+          description: >-
+            A token, which can be sent as `page_token` to retrieve the next
+            page. If this field is omitted, there are no subsequent pages.
+          type: string
+    Entitlement:
+      id: Entitlement
+      description: >-
+        Entitlement stores data related to API Observation entitlement for a
+        given project
+      type: object
+      properties:
+        name:
+          description: >-
+            Identifier. The entitlement resource name
+            `projects/{project}/locations/{location}/entitlement`
+          type: string
+        billingProjectNumber:
+          description: >-
+            Project number of associated billing project that has Apigee and
+            Advanced API Security entitled.
+          type: string
+          format: int64
+        apiObservationEntitled:
+          description: Whether API Observation is entitled.
+          type: boolean
+        createTime:
+          description: Output only. The time of the entitlement creation.
+          readOnly: true
+          type: string
+          format: google-datetime
+        updateTime:
+          description: Output only. The time of the entitlement update.
+          readOnly: true
+          type: string
+          format: google-datetime
+    ListLocationsResponse:
+      id: ListLocationsResponse
+      description: The response message for Locations.ListLocations.
+      type: object
+      properties:
+        locations:
+          description: >-
+            A list of locations that matches the specified filter in the
+            request.
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        nextPageToken:
+          description: The standard List next-page token.
+          type: string
+    Location:
+      id: Location
+      description: A resource that represents a Google Cloud location.
+      type: object
+      properties:
+        name:
+          description: >-
+            Resource name for the location, which may vary between
+            implementations. For example:
+            `"projects/example-project/locations/us-east1"`
+          type: string
+        locationId:
+          description: 'The canonical id for this location. For example: `"us-east1"`.'
+          type: string
+        displayName:
+          description: >-
+            The friendly name for this location, typically a nearby city name.
+            For example, "Tokyo".
+          type: string
+        labels:
+          description: >-
+            Cross-service attributes for the location. For example
+            {"cloud.googleapis.com/region": "us-east1"}
+          type: object
+          additionalProperties:
+            type: string
+        metadata:
+          description: >-
+            Service-specific metadata. For example the available capacity at the
+            given location.
+          type: object
+          additionalProperties:
+            type: any
+            description: Properties of the object. Contains field @type with type URL.
+    OperationMetadata:
+      id: OperationMetadata
+      description: Represents the metadata of the long-running operation.
+      type: object
+      properties:
+        createTime:
+          description: Output only. The time the operation was created.
+          readOnly: true
+          type: string
+          format: google-datetime
+        endTime:
+          description: Output only. The time the operation finished running.
+          readOnly: true
+          type: string
+          format: google-datetime
+        target:
+          description: >-
+            Output only. Server-defined resource path for the target of the
+            operation.
+          readOnly: true
+          type: string
+        verb:
+          description: Output only. Name of the verb executed by the operation.
+          readOnly: true
+          type: string
+        statusMessage:
+          description: Output only. Human-readable status of the operation, if any.
+          readOnly: true
+          type: string
+        requestedCancellation:
+          description: >-
+            Output only. Identifies whether the user has requested cancellation
+            of the operation. Operations that have been cancelled successfully
+            have Operation.error value with a google.rpc.Status.code of 1,
+            corresponding to `Code.CANCELLED`.
+          readOnly: true
+          type: boolean
+        apiVersion:
+          description: Output only. API version used to start the operation.
+          readOnly: true
+          type: string
+  parameters:
+    access_token:
+      description: OAuth access token.
+      in: query
+      name: access_token
+      schema:
+        type: string
+    alt:
+      description: Data format for response.
+      in: query
+      name: alt
+      schema:
+        type: string
+        enum:
+          - json
+          - media
+          - proto
+    callback:
+      description: JSONP
+      in: query
+      name: callback
+      schema:
+        type: string
+    fields:
+      description: Selector specifying which fields to include in a partial response.
+      in: query
+      name: fields
+      schema:
+        type: string
+    key:
+      description: >-
+        API key. Your API key identifies your project and provides you with API
+        access, quota, and reports. Required unless you provide an OAuth 2.0
+        token.
+      in: query
+      name: key
+      schema:
+        type: string
+    oauth_token:
+      description: OAuth 2.0 token for the current user.
+      in: query
+      name: oauth_token
+      schema:
+        type: string
+    prettyPrint:
+      description: Returns response with indentations and line breaks.
+      in: query
+      name: prettyPrint
+      schema:
+        type: boolean
+    quotaUser:
+      description: >-
+        Available to use for quota purposes for server-side applications. Can be
+        any arbitrary string assigned to a user, but should not exceed 40
+        characters.
+      in: query
+      name: quotaUser
+      schema:
+        type: string
+    upload_protocol:
+      description: Upload protocol for media (e.g. "raw", "multipart").
+      in: query
+      name: upload_protocol
+      schema:
+        type: string
+    uploadType:
+      description: Legacy upload protocol for media (e.g. "media", "multipart").
+      in: query
+      name: uploadType
+      schema:
+        type: string
+    _.xgafv:
+      description: V1 error format.
+      in: query
+      name: $.xgafv
+      schema:
+        type: string
+        enum:
+          - '1'
+          - '2'
+  x-stackQL-resources:
+    api_observation_tags:
+      id: google.apim.api_observation_tags
+      name: api_observation_tags
+      title: Api_observation_tags
+      methods:
+        list_api_observation_tags:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}:listApiObservationTags/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.apiObservationTags
+      sqlVerbs:
+        select:
+          - $ref: >-
+              #/components/x-stackQL-resources/api_observation_tags/methods/list_api_observation_tags
+        insert: []
+        update: []
+        replace: []
+        delete: []
+    entitlements:
+      id: google.apim.entitlements
+      name: entitlements
+      title: Entitlements
+      methods:
+        get_entitlement:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1entitlement/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: >-
+              #/components/x-stackQL-resources/entitlements/methods/get_entitlement
+        insert: []
+        update: []
+        replace: []
+        delete: []
+    locations:
+      id: google.apim.locations
+      name: locations
+      title: Locations
+      methods:
+        list:
+          operation:
+            $ref: '#/paths/~1v1alpha~1projects~1{projectsId}~1locations/get'
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.locations
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/locations/methods/get'
+          - $ref: '#/components/x-stackQL-resources/locations/methods/list'
+        insert: []
+        update: []
+        replace: []
+        delete: []
+    operations:
+      id: google.apim.operations
+      name: operations
+      title: Operations
+      methods:
+        list:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1operations/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.operations
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1operations~1{operationsId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        delete:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1operations~1{operationsId}/delete
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        cancel:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1operations~1{operationsId}:cancel/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/operations/methods/get'
+          - $ref: '#/components/x-stackQL-resources/operations/methods/list'
+        insert: []
+        update: []
+        replace: []
+        delete:
+          - $ref: '#/components/x-stackQL-resources/operations/methods/delete'
+    observation_sources:
+      id: google.apim.observation_sources
+      name: observation_sources
+      title: Observation_sources
+      methods:
+        create:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationSources/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        list:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationSources/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.observationSources
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationSources~1{observationSourcesId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        delete:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationSources~1{observationSourcesId}/delete
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/observation_sources/methods/get'
+          - $ref: '#/components/x-stackQL-resources/observation_sources/methods/list'
+        insert:
+          - $ref: >-
+              #/components/x-stackQL-resources/observation_sources/methods/create
+        update: []
+        replace: []
+        delete:
+          - $ref: >-
+              #/components/x-stackQL-resources/observation_sources/methods/delete
+    observation_jobs:
+      id: google.apim.observation_jobs
+      name: observation_jobs
+      title: Observation_jobs
+      methods:
+        create:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        list:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.observationJobs
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        delete:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}/delete
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        enable:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}:enable/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        disable:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}:disable/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/observation_jobs/methods/get'
+          - $ref: '#/components/x-stackQL-resources/observation_jobs/methods/list'
+        insert:
+          - $ref: '#/components/x-stackQL-resources/observation_jobs/methods/create'
+        update: []
+        replace: []
+        delete:
+          - $ref: '#/components/x-stackQL-resources/observation_jobs/methods/delete'
+    api_observations:
+      id: google.apim.api_observations
+      name: api_observations
+      title: Api_observations
+      methods:
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}~1apiObservations~1{apiObservationsId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        list:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}~1apiObservations/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.apiObservations
+        batch_edit_tags:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}~1apiObservations:batchEditTags/post
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/api_observations/methods/get'
+          - $ref: '#/components/x-stackQL-resources/api_observations/methods/list'
+        insert: []
+        update: []
+        replace: []
+        delete: []
+    api_operations:
+      id: google.apim.api_operations
+      name: api_operations
+      title: Api_operations
+      methods:
+        get:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}~1apiObservations~1{apiObservationsId}~1apiOperations~1{apiOperationsId}/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+        list:
+          operation:
+            $ref: >-
+              #/paths/~1v1alpha~1projects~1{projectsId}~1locations~1{locationsId}~1observationJobs~1{observationJobsId}~1apiObservations~1{apiObservationsId}~1apiOperations/get
+          response:
+            mediaType: application/json
+            openAPIDocKey: '200'
+            objectKey: $.apiOperations
+      sqlVerbs:
+        select:
+          - $ref: '#/components/x-stackQL-resources/api_operations/methods/get'
+          - $ref: '#/components/x-stackQL-resources/api_operations/methods/list'
+        insert: []
+        update: []
+        replace: []
+        delete: []
+paths:
+  /v1alpha/projects/{projectsId}/locations/{locationsId}:listApiObservationTags:
+    parameters: &ref_1
+      - $ref: '#/components/parameters/access_token'
+      - $ref: '#/components/parameters/alt'
+      - $ref: '#/components/parameters/callback'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/key'
+      - $ref: '#/components/parameters/oauth_token'
+      - $ref: '#/components/parameters/prettyPrint'
+      - $ref: '#/components/parameters/quotaUser'
+      - $ref: '#/components/parameters/upload_protocol'
+      - $ref: '#/components/parameters/uploadType'
+      - $ref: '#/components/parameters/_.xgafv'
+    get:
+      description: >-
+        ListApiObservationTags lists all extant tags on any observation in the
+        given project.
+      operationId: apim.projects.locations.listApiObservationTags
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListApiObservationTagsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/entitlement:
+    parameters: *ref_1
+    get:
+      description: GetEntitlement returns the entitlement for the provided project.
+      operationId: apim.projects.locations.getEntitlement
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations:
+    parameters: *ref_1
+    get:
+      description: Lists information about the supported locations for this service.
+      operationId: apim.projects.locations.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLocationsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: filter
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+        - in: query
+          name: extraLocationTypes
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}:
+    parameters: *ref_1
+    get:
+      description: Gets information about a location.
+      operationId: apim.projects.locations.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/operations:
+    parameters: *ref_1
+    get:
+      description: >-
+        Lists operations that match the specified filter in the request. If the
+        server doesn't support this method, it returns `UNIMPLEMENTED`.
+      operationId: apim.projects.locations.operations.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOperationsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: filter
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:
+    parameters: *ref_1
+    get:
+      description: >-
+        Gets the latest state of a long-running operation. Clients can use this
+        method to poll the operation result at intervals as recommended by the
+        API service.
+      operationId: apim.projects.locations.operations.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: operationsId
+          required: true
+          schema:
+            type: string
+    delete:
+      description: >-
+        Deletes a long-running operation. This method indicates that the client
+        is no longer interested in the operation result. It does not cancel the
+        operation. If the server doesn't support this method, it returns
+        `google.rpc.Code.UNIMPLEMENTED`.
+      operationId: apim.projects.locations.operations.delete
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empty'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: operationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:cancel:
+    parameters: *ref_1
+    post:
+      description: >-
+        Starts asynchronous cancellation on a long-running operation. The server
+        makes a best effort to cancel the operation, but success is not
+        guaranteed. If the server doesn't support this method, it returns
+        `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation
+        or other methods to check whether the cancellation succeeded or whether
+        the operation completed despite cancellation. On successful
+        cancellation, the operation is not deleted; instead, it becomes an
+        operation with an Operation.error value with a google.rpc.Status.code of
+        `1`, corresponding to `Code.CANCELLED`.
+      operationId: apim.projects.locations.operations.cancel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelOperationRequest'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empty'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: operationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationSources:
+    parameters: *ref_1
+    post:
+      description: >-
+        CreateObservationSource creates a new ObservationSource but does not
+        affect any deployed infrastructure. It is a configuration that can be
+        used in an Observation Job to collect data about APIs running in user's
+        dataplane.
+      operationId: apim.projects.locations.observationSources.create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObservationSource'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: observationSourceId
+          schema:
+            type: string
+        - in: query
+          name: requestId
+          schema:
+            type: string
+    get:
+      description: >-
+        ListObservationSources gets all ObservationSources for a given project
+        and location.
+      operationId: apim.projects.locations.observationSources.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListObservationSourcesResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationSources/{observationSourcesId}:
+    parameters: *ref_1
+    get:
+      description: GetObservationSource retrieves a single ObservationSource by name.
+      operationId: apim.projects.locations.observationSources.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationSource'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationSourcesId
+          required: true
+          schema:
+            type: string
+    delete:
+      description: >-
+        DeleteObservationSource deletes an observation source. This method will
+        fail if the observation source is currently being used by any
+        ObservationJob, even if not enabled.
+      operationId: apim.projects.locations.observationSources.delete
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationSourcesId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs:
+    parameters: *ref_1
+    post:
+      description: >-
+        CreateObservationJob creates a new ObservationJob but does not have any
+        effecton its own. It is a configuration that can be used in an
+        Observation Job to collect data about existing APIs.
+      operationId: apim.projects.locations.observationJobs.create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObservationJob'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: observationJobId
+          schema:
+            type: string
+        - in: query
+          name: requestId
+          schema:
+            type: string
+    get:
+      description: >-
+        ListObservationJobs gets all ObservationJobs for a given project and
+        location.
+      operationId: apim.projects.locations.observationJobs.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListObservationJobsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}:
+    parameters: *ref_1
+    get:
+      description: GetObservationJob retrieves a single ObservationJob by name.
+      operationId: apim.projects.locations.observationJobs.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationJob'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+    delete:
+      description: >-
+        DeleteObservationJob deletes an ObservationJob. This method will fail if
+        the observation job is currently being used by any ObservationSource,
+        even if not enabled.
+      operationId: apim.projects.locations.observationJobs.delete
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}:enable:
+    parameters: *ref_1
+    post:
+      description: Enables the given ObservationJob.
+      operationId: apim.projects.locations.observationJobs.enable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnableObservationJobRequest'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}:disable:
+    parameters: *ref_1
+    post:
+      description: Disables the given ObservationJob.
+      operationId: apim.projects.locations.observationJobs.disable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisableObservationJobRequest'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}/apiObservations/{apiObservationsId}:
+    parameters: *ref_1
+    get:
+      description: GetApiObservation retrieves a single ApiObservation by name.
+      operationId: apim.projects.locations.observationJobs.apiObservations.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiObservation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: apiObservationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}/apiObservations:
+    parameters: *ref_1
+    get:
+      description: >-
+        ListApiObservations gets all ApiObservations for a given project and
+        location and ObservationJob.
+      operationId: apim.projects.locations.observationJobs.apiObservations.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListApiObservationsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}/apiObservations:batchEditTags:
+    parameters: *ref_1
+    post:
+      description: BatchEditTagsApiObservations adds or removes Tags for ApiObservations.
+      operationId: apim.projects.locations.observationJobs.apiObservations.batchEditTags
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchEditTagsApiObservationsRequest'
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchEditTagsApiObservationsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}/apiObservations/{apiObservationsId}/apiOperations/{apiOperationsId}:
+    parameters: *ref_1
+    get:
+      description: GetApiOperation retrieves a single ApiOperation by name.
+      operationId: >-
+        apim.projects.locations.observationJobs.apiObservations.apiOperations.get
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiOperation'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: apiObservationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: apiOperationsId
+          required: true
+          schema:
+            type: string
+  /v1alpha/projects/{projectsId}/locations/{locationsId}/observationJobs/{observationJobsId}/apiObservations/{apiObservationsId}/apiOperations:
+    parameters: *ref_1
+    get:
+      description: >-
+        ListApiOperations gets all ApiOperations for a given project and
+        location and ObservationJob and ApiObservation.
+      operationId: >-
+        apim.projects.locations.observationJobs.apiObservations.apiOperations.list
+      security:
+        - Oauth2:
+            - https://www.googleapis.com/auth/cloud-platform
+          Oauth2c:
+            - https://www.googleapis.com/auth/cloud-platform
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListApiOperationsResponse'
+      parameters:
+        - in: path
+          name: projectsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: locationsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: observationJobsId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: apiObservationsId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: pageToken
+          schema:
+            type: string

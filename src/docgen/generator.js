@@ -18,10 +18,11 @@ export async function generateDocs(options) {
     console.log(`documenting ${providerName}...`);
 
     const docsDir = path.join(outputDir, `docs`);
+    const servicesDir = path.join(docsDir, `services`);
    
     // Remove directory if it exists, then create it fresh
     fs.existsSync(docsDir) && fs.rmSync(docsDir, { recursive: true, force: true });
-    fs.mkdirSync(docsDir, { recursive: true });
+    fs.mkdirSync(servicesDir, { recursive: true });
 
     // Check for provider data files
     console.log(providerDataDir);
@@ -58,16 +59,16 @@ export async function generateDocs(options) {
         servicesForIndex.push(serviceName);
         const filePath = path.join(serviceDir, file);
         totalServicesCount++;
-        const serviceFolder = `${docsDir}/${serviceName}`;
+        const serviceFolder = `${servicesDir}/${serviceName}`;
         await createDocsForService(filePath, providerName, serviceName, serviceFolder);
     }
 
     console.log(`Processed ${totalServicesCount} services`);
 
     // Count total resources
-    totalResourcesCount = fs.readdirSync(`${docsDir}`, { withFileTypes: true })
+    totalResourcesCount = fs.readdirSync(`${servicesDir}`, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
-        .map(dirent => fs.readdirSync(`${docsDir}/${dirent.name}`).length)
+        .map(dirent => fs.readdirSync(`${servicesDir}/${dirent.name}`).length)
         .reduce((a, b) => a + b, 0);
 
     console.log(`Processed ${totalResourcesCount} resources`);
@@ -264,12 +265,12 @@ ${secondColumnLinks}
 function generateResourceLinks(providerName, serviceName, resources) {
     // Generate resource links for the service index
     const resourceLinks = resources.map((resource) => {
-        return `<a href="/${serviceName}/${resource.name}/">${resource.name}</a>`;
+        return `<a href="/services/${serviceName}/${resource.name}/">${resource.name}</a>`;
     });
     return resourceLinks.join('<br />\n');
 }
 
 // Function to convert services to markdown links
 function servicesToMarkdown(providerName, servicesList) {
-    return servicesList.map(service => `<a href="/${service}/">${service}</a><br />`).join('\n');
+    return servicesList.map(service => `<a href="/services/${service}/">${service}</a><br />`).join('\n');
 }

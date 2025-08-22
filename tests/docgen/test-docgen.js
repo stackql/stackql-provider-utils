@@ -1,6 +1,21 @@
 import { docgen } from '../../src/index.js';
 
 // Test the documentation generator
+// async function testDocGen() {
+//     try {
+//         const result = await docgen.generateDocs({
+//             providerName: 'google',
+//             providerDir: 'tests/docgen/src/googleapis.com/v00.00.00000',
+//             outputDir: 'tests/docgen/test-output',
+//             providerDataDir: 'tests/docgen/provider-data/google',
+//         });
+        
+//         console.log('Documentation generated successfully:', result);
+//     } catch (error) {
+//         console.error('Error generating documentation:', error);
+//     }
+// }
+
 async function testDocGen() {
     try {
         const result = await docgen.generateDocs({

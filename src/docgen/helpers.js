@@ -386,30 +386,37 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
     }
 
     const schema = responseObj.content[mediaType].schema;
-    
+
+    const { respProps, respDescription } = getHttpRespBody(schema, objectKey);
+
+    return {
+        respProps,
+        respDescription: responseObj.description ? responseObj.description : respDescription,
+        opDescription,
+        requestBody
+    };
+}
+
+function getHttpRespBody(schema, objectKey) {
+
     if (schema.type === 'array') {
         return {
-            respProps: schema.items.properties || {},
-            respDescription: schema.items.description || responseObj.description || '',
-            opDescription,
-            requestBody
-        };
+         respProps: schema.items.properties || {},
+         respDescription: schema.items.description || '',
+        }
     } else if (schema.type === 'object') {
         return {
-            respProps: schema.properties || {},
-            respDescription: schema.description || responseObj.description || '',
-            opDescription,
-            requestBody
+         respProps: schema.properties || {},
+         respDescription: schema.description || '',
         };
     } else {
-        // For primitive types or when schema structure is unexpected
         return {
             respProps: {},
-            respDescription: schema.description || responseObj.description || '',
-            opDescription,
-            requestBody
+            respDescription: '',
         };
     }
+
+
 }
 
 function getHttpOperationParams(dereferencedAPI, path, httpVerb) {
