@@ -405,18 +405,64 @@ function getHttpRespBody(schema, objectKey) {
          respDescription: schema.items.description || '',
         }
     } else if (schema.type === 'object') {
-        return {
-         respProps: schema.properties || {},
-         respDescription: schema.description || '',
-        };
+        if(objectKey){
+            // if objectKey contains [*] print something
+            if (objectKey.includes('[*]')) {
+                // complex object key
+                console.log(`Complex Object Key : ${objectKey}`);
+                const parts = objectKey.split('[*]');
+                const complexObjectKey = parts[1].replace('.', '');
+                console.log(`Item of Interest : ${complexObjectKey}`);
+
+                // Safe access to respProps
+                const respProps = schema?.properties?.items?.additionalProperties?.properties?.[complexObjectKey]?.items?.properties ?? {};
+
+                // Safe access to respDescription with fallbacks
+                const respDescription = 
+                    schema?.properties?.items?.additionalProperties?.properties?.[complexObjectKey]?.items?.description ?? 
+                    schema?.properties?.items?.description ?? 
+                    '';
+
+                // console.info(respProps);
+                // console.log(respDescription);
+                return {
+                    respProps: respProps,
+                    respDescription: respDescription,
+                };
+
+            } else {
+                // simple object key
+                console.log(`Simple Object Key : ${objectKey}`);
+                const simpleObjectKey = objectKey.replace('$.', '');
+
+
+                const respProps = (schema?.properties?.[simpleObjectKey]?.items?.properties) ?? 
+                                (schema?.properties?.[simpleObjectKey]?.properties) ?? 
+                                {};
+
+                const respDescription = (schema?.properties?.[simpleObjectKey]?.items?.description) ?? 
+                                        (schema?.description) ?? 
+                                        '';
+
+                // console.info(respProps);
+                // console.log(respDescription);
+                return {
+                    respProps: respProps,
+                    respDescription: respDescription,
+                };
+            }
+        } else {
+                return {
+                    respProps: schema.properties || {},
+                    respDescription: schema.description || '',
+                };
+        }
     } else {
         return {
             respProps: {},
             respDescription: '',
         };
     }
-
-
 }
 
 function getHttpOperationParams(dereferencedAPI, path, httpVerb) {

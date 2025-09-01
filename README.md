@@ -154,8 +154,15 @@ components:
 ### 3. Run the Test
 
 ```bash
-node tests/docgen/test-docgen.js
+node tests/docgen/test-docgen.js snowflake
+node tests/docgen/test-docgen.js google
+node tests/docgen/test-docgen.js homebrew
 ```
+
+
+node tests/providerdev/test-split.js okta tests/providerdev/split-source/okta/management-minimal.yaml path
+node tests/providerdev/test-analyze.js okta
+node tests/providerdev/test-generate.js okta
 
 ## Using the Documentation Generator
 

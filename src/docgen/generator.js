@@ -13,6 +13,7 @@ export async function generateDocs(options) {
         providerDir,        // e.g., 'output/src/heroku/v00.00.00000'
         outputDir,          // e.g., 'website'
         providerDataDir,    // e.g., 'config/provider-data'
+        dereferenced = false,
     } = options;
 
     console.log(`documenting ${providerName}...`);
@@ -60,7 +61,7 @@ export async function generateDocs(options) {
         const filePath = path.join(serviceDir, file);
         totalServicesCount++;
         const serviceFolder = `${servicesDir}/${serviceName}`;
-        await createDocsForService(filePath, providerName, serviceName, serviceFolder);
+        await createDocsForService(filePath, providerName, serviceName, serviceFolder, dereferenced);
     }
 
     console.log(`Processed ${totalServicesCount} services`);
@@ -116,7 +117,7 @@ ${servicesToMarkdown(providerName, secondColumnServices)}
 }
 
 // Process each service sequentially
-async function createDocsForService(yamlFilePath, providerName, serviceName, serviceFolder) {
+async function createDocsForService(yamlFilePath, providerName, serviceName, serviceFolder, dereferenced = false) {
 
     const data = yaml.load(fs.readFileSync(yamlFilePath, 'utf8'));
 
@@ -126,12 +127,17 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
     const ignorePaths = ["$.components.x-stackQL-resources"];
     let dereferencedAPI;
 
-    try {
-        // dereferencedAPI = await deno_openapi_dereferencer.dereferenceApi(api, "$", ignorePaths);
-        dereferencedAPI = await SwaggerParser.dereference(api);
-        dereferencedAPI = await deno_openapi_dereferencer.flattenAllOf(dereferencedAPI);
-    } catch (error) {
-        console.error("error in dereferencing or flattening:", error);
+    if (dereferenced) {
+        // If API is already dereferenced, just use it as is
+        dereferencedAPI = api;
+    } else {
+        try {
+            // Only dereference and flatten if needed
+            dereferencedAPI = await SwaggerParser.dereference(api);
+            dereferencedAPI = await deno_openapi_dereferencer.flattenAllOf(dereferencedAPI);
+        } catch (error) {
+            console.error("error in dereferencing or flattening:", error);
+        }
     }
 
     // Create service directory
@@ -154,11 +160,21 @@ async function createDocsForService(yamlFilePath, providerName, serviceName, ser
             console.warn(`No 'id' defined for resource: ${resourceName} in service: ${serviceName}`);
             continue;
         }
-    
+
+        const resourceDescription = resourceData.description || '';
+
+        // Determine if it's a View or a Resource
+        let resourceType = "Resource"; // Default type
+        if (resourceData.config?.views?.select) {
+            resourceType = "View";
+        }
+        
         resources.push({
             name: resourceName,
+            description: resourceDescription,
+            type: resourceType,
             resourceData,
-            dereferencedAPI
+            dereferencedAPI,
         });
     }    
 
@@ -197,9 +213,7 @@ async function processResource(providerName, serviceFolder, serviceName, resourc
     const resourceIndexContent = await createResourceIndexContent(
         providerName, 
         serviceName, 
-        resource.name, 
-        resource.resourceData, 
-        resource.dereferencedAPI,
+        resource,
     );
     fs.writeFileSync(resourceIndexPath, resourceIndexContent);
 

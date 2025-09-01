@@ -3,7 +3,7 @@ import {
     getIndefiniteArticle, 
 } from '../helpers.js';
 
-export function createOverviewSection(resourceName, providerName, serviceName) {
+export function createOverviewSection(resourceName, resourceType, resourceDescription, providerName, serviceName) {
 
   let content = `--- 
 title: ${resourceName}
@@ -25,12 +25,16 @@ import CopyableCode from '@site/src/components/CopyableCode/CopyableCode';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Creates, updates, deletes, gets or lists ${getIndefiniteArticle(resourceName)} <code>${resourceName}</code> resource.
+`;
+
+content += resourceDescription ? resourceDescription : `Creates, updates, deletes, gets or lists ${getIndefiniteArticle(resourceName)} <code>${resourceName}</code> resource.`;
+
+content += `
 
 ## Overview
 <table><tbody>
 <tr><td><b>Name</b></td><td><code>${resourceName}</code></td></tr>
-<tr><td><b>Type</b></td><td>Resource</td></tr>
+<tr><td><b>Type</b></td><td>${resourceType}</td></tr>
 <tr><td><b>Id</b></td><td><CopyableCode code="${providerName}.${serviceName}.${resourceName}" /></td></tr>
 </tbody></table>
 

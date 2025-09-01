@@ -1,28 +1,19 @@
 import { docgen } from '../../src/index.js';
 
-// Test the documentation generator
-// async function testDocGen() {
-//     try {
-//         const result = await docgen.generateDocs({
-//             providerName: 'google',
-//             providerDir: 'tests/docgen/src/googleapis.com/v00.00.00000',
-//             outputDir: 'tests/docgen/test-output',
-//             providerDataDir: 'tests/docgen/provider-data/google',
-//         });
-        
-//         console.log('Documentation generated successfully:', result);
-//     } catch (error) {
-//         console.error('Error generating documentation:', error);
-//     }
-// }
-
+// Get the provider name from command line arguments
 async function testDocGen() {
     try {
+        // Get provider from command line argument, default to 'snowflake' if not provided
+        const args = process.argv.slice(2);
+        const providerName = args[0] || 'snowflake';
+        
+        console.log(`Generating documentation for provider: ${providerName}`);
+        
         const result = await docgen.generateDocs({
-            providerName: 'snowflake',
-            providerDir: 'tests/docgen/src/snowflake/v00.00.00000',
+            providerName: providerName,
+            providerDir: providerName === 'google' ? `tests/docgen/src/googleapis.com/v00.00.00000` : `tests/docgen/src/${providerName}/v00.00.00000`,
             outputDir: 'tests/docgen/test-output',
-            providerDataDir: 'tests/docgen/provider-data/snowflake',
+            providerDataDir: `tests/docgen/provider-data/${providerName}`,
         });
         
         console.log('Documentation generated successfully:', result);

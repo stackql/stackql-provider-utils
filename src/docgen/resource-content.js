@@ -9,16 +9,14 @@ import { createExamplesSection } from './resource/examples.js';
 export async function createResourceIndexContent(
     providerName, 
     serviceName, 
-    resourceName, 
-    resourceData, 
-    dereferencedAPI,
+    resource,
 ) {
     // Generate each section of the documentation
-    const overviewContent = createOverviewSection(resourceName, providerName, serviceName);
-    const fieldsContent = createFieldsSection(resourceData, dereferencedAPI);
-    const methodsContent = createMethodsSection(resourceData, dereferencedAPI);
-    const paramsContent = createParamsSection(resourceData, dereferencedAPI);
-    const examplesContent = createExamplesSection(providerName, serviceName, resourceName, resourceData, dereferencedAPI);
+    const overviewContent = createOverviewSection(resource.name, resource.type, resource.description, providerName, serviceName);
+    const fieldsContent = createFieldsSection(resource.type, resource.resourceData, resource.dereferencedAPI);
+    const methodsContent = resource.type === 'Resource' ? createMethodsSection(resource.resourceData, resource.dereferencedAPI) : '';
+    const paramsContent = resource.type === 'Resource' ? createParamsSection(resource.resourceData, resource.dereferencedAPI) : '';
+    const examplesContent = resource.type === 'Resource' ? createExamplesSection(providerName, serviceName, resource.name, resource.resourceData, resource.dereferencedAPI) : '';
 
     // Combine all sections into the final content
     return `${overviewContent}${fieldsContent}${methodsContent}${paramsContent}${examplesContent}`;
