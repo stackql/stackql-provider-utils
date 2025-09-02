@@ -4,6 +4,8 @@ import path from 'path';
 import yaml from 'js-yaml';
 import logger from '../logger.js';
 import { camelToSnake } from '../utils.js';
+import { createReadStream } from 'fs';
+import csv from 'csv-parser';
 
 /**
  * Load specification from YAML or JSON file
@@ -62,6 +64,7 @@ function findExistingMapping(spec, pathRef) {
     // Check methods
     for (const [methodName, method] of Object.entries(resource.methods || {})) {
       if (method.operation?.$ref === pathRef) {
+        logger.info(`Found mapping for ${pathRef}: ${resourceName}.${methodName}`);
         // Find SQL verb for this method
         let sqlVerb = 'exec'; // Default if no explicit mapping
         
@@ -82,6 +85,8 @@ function findExistingMapping(spec, pathRef) {
       }
     }
   }
+
+  logger.info(`No mapping for ${pathRef}`);
   
   return {
     resourceName: '',
@@ -102,13 +107,60 @@ export async function analyze(options) {
   } = options;
 
   try {
-    fs.mkdirSync(outputDir, { recursive: true });
+    // In the analyze function
     const outputPath = path.join(outputDir, 'all_services.csv');
-    
-    const writer = fs.createWriteStream(outputPath, { encoding: 'utf8' });
-    
-    // Write header
-    writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb\n');
+
+    // Check if output file already exists
+    let fileExists = false;
+    if (fs.existsSync(outputPath)) {
+      logger.info(`Output file already exists: ${outputPath}`);
+      fileExists = true;
+    } else if (!fs.existsSync(outputDir)) {
+      logger.info(`Output directory does not exist. Creating: ${outputDir}`);
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    // get existing mappings
+    const existingMappings = {};
+    if (fileExists) {
+      try {
+        await new Promise((resolve, reject) => {
+          createReadStream(outputPath)
+            .pipe(csv())
+            .on('data', (row) => {
+              if (row.operationId) {
+                const key = `${row.filename}::${row.operationId}`;
+                existingMappings[key] = {
+                  resourceName: row.stackql_resource_name || '',
+                  methodName: row.stackql_method_name || '',
+                  sqlVerb: row.stackql_verb || ''
+                };
+              }
+            })
+            .on('end', () => {
+              logger.info(`Loaded ${Object.keys(existingMappings).length} mappings from existing CSV`);
+              resolve();
+            })
+            .on('error', (error) => {
+              logger.error(`Failed to load existing CSV: ${error.message}`);
+              reject(error);
+            });
+        });
+      } catch (error) {
+        logger.error(`Error processing CSV: ${error.message}`);
+      }
+    }
+
+    // Create write stream - append if file exists
+    const writer = fs.createWriteStream(outputPath, { 
+      encoding: 'utf8',
+      flags: fileExists ? 'a' : 'w'  // Use 'a' for append if file exists, 'w' for write if new
+    });
+
+    // Only write header if creating a new file
+    if (!fileExists) {
+      writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb\n');
+    }
     
     const files = fs.readdirSync(inputDir);
     
@@ -120,13 +172,32 @@ export async function analyze(options) {
       const filepath = path.join(inputDir, filename);
       const spec = loadSpec(filepath);
       
+      const relevantVerbs = ["get", "put", "post", "patch", "delete"];
+      
       for (const [pathKey, pathItem] of Object.entries(spec.paths || {})) {
         for (const [verb, operation] of Object.entries(pathItem)) {
           if (typeof operation !== 'object' || operation === null) {
             continue;
           }
-          
+          if(!relevantVerbs.includes(verb)) {
+            logger.info(`Skipping irrelevant operation: ${verb}`);
+            continue;
+          }
+
+          // Then in the operation processing loop:
           const operationId = operation.operationId || '';
+          // Check if operation is already mapped in CSV
+          const mappingKey = `${filename}::${operationId}`;
+          if (operationId && existingMappings[mappingKey]) {
+            const mapping = existingMappings[mappingKey];
+            if (mapping.resourceName && mapping.methodName && mapping.sqlVerb) {
+              logger.info(`Skipping already mapped operation: ${mappingKey} (${mapping.resourceName}.${mapping.methodName} - ${mapping.sqlVerb})`);
+              continue; // Skip to next operation
+            } else {
+              logger.warn(`Operation ${mappingKey} found in CSV but has incomplete mapping`);
+            }
+          }
+
           // Format operationId as snake_case
           const formattedOpId = operationId ? camelToSnake(operationId) : '';
           

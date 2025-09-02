@@ -126,8 +126,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathCaptchaId'
     post:
       summary: Update a CAPTCHA instance
       description: Partially updates the properties of a specified CAPTCHA instance
@@ -175,8 +173,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathCaptchaId'
     put:
       summary: Replace a CAPTCHA instance
       description: Replaces the properties for a specified CAPTCHA instance
@@ -224,8 +220,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathCaptchaId'
     delete:
       summary: Delete a CAPTCHA instance
       description: >-
@@ -265,8 +259,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathCaptchaId'
+    parameters:
+      - $ref: '#/components/parameters/pathCaptchaId'
 components:
   schemas:
     CAPTCHAInstance:
@@ -296,25 +290,6 @@ components:
           $ref: '#/components/schemas/CAPTCHAType'
         _links:
           $ref: '#/components/schemas/LinksSelf'
-    CAPTCHAType:
-      description: The type of CAPTCHA provider
-      type: string
-      enum:
-        - HCAPTCHA
-        - RECAPTCHA_V2
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
     Error:
       title: Error
       type: object
@@ -340,15 +315,34 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
+    CAPTCHAType:
+      description: The type of CAPTCHA provider
+      type: string
+      enum:
+        - HCAPTCHA
+        - RECAPTCHA_V2
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
     ErrorCause:
       type: object
       properties:
         errorSummary:
           type: string
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
     HrefObject:
       title: Link Object
       additionalProperties: true
@@ -430,24 +424,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathCaptchaId:
+      name: captchaId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: The unique key used to identify your CAPTCHA instance
   examples:
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CAPTCHAInstanceRequestHCaptcha:
       value:
         name: myHCaptcha
@@ -490,6 +475,14 @@ components:
                 - POST
                 - PUT
                 - DELETE
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
     ErrorCAPTCHALimitOfOne:
       value:
         errorCode: E0000165
@@ -498,6 +491,23 @@ components:
           per Org.
         errorLink: E0000165
         errorId: oaejrB1fWL1S7mc-2KcG-SOtw
+        errorCauses: []
+    ErrorCAPTCHAOrgWideSetting:
+      value:
+        errorCode: E0000149
+        errorSummary: >-
+          Current CAPTCHA is associated with org-wide settings, cannot be
+          removed.
+        errorLink: E0000149
+        errorId: samplezsusshPdiTWiITwqBt8
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
     ErrorApiValidationFailed:
       summary: API Validation Failed
@@ -515,20 +525,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-    ErrorCAPTCHAOrgWideSetting:
-      value:
-        errorCode: E0000149
-        errorSummary: >-
-          Current CAPTCHA is associated with org-wide settings, cannot be
-          removed.
-        errorLink: E0000149
-        errorId: samplezsusshPdiTWiITwqBt8
-        errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

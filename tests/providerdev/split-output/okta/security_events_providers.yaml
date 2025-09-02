@@ -124,8 +124,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathSecurityEventProviderId'
     put:
       summary: Replace a security events provider
       description: Replaces a Security Events Provider instance specified by `id`
@@ -179,8 +177,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathSecurityEventProviderId'
     delete:
       summary: Delete a security events provider
       description: Deletes a Security Events Provider instance specified by `id`
@@ -208,8 +204,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathSecurityEventProviderId'
+    parameters:
+      - $ref: '#/components/parameters/pathSecurityEventProviderId'
   /api/v1/security-events-providers/{securityEventProviderId}/lifecycle/activate:
     post:
       summary: Activate a security events provider
@@ -250,8 +246,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathSecurityEventProviderId'
+    parameters:
+      - $ref: '#/components/parameters/pathSecurityEventProviderId'
   /api/v1/security-events-providers/{securityEventProviderId}/lifecycle/deactivate:
     post:
       summary: Deactivate a security events provider
@@ -292,8 +288,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathSecurityEventProviderId'
+    parameters:
+      - $ref: '#/components/parameters/pathSecurityEventProviderId'
 components:
   schemas:
     SecurityEventsProviderResponse:
@@ -328,6 +324,34 @@ components:
           example: okta
         _links:
           $ref: '#/components/schemas/LinksSelfAndLifecycle'
+    SecurityEventsProviderRequest:
+      title: Security Events Provider Request
+      description: >-
+        The request schema for creating or updating a Security Events Provider.
+        The `settings` must match one of the schemas.
+      type: object
+      properties:
+        name:
+          description: The name of the Security Events Provider instance
+          type: string
+          maxLength: 100
+          example: Target SSF Provider
+        settings:
+          type: object
+          description: Information about the Security Events Provider for signal ingestion
+          oneOf:
+            - $ref: '#/components/schemas/SecurityEventsProviderSettingsSSFCompliant'
+            - $ref: >-
+                #/components/schemas/SecurityEventsProviderSettingsNonSSFCompliant
+        type:
+          description: The application type of the Security Events Provider
+          maxLength: 255
+          type: string
+          example: okta
+      required:
+        - name
+        - settings
+        - type
     SecurityEventsProviderSettingsResponse:
       title: Security Events Provider settings
       description: Security Events Provider settings
@@ -387,6 +411,42 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    SecurityEventsProviderSettingsSSFCompliant:
+      title: Provider with well-known URL setting
+      description: Security Events Provider with well-known URL setting
+      type: object
+      properties:
+        well_known_url:
+          type: string
+          format: url
+          description: >-
+            The published well-known URL of the Security Events Provider (the
+            SSF transmitter)
+          maxLength: 1000
+          example: https://example.okta.com/.well-known/ssf-configuration
+      required:
+        - well_known_url
+    SecurityEventsProviderSettingsNonSSFCompliant:
+      title: Provider with issuer and JWKS settings
+      description: >-
+        Security Events Provider with issuer and JWKS settings for signal
+        ingestion
+      type: object
+      properties:
+        issuer:
+          type: string
+          description: Issuer URL
+          maxLength: 700
+          example: example.okta.com
+        jwks_url:
+          type: string
+          format: url
+          description: The public URL where the JWKS public key is uploaded
+          maxLength: 1000
+          example: https://example.okta.com/oauth2/v1/keys
+      required:
+        - jwks_url
+        - issuer
     LinksSelf:
       description: >-
         Specifies link relations (see [Web
@@ -461,70 +521,6 @@ components:
         - GET
         - POST
         - PUT
-    SecurityEventsProviderRequest:
-      title: Security Events Provider Request
-      description: >-
-        The request schema for creating or updating a Security Events Provider.
-        The `settings` must match one of the schemas.
-      type: object
-      properties:
-        name:
-          description: The name of the Security Events Provider instance
-          type: string
-          maxLength: 100
-          example: Target SSF Provider
-        settings:
-          type: object
-          description: Information about the Security Events Provider for signal ingestion
-          oneOf:
-            - $ref: '#/components/schemas/SecurityEventsProviderSettingsSSFCompliant'
-            - $ref: >-
-                #/components/schemas/SecurityEventsProviderSettingsNonSSFCompliant
-        type:
-          description: The application type of the Security Events Provider
-          maxLength: 255
-          type: string
-          example: okta
-      required:
-        - name
-        - settings
-        - type
-    SecurityEventsProviderSettingsSSFCompliant:
-      title: Provider with well-known URL setting
-      description: Security Events Provider with well-known URL setting
-      type: object
-      properties:
-        well_known_url:
-          type: string
-          format: url
-          description: >-
-            The published well-known URL of the Security Events Provider (the
-            SSF transmitter)
-          maxLength: 1000
-          example: https://example.okta.com/.well-known/ssf-configuration
-      required:
-        - well_known_url
-    SecurityEventsProviderSettingsNonSSFCompliant:
-      title: Provider with issuer and JWKS settings
-      description: >-
-        Security Events Provider with issuer and JWKS settings for signal
-        ingestion
-      type: object
-      properties:
-        issuer:
-          type: string
-          description: Issuer URL
-          maxLength: 700
-          example: example.okta.com
-        jwks_url:
-          type: string
-          format: url
-          description: The public URL where the JWKS public key is uploaded
-          maxLength: 1000
-          example: https://example.okta.com/oauth2/v1/keys
-      required:
-        - jwks_url
-        - issuer
   responses:
     ErrorInvalidToken401:
       description: Unauthorized
@@ -571,7 +567,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathSecurityEventProviderId:
+      name: securityEventProviderId
+      in: path
+      schema:
+        type: string
+        example: sse1qg25RpusjUP6m0g5
+      required: true
+      description: '`id` of the Security Events Provider instance'
   examples:
     ListOfSecurityEventsProviderInstances:
       summary: List of security events providers
@@ -621,30 +625,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorInvalidTokenProvided:
-      summary: Invalid Token Provided
-      value:
-        errorCode: E0000011
-        errorSummary: Invalid token provided
-        errorLink: E0000011
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     SecurityEventsProviderRequestWellKnownUrl:
       summary: Provider with well-known URL
       value:
@@ -711,22 +691,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     DeactivatedSecurityEventsProviderResponse:
       summary: Inactive security events provider
       value:
@@ -753,11 +717,46 @@ components:
             hints:
               allow:
                 - POST
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorInvalidTokenProvided:
+      summary: Invalid Token Provided
+      value:
+        errorCode: E0000011
+        errorSummary: Invalid token provided
+        errorLink: E0000011
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -158,6 +158,15 @@ export async function generate(options) {
     const files = fs.readdirSync(inputDir);
     
     for (const filename of files) {
+
+      const filePath = path.join(inputDir, filename);
+      
+      // Skip directories
+      if (fs.statSync(filePath).isDirectory()) {
+        logger.info(`📁 Skipping directory: ${filename}`);
+        continue;
+      }
+  
       if (skipFiles.includes(filename)) {
         logger.info(`⭐️ Skipping ${filename} (matched --skip)`);
         continue;

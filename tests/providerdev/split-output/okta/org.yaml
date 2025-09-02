@@ -288,8 +288,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathContactType'
     put:
       summary: Replace the contact type user
       description: Replaces the user associated with the specified contact type
@@ -333,8 +331,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathContactType'
+    parameters:
+      - $ref: '#/components/parameters/pathContactType'
   /api/v1/org/email/bounces/remove-list:
     post:
       summary: Remove bounced emails
@@ -433,69 +431,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - name: after
-          in: query
-          description: Specifies the pagination cursor for the next page of tokens
-          schema:
-            type: string
-        - name: expand
-          in: query
-          description: >-
-            Embeds the [user](/openapi/okta-management/management/tag/User/)
-            resource if the YubiKey token is assigned to a user and `expand` is
-            set to `user`
-          schema:
-            type: string
-        - name: filter
-          in: query
-          description: The expression used to filter tokens
-          schema:
-            type: string
-            enum:
-              - profile.email
-              - profile.serial
-              - activated
-              - user.id
-              - created
-              - status
-              - lastVerified
-        - name: forDownload
-          in: query
-          description: >-
-            Returns tokens in a CSV to download instead of in the response. When
-            you use this query parameter, the `limit` default changes to 1000.
-          schema:
-            type: boolean
-            default: false
-        - name: limit
-          in: query
-          description: Specifies the number of results per page
-          schema:
-            type: integer
-            default: 20
-            maximum: 200
-        - name: sortBy
-          in: query
-          description: The value of how the tokens are sorted
-          schema:
-            type: string
-            enum:
-              - profile.email
-              - profile.serial
-              - activated
-              - user.id
-              - created
-              - status
-              - lastVerified
-        - name: sortOrder
-          in: query
-          description: Specifies the sort order, either `ASC` or `DESC`
-          schema:
-            type: string
-            enum:
-              - ASC
-              - DESC
     post:
       summary: Upload a YubiKey OTP seed
       description: Uploads a seed for a user to enroll a YubiKey OTP
@@ -551,76 +486,81 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - name: after
-          in: query
-          description: Specifies the pagination cursor for the next page of tokens
-          schema:
-            type: string
-        - name: expand
-          in: query
-          description: >-
-            Embeds the [user](/openapi/okta-management/management/tag/User/)
-            resource if the YubiKey token is assigned to a user and `expand` is
-            set to `user`
-          schema:
-            type: string
-        - name: filter
-          in: query
-          description: The expression used to filter tokens
-          schema:
-            type: string
-            enum:
-              - profile.email
-              - profile.serial
-              - activated
-              - user.id
-              - created
-              - status
-              - lastVerified
-        - name: forDownload
-          in: query
-          description: >-
-            Returns tokens in a CSV to download instead of in the response. When
-            you use this query parameter, the `limit` default changes to 1000.
-          schema:
-            type: boolean
-            default: false
-        - name: limit
-          in: query
-          description: Specifies the number of results per page
-          schema:
-            type: integer
-            default: 20
-            maximum: 200
-        - name: sortBy
-          in: query
-          description: The value of how the tokens are sorted
-          schema:
-            type: string
-            enum:
-              - profile.email
-              - profile.serial
-              - activated
-              - user.id
-              - created
-              - status
-              - lastVerified
-        - name: sortOrder
-          in: query
-          description: Specifies the sort order, either `ASC` or `DESC`
-          schema:
-            type: string
-            enum:
-              - ASC
-              - DESC
+    parameters:
+      - name: after
+        in: query
+        description: Specifies the pagination cursor for the next page of tokens
+        schema:
+          type: string
+      - name: expand
+        in: query
+        description: >-
+          Embeds the [user](/openapi/okta-management/management/tag/User/)
+          resource if the YubiKey token is assigned to a user and `expand` is
+          set to `user`
+        schema:
+          type: string
+      - name: filter
+        in: query
+        description: The expression used to filter tokens
+        schema:
+          type: string
+          enum:
+            - profile.email
+            - profile.serial
+            - activated
+            - user.id
+            - created
+            - status
+            - lastVerified
+      - name: forDownload
+        in: query
+        description: >-
+          Returns tokens in a CSV to download instead of in the response. When
+          you use this query parameter, the `limit` default changes to 1000.
+        schema:
+          type: boolean
+          default: false
+      - name: limit
+        in: query
+        description: Specifies the number of results per page
+        schema:
+          type: integer
+          default: 20
+          maximum: 200
+      - name: sortBy
+        in: query
+        description: The value of how the tokens are sorted
+        schema:
+          type: string
+          enum:
+            - profile.email
+            - profile.serial
+            - activated
+            - user.id
+            - created
+            - status
+            - lastVerified
+      - name: sortOrder
+        in: query
+        description: Specifies the sort order, either `ASC` or `DESC`
+        schema:
+          type: string
+          enum:
+            - ASC
+            - DESC
   /api/v1/org/factors/yubikey_token/tokens/{tokenId}:
     get:
       summary: Retrieve a YubiKey OTP token
       description: Retrieves the specified YubiKey OTP token by `id`
       operationId: getYubikeyOtpTokenById
       parameters:
-        - $ref: '#/components/parameters/yubikeyTokenId'
+        - name: tokenId
+          in: path
+          required: true
+          description: The YubiKey OTP token ID
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -646,6 +586,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/yubikeyTokenId'
   /api/v1/org/logo:
     post:
       summary: Upload the org logo
@@ -1217,8 +1159,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/caseNumber'
+    parameters:
+      - $ref: '#/components/parameters/caseNumber'
   /api/v1/org/privacy/oktaSupport/extend:
     post:
       deprecated: true
@@ -1511,6 +1453,360 @@ components:
           description: Website of the organization associated with the org
         _links:
           $ref: '#/components/schemas/orgGeneralSettingLinks'
+    OrgCAPTCHASettings:
+      title: OrgCAPTCHASettings
+      description: ''
+      type: object
+      properties:
+        captchaId:
+          description: The unique key of the associated CAPTCHA instance
+          type: string
+        enabledPages:
+          description: An array of pages that have CAPTCHA enabled
+          type: array
+          items:
+            $ref: '#/components/schemas/enabledPagesType'
+        _links:
+          type: object
+          description: Link relations for the CAPTCHA settings object
+          properties:
+            self:
+              $ref: '#/components/schemas/HrefObject'
+          readOnly: true
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    OrgContactTypeObj:
+      anyOf:
+        - $ref: '#/components/schemas/orgBillingContactType'
+        - $ref: '#/components/schemas/orgTechnicalContactType'
+      type: object
+      properties:
+        contactType:
+          $ref: '#/components/schemas/OrgContactType'
+      discriminator:
+        propertyName: contactType
+        mapping:
+          BILLING: '#/components/schemas/orgBillingContactType'
+          TECHNICAL: '#/components/schemas/orgTechnicalContactType'
+    OrgContactUser:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Contact user ID
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+            contact type user object using the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            user:
+              $ref: '#/components/schemas/HrefObjectUserLink'
+    BouncesRemoveListObj:
+      type: object
+      properties:
+        emailAddresses:
+          type: array
+          description: >-
+            A list of email addresses to remove from the email-service bounce
+            list
+          items:
+            type: string
+            description: Email address
+    BouncesRemoveListResult:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: >-
+            A list of emails that wasn't added to the email-bounced remove list
+            and the error reason
+          items:
+            $ref: '#/components/schemas/BouncesRemoveListError'
+    UserFactorYubikeyOtpToken:
+      type: object
+      properties:
+        created:
+          description: Timestamp when the token was created
+          type: string
+          format: date-time
+          example: '2022-08-25T00:31:00.000Z'
+          readOnly: true
+        id:
+          description: ID of the token
+          type: string
+          example: ykkwcx13nrDq8g4oy0g3
+          readOnly: true
+        lastUpdated:
+          description: Timestamp when the token was last updated
+          type: string
+          format: date-time
+          example: '2022-08-25T00:31:00.000Z'
+          readOnly: true
+        lastVerified:
+          description: Timestamp when the token was last verified
+          type: string
+          format: date-time
+          example: '2022-08-25T00:31:00.000Z'
+          readOnly: true
+        profile:
+          type: object
+          description: Specified profile information for token
+          additionalProperties:
+            type: object
+            properties: {}
+        status:
+          description: Token status
+          type: string
+          enum:
+            - BLOCKED
+            - UNASSIGNED
+            - ACTIVE
+            - REVOKED
+            - DELETED
+            - INACTIVE
+        _embedded:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        _links:
+          $ref: '#/components/schemas/UserFactorLinks'
+    ThirdPartyAdminSetting:
+      description: The third-party admin setting
+      type: object
+      properties:
+        thirdPartyAdmin:
+          type: boolean
+          description: Indicates if the third-party admin functionality is enabled
+          example: false
+    OrgPreferences:
+      type: object
+      properties:
+        showEndUserFooter:
+          type: boolean
+          description: Indicates if the footer is shown on the End-User Dashboard
+          readOnly: true
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
+            object using the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            hideEndUserFooter:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to hide the footer in the End-User Dashboard
+            showEndUserFooter:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to show the footer on the End-User Dashboard
+    OrgAerialConsentDetails:
+      type: object
+      properties:
+        accountId:
+          description: The unique ID of the Aerial account
+          type: string
+        grantedBy:
+          type: string
+          description: Principal ID of the user who granted the permission
+          example: 00u23ej02I2RLFxS5406
+        grantedDate:
+          type: string
+          description: Date when grant was created
+          example: '2024-07-24T16:01:13.000Z'
+        _links:
+          $ref: '#/components/schemas/LinksAerialConsentGranted'
+      required:
+        - accountId
+    OrgAerialConsent:
+      type: object
+      properties:
+        accountId:
+          description: The unique ID of the Aerial account
+          type: string
+      required:
+        - accountId
+    OrgAerialConsentRevoked:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/LinksAerialConsentRevoked'
+    OrgOktaCommunicationSetting:
+      type: object
+      properties:
+        optOutEmailUsers:
+          type: boolean
+          description: Indicates whether org users receive Okta communication emails
+          readOnly: true
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
+            object using the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            optIn:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to opt users in to communication emails
+            optOut:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to opt users out of communication emails
+    OrgOktaSupportSettingsObj:
+      type: object
+      properties:
+        caseNumber:
+          type: string
+          description: Support case number for the Okta Support access grant
+          readOnly: true
+          nullable: true
+        expiration:
+          format: date-time
+          type: string
+          description: Expiration of Okta Support
+          readOnly: true
+          nullable: true
+        support:
+          $ref: '#/components/schemas/OrgOktaSupportSetting'
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+            Okta Support Settings object using the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            extend:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: >-
+                    Link to [extend Okta Support
+                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/extendOktaSupport)
+            revoke:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: >-
+                    Link to [revoke Okta Support
+                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/revokeOktaSupport)
+            grant:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: >-
+                    Link to [grant Okta Support
+                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/grantOktaSupport)
+            case:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: >-
+                    Link to [update an Okta Support
+                    case](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/updateOktaSupportCase)
+            cases:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: >-
+                    Link to [List all Okta Support
+                    cases](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/listOktaSupportCases)
+    OktaSupportCases:
+      type: object
+      properties:
+        supportCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/OktaSupportCase'
+    OktaSupportCase:
+      type: object
+      properties:
+        caseNumber:
+          type: string
+          description: Okta Support case number
+          readOnly: true
+        impersonation:
+          type: object
+          description: >-
+            Allows the Okta Support team to sign in to your org as an admin and
+            troubleshoot issues
+          properties:
+            status:
+              $ref: '#/components/schemas/OktaSupportAccessStatus'
+            expiration:
+              format: date-time
+              type: string
+              description: Expiration date of Okta Support access
+              nullable: true
+        selfAssigned:
+          type: object
+          description: >-
+            Customer allows Okta Support access to self-assigned cases. Support
+            cases are self-assigned when an Okta Support team member creates and
+            assigns the case to themselves.
+          properties:
+            status:
+              $ref: '#/components/schemas/SelfAssignedStatus'
+        subject:
+          type: string
+          description: Subject of the support case
+          readOnly: true
+    AutoAssignAdminAppSetting:
+      description: >-
+        The org setting that automatically assigns the Okta Admin Console when
+        an admin role is assigned
+      type: object
+      properties:
+        autoAssignAdminAppSetting:
+          type: boolean
+          description: >-
+            Automatically assigns the Okta Admin Console to the user when an
+            admin role is assigned
+    ClientPrivilegesSetting:
+      description: >-
+        The org setting that assigns the super admin role by default to a public
+        client app
+      type: object
+      properties:
+        clientPrivilegesSetting:
+          type: boolean
+          description: >-
+            If true, assigns the super admin role by default to new public
+            client apps
+          example: true
     orgGeneralSettingLinks:
       description: >-
         Specifies link relations (see [Web
@@ -1560,31 +1856,17 @@ components:
                 Logo](/openapi/okta-management/management/tag/OrgSettingCustomization/#tag/OrgSettingCustomization/operation/uploadOrgLogo)
                 resource
       readOnly: true
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
+    enabledPagesType:
+      title: enabledPages
+      type: string
+      enum:
+        - SIGN_IN
+        - SSPR
+        - SSR
+      x-enumDescriptions:
+        SIGN_IN: User sign-in page
+        SSPR: Self-service Password Recovery page
+        SSR: Self-service Registration page
     HrefObject:
       title: Link Object
       additionalProperties: true
@@ -1619,65 +1901,6 @@ components:
       properties:
         errorSummary:
           type: string
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
-    OrgCAPTCHASettings:
-      title: OrgCAPTCHASettings
-      description: ''
-      type: object
-      properties:
-        captchaId:
-          description: The unique key of the associated CAPTCHA instance
-          type: string
-        enabledPages:
-          description: An array of pages that have CAPTCHA enabled
-          type: array
-          items:
-            $ref: '#/components/schemas/enabledPagesType'
-        _links:
-          type: object
-          description: Link relations for the CAPTCHA settings object
-          properties:
-            self:
-              $ref: '#/components/schemas/HrefObject'
-          readOnly: true
-    enabledPagesType:
-      title: enabledPages
-      type: string
-      enum:
-        - SIGN_IN
-        - SSPR
-        - SSR
-      x-enumDescriptions:
-        SIGN_IN: User sign-in page
-        SSPR: Self-service Password Recovery page
-        SSR: Self-service Registration page
-    OrgContactTypeObj:
-      anyOf:
-        - $ref: '#/components/schemas/orgBillingContactType'
-        - $ref: '#/components/schemas/orgTechnicalContactType'
-      type: object
-      properties:
-        contactType:
-          $ref: '#/components/schemas/OrgContactType'
-      discriminator:
-        propertyName: contactType
-        mapping:
-          BILLING: '#/components/schemas/orgBillingContactType'
-          TECHNICAL: '#/components/schemas/orgTechnicalContactType'
     orgBillingContactType:
       description: Org billing contact
       type: object
@@ -1732,49 +1955,10 @@ components:
       enum:
         - BILLING
         - TECHNICAL
-    OrgContactUser:
-      type: object
-      properties:
-        userId:
-          type: string
-          description: Contact user ID
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-            contact type user object using the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            user:
-              $ref: '#/components/schemas/HrefObjectUserLink'
     HrefObjectUserLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to the user resource
-    BouncesRemoveListObj:
-      type: object
-      properties:
-        emailAddresses:
-          type: array
-          description: >-
-            A list of email addresses to remove from the email-service bounce
-            list
-          items:
-            type: string
-            description: Email address
-    BouncesRemoveListResult:
-      type: object
-      properties:
-        errors:
-          type: array
-          description: >-
-            A list of emails that wasn't added to the email-bounced remove list
-            and the error reason
-          items:
-            $ref: '#/components/schemas/BouncesRemoveListError'
     BouncesRemoveListError:
       type: object
       properties:
@@ -1784,55 +1968,6 @@ components:
         reason:
           type: string
           description: Validation error reason
-    UserFactorYubikeyOtpToken:
-      type: object
-      properties:
-        created:
-          description: Timestamp when the token was created
-          type: string
-          format: date-time
-          example: '2022-08-25T00:31:00.000Z'
-          readOnly: true
-        id:
-          description: ID of the token
-          type: string
-          example: ykkwcx13nrDq8g4oy0g3
-          readOnly: true
-        lastUpdated:
-          description: Timestamp when the token was last updated
-          type: string
-          format: date-time
-          example: '2022-08-25T00:31:00.000Z'
-          readOnly: true
-        lastVerified:
-          description: Timestamp when the token was last verified
-          type: string
-          format: date-time
-          example: '2022-08-25T00:31:00.000Z'
-          readOnly: true
-        profile:
-          type: object
-          description: Specified profile information for token
-          additionalProperties:
-            type: object
-            properties: {}
-        status:
-          description: Token status
-          type: string
-          enum:
-            - BLOCKED
-            - UNASSIGNED
-            - ACTIVE
-            - REVOKED
-            - DELETED
-            - INACTIVE
-        _embedded:
-          type: object
-          additionalProperties:
-            type: object
-            properties: {}
-        _links:
-          $ref: '#/components/schemas/UserFactorLinks'
     UserFactorLinks:
       allOf:
         - $ref: '#/components/schemas/LinksActivate'
@@ -1849,6 +1984,61 @@ components:
         - $ref: '#/components/schemas/LinksUser'
         - $ref: '#/components/schemas/LinksVerify'
       readOnly: true
+    LinksAerialConsentGranted:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            revoke:
+              $ref: '#/components/schemas/HrefObjectRevokeAerialConsent'
+    LinksAerialConsentRevoked:
+      allOf:
+        - type: object
+          properties:
+            grant:
+              $ref: '#/components/schemas/HrefObjectGrantAerialConsent'
+    OrgOktaSupportSetting:
+      description: Status of Okta Support Settings
+      type: string
+      enum:
+        - DISABLED
+        - ENABLED
+    OktaSupportAccessStatus:
+      description: Status of Okta Support access
+      type: string
+      enum:
+        - DISABLED
+        - ENABLED
+        - NOT_REQUESTED
+        - REQUESTED
+      x-enumDescriptions:
+        NOT_REQUESTED: Okta Support access not requested
+        REQUESTED: Okta Support access requested
+        DISABLED: Okta Support access disabled
+        ENABLED: Okta Support access enabled
+    SelfAssignedStatus:
+      description: Okta Support access approval status for self-assigned cases
+      type: string
+      enum:
+        - APPROVED
+        - NOT_REQUIRED
+        - REQUESTED
+      x-enumDescriptions:
+        NOT_REQUIRED: >-
+          Approval isn't required because the case wasn't self-created and
+          self-assigned by an Okta Support user
+        REQUESTED: Customer approval for self-assigned case requested
+        APPROVED: >-
+          Okta Support access is approved by the customer for the self-assigned
+          case
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
     LinksActivate:
       type: object
       properties:
@@ -1977,273 +2167,25 @@ components:
                 factor](/openapi/okta-management/management/tag/UserFactor/#tag/UserFactor/operation/verifyFactor).
             - $ref: '#/components/schemas/HrefObject'
       readOnly: true
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    ThirdPartyAdminSetting:
-      description: The third-party admin setting
-      type: object
-      properties:
-        thirdPartyAdmin:
-          type: boolean
-          description: Indicates if the third-party admin functionality is enabled
-          example: false
-    OrgPreferences:
-      type: object
-      properties:
-        showEndUserFooter:
-          type: boolean
-          description: Indicates if the footer is shown on the End-User Dashboard
-          readOnly: true
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
-            object using the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            hideEndUserFooter:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to hide the footer in the End-User Dashboard
-            showEndUserFooter:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to show the footer on the End-User Dashboard
-    OrgAerialConsentDetails:
-      type: object
-      properties:
-        accountId:
-          description: The unique ID of the Aerial account
-          type: string
-        grantedBy:
-          type: string
-          description: Principal ID of the user who granted the permission
-          example: 00u23ej02I2RLFxS5406
-        grantedDate:
-          type: string
-          description: Date when grant was created
-          example: '2024-07-24T16:01:13.000Z'
-        _links:
-          $ref: '#/components/schemas/LinksAerialConsentGranted'
-      required:
-        - accountId
-    LinksAerialConsentGranted:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            revoke:
-              $ref: '#/components/schemas/HrefObjectRevokeAerialConsent'
     HrefObjectRevokeAerialConsent:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to revoke Okta Aerial consent for your Org
-    OrgAerialConsent:
-      type: object
-      properties:
-        accountId:
-          description: The unique ID of the Aerial account
-          type: string
-      required:
-        - accountId
-    OrgAerialConsentRevoked:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/LinksAerialConsentRevoked'
-    LinksAerialConsentRevoked:
-      allOf:
-        - type: object
-          properties:
-            grant:
-              $ref: '#/components/schemas/HrefObjectGrantAerialConsent'
     HrefObjectGrantAerialConsent:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to grant Okta Aerial access to your Org
-    OrgOktaCommunicationSetting:
-      type: object
-      properties:
-        optOutEmailUsers:
-          type: boolean
-          description: Indicates whether org users receive Okta communication emails
-          readOnly: true
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
-            object using the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            optIn:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to opt users in to communication emails
-            optOut:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to opt users out of communication emails
-    OrgOktaSupportSettingsObj:
-      type: object
-      properties:
-        caseNumber:
-          type: string
-          description: Support case number for the Okta Support access grant
-          readOnly: true
-          nullable: true
-        expiration:
-          format: date-time
-          type: string
-          description: Expiration of Okta Support
-          readOnly: true
-          nullable: true
-        support:
-          $ref: '#/components/schemas/OrgOktaSupportSetting'
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-            Okta Support Settings object using the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            extend:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: >-
-                    Link to [extend Okta Support
-                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/extendOktaSupport)
-            revoke:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: >-
-                    Link to [revoke Okta Support
-                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/revokeOktaSupport)
-            grant:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: >-
-                    Link to [grant Okta Support
-                    Access](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/grantOktaSupport)
-            case:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: >-
-                    Link to [update an Okta Support
-                    case](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/updateOktaSupportCase)
-            cases:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: >-
-                    Link to [List all Okta Support
-                    cases](/openapi/okta-management/management/tag/OrgSettingSupport/#tag/OrgSettingSupport/operation/listOktaSupportCases)
-    OrgOktaSupportSetting:
-      description: Status of Okta Support Settings
+    HttpMethod:
       type: string
       enum:
-        - DISABLED
-        - ENABLED
-    OktaSupportCases:
-      type: object
-      properties:
-        supportCases:
-          type: array
-          items:
-            $ref: '#/components/schemas/OktaSupportCase'
-    OktaSupportCase:
-      type: object
-      properties:
-        caseNumber:
-          type: string
-          description: Okta Support case number
-          readOnly: true
-        impersonation:
-          type: object
-          description: >-
-            Allows the Okta Support team to sign in to your org as an admin and
-            troubleshoot issues
-          properties:
-            status:
-              $ref: '#/components/schemas/OktaSupportAccessStatus'
-            expiration:
-              format: date-time
-              type: string
-              description: Expiration date of Okta Support access
-              nullable: true
-        selfAssigned:
-          type: object
-          description: >-
-            Customer allows Okta Support access to self-assigned cases. Support
-            cases are self-assigned when an Okta Support team member creates and
-            assigns the case to themselves.
-          properties:
-            status:
-              $ref: '#/components/schemas/SelfAssignedStatus'
-        subject:
-          type: string
-          description: Subject of the support case
-          readOnly: true
-    OktaSupportAccessStatus:
-      description: Status of Okta Support access
-      type: string
-      enum:
-        - DISABLED
-        - ENABLED
-        - NOT_REQUESTED
-        - REQUESTED
-      x-enumDescriptions:
-        NOT_REQUESTED: Okta Support access not requested
-        REQUESTED: Okta Support access requested
-        DISABLED: Okta Support access disabled
-        ENABLED: Okta Support access enabled
-    SelfAssignedStatus:
-      description: Okta Support access approval status for self-assigned cases
-      type: string
-      enum:
-        - APPROVED
-        - NOT_REQUIRED
-        - REQUESTED
-      x-enumDescriptions:
-        NOT_REQUIRED: >-
-          Approval isn't required because the case wasn't self-created and
-          self-assigned by an Okta Support user
-        REQUESTED: Customer approval for self-assigned case requested
-        APPROVED: >-
-          Okta Support access is approved by the customer for the self-assigned
-          case
-    AutoAssignAdminAppSetting:
-      description: >-
-        The org setting that automatically assigns the Okta Admin Console when
-        an admin role is assigned
-      type: object
-      properties:
-        autoAssignAdminAppSetting:
-          type: boolean
-          description: >-
-            Automatically assigns the Okta Admin Console to the user when an
-            admin role is assigned
-    ClientPrivilegesSetting:
-      description: >-
-        The org setting that assigns the super admin role by default to a public
-        client app
-      type: object
-      properties:
-        clientPrivilegesSetting:
-          type: boolean
-          description: >-
-            If true, assigns the super admin role by default to new public
-            client apps
-          example: true
+        - DELETE
+        - GET
+        - POST
+        - PUT
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -2281,7 +2223,34 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathContactType:
+      name: contactType
+      in: path
+      required: true
+      schema:
+        type: string
+        description: Type of contact
+        enum:
+          - BILLING
+          - TECHNICAL
+        example: BILLING
+    yubikeyTokenId:
+      name: tokenId
+      description: ID of a YubiKey token
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ykkxdtCA1fKVxyu6R0g3
+    caseNumber:
+      name: caseNumber
+      in: path
+      required: true
+      schema:
+        type: string
+        description: Okta Support case number
+        example: '00000144'
   examples:
     OrgSettingResponse:
       summary: Org setting response
@@ -2318,22 +2287,6 @@ components:
             href: https://{yourOktaDomain}/api/v1/org/privacy/oktaSupport
           contacts:
             href: https://vantest.oktapreview.com/api/v1/org/contacts
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     UpdateOrgSettingEx:
       summary: Org setting request
       value:
@@ -2348,14 +2301,6 @@ components:
         state: California
         supportPhoneNumber: '+18887227871'
         website: www.okta.com
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     OrgCAPTCHASettingsConfigured:
       summary: org-wide Captcha settings are configured
       value:
@@ -2439,14 +2384,6 @@ components:
             blank when enabledPages is not empty. Please resubmit with an
             existing CAPTCHA ID or disable CAPTCHA support on all supported
             pages.
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     orgContactTypeResponse:
       summary: Org contact types
       value:
@@ -2727,11 +2664,38 @@ components:
         selfAssigned:
           status: APPROVED
         caseNumber: '1011001'
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

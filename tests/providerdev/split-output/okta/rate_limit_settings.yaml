@@ -251,36 +251,6 @@ components:
           type: boolean
       required:
         - notificationsEnabled
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     PerClientRateLimitSettings:
       title: PerClientRateLimitSettings
       description: ''
@@ -306,12 +276,6 @@ components:
               $ref: '#/components/schemas/PerClientRateLimitMode'
       required:
         - defaultMode
-    PerClientRateLimitMode:
-      type: string
-      enum:
-        - DISABLE
-        - ENFORCE
-        - PREVIEW
     RateLimitWarningThresholdResponse:
       title: RateLimitWarningThreshold
       description: ''
@@ -340,6 +304,42 @@ components:
           maximum: 90
       required:
         - warningThreshold
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    PerClientRateLimitMode:
+      type: string
+      enum:
+        - DISABLE
+        - ENFORCE
+        - PREVIEW
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -368,7 +368,6 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
   examples:
     RateLimitAdminNotificationsEnabled:
       value:
@@ -376,6 +375,23 @@ components:
     RateLimitAdminNotificationsDisabled:
       value:
         notificationsEnabled: false
+    PerClientRateLimitSettingsEnforceDefault:
+      value:
+        defaultMode: ENFORCE
+    PerClientRateLimitSettingsEnforceDefaultWithOverrides:
+      value:
+        defaultMode: ENFORCE
+        useCaseModeOverrides:
+          OAUTH2_AUTHORIZE: PREVIEW
+          OIE_APP_INTENT: DISABLE
+    PerClientRateLimitSettingsPreviewDefaultWithOverrides:
+      value:
+        defaultMode: PREVIEW
+        useCaseModeOverrides:
+          LOGIN_PAGE: ENFORCE
+    RateLimitWarningThresholdValidExample:
+      value:
+        warningThreshold: 66
     ErrorAccessDenied:
       summary: Access Denied
       value:
@@ -400,28 +416,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-    PerClientRateLimitSettingsEnforceDefault:
-      value:
-        defaultMode: ENFORCE
-    PerClientRateLimitSettingsEnforceDefaultWithOverrides:
-      value:
-        defaultMode: ENFORCE
-        useCaseModeOverrides:
-          OAUTH2_AUTHORIZE: PREVIEW
-          OIE_APP_INTENT: DISABLE
-    PerClientRateLimitSettingsPreviewDefaultWithOverrides:
-      value:
-        defaultMode: PREVIEW
-        useCaseModeOverrides:
-          LOGIN_PAGE: ENFORCE
-    RateLimitWarningThresholdValidExample:
-      value:
-        warningThreshold: 66
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

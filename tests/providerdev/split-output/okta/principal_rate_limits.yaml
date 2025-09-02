@@ -145,8 +145,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPrincipalRateLimitId'
     put:
       summary: Replace a principal rate limit
       description: Replaces a principal rate limit entity by `principalRateLimitId`
@@ -190,8 +188,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPrincipalRateLimitId'
+    parameters:
+      - $ref: '#/components/parameters/pathPrincipalRateLimitId'
 components:
   schemas:
     PrincipalRateLimitEntity:
@@ -322,7 +320,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathPrincipalRateLimitId:
+      name: principalRateLimitId
+      in: path
+      schema:
+        type: string
+        example: 0oacamvryxiyMqgiY1d7
+      required: true
+      description: ID of the principal rate limit
   examples:
     PrincipalRateLimitsSSWSListAllExample:
       summary: List all SSWS API token principal rate limits
@@ -380,6 +386,46 @@ components:
           lastUpdatedBy: 00uid52637YwIXkJq1d4
           createdDate: '2024-01-12T20:59:18.000Z'
           createdBy: 00uid52637YwIXkJq1d4
+    PrincipalRateLimitEntityRequestSSWSToken:
+      summary: Create a principal rate limit entity request example
+      value:
+        principalId: prlh5hd6act3aHDrr1f5
+        principalType: SSWS_TOKEN
+        defaultPercentage: 50
+        defaultConcurrencyPercentage: 75
+    PrincipalRateLimitEntityResponseSSWSToken:
+      summary: Create a principal rate limit entity response example
+      value:
+        id: 0oacamvryxiyMqgiY1e5
+        orgId: org1234
+        principalId: prlh5hd6act3aHDrr1f5
+        principalType: SSWS_TOKEN
+        defaultPercentage: 50
+        defaultConcurrencyPercentage: 75
+        createdDate: '2022-05-19T20:05:32.720Z'
+        createdBy: 00u7xut94qEWYx5ss1d4
+        lastUpdate: '2022-05-20T21:13:07.410Z'
+        lastUpdatedBy: 00u7xut94qEWYx5ss1d4
+    PrincipalRateLimitEntityReplaceRequestSSWSToken:
+      summary: Replace a principal rate limit entity request
+      value:
+        principalId: prlh5hd6act3aHDrr1f5
+        principalType: SSWS_TOKEN
+        defaultPercentage: 50
+        defaultConcurrencyPercentage: 75
+    PrincipalRateLimitEntityReplaceResponseSSWSToken:
+      summary: Replace a principal rate limit entity response example
+      value:
+        id: 0oacamvryxiyMqgiY1e5
+        orgId: org1234
+        principalId: prlh5hd6act3aHDrr1f5
+        principalType: SSWS_TOKEN
+        defaultPercentage: 50
+        defaultConcurrencyPercentage: 75
+        createdDate: '2022-05-19T20:05:32.720Z'
+        createdBy: 00u7xut94qEWYx5ss1d4
+        lastUpdate: '2022-05-20T21:13:07.410Z'
+        lastUpdatedBy: 00u7xut94qEWYx5ss1d4
     ErrorApiValidationFailed:
       summary: API Validation Failed
       value:
@@ -404,26 +450,6 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
-    PrincipalRateLimitEntityRequestSSWSToken:
-      summary: Create a principal rate limit entity request example
-      value:
-        principalId: prlh5hd6act3aHDrr1f5
-        principalType: SSWS_TOKEN
-        defaultPercentage: 50
-        defaultConcurrencyPercentage: 75
-    PrincipalRateLimitEntityResponseSSWSToken:
-      summary: Create a principal rate limit entity response example
-      value:
-        id: 0oacamvryxiyMqgiY1e5
-        orgId: org1234
-        principalId: prlh5hd6act3aHDrr1f5
-        principalType: SSWS_TOKEN
-        defaultPercentage: 50
-        defaultConcurrencyPercentage: 75
-        createdDate: '2022-05-19T20:05:32.720Z'
-        createdBy: 00u7xut94qEWYx5ss1d4
-        lastUpdate: '2022-05-20T21:13:07.410Z'
-        lastUpdatedBy: 00u7xut94qEWYx5ss1d4
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -432,31 +458,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-    PrincipalRateLimitEntityReplaceRequestSSWSToken:
-      summary: Replace a principal rate limit entity request
-      value:
-        principalId: prlh5hd6act3aHDrr1f5
-        principalType: SSWS_TOKEN
-        defaultPercentage: 50
-        defaultConcurrencyPercentage: 75
-    PrincipalRateLimitEntityReplaceResponseSSWSToken:
-      summary: Replace a principal rate limit entity response example
-      value:
-        id: 0oacamvryxiyMqgiY1e5
-        orgId: org1234
-        principalId: prlh5hd6act3aHDrr1f5
-        principalType: SSWS_TOKEN
-        defaultPercentage: 50
-        defaultConcurrencyPercentage: 75
-        createdDate: '2022-05-19T20:05:32.720Z'
-        createdBy: 00u7xut94qEWYx5ss1d4
-        lastUpdate: '2022-05-20T21:13:07.410Z'
-        lastUpdatedBy: 00u7xut94qEWYx5ss1d4
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

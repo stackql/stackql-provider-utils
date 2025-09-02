@@ -39,8 +39,6 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
     post:
       summary: Create an identity source session
       description: >-
@@ -73,8 +71,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdentitySourceId'
   /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}:
     get:
       summary: Retrieve an identity source session
@@ -108,9 +106,6 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
-        - $ref: '#/components/parameters/pathIdentitySourceSessionId'
     delete:
       summary: Delete an identity source session
       description: >-
@@ -136,9 +131,9 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
-        - $ref: '#/components/parameters/pathIdentitySourceSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdentitySourceId'
+      - $ref: '#/components/parameters/pathIdentitySourceSessionId'
   /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-delete:
     post:
       summary: Upload the data to be deleted in Okta
@@ -175,9 +170,9 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
-        - $ref: '#/components/parameters/pathIdentitySourceSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdentitySourceId'
+      - $ref: '#/components/parameters/pathIdentitySourceSessionId'
   /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-upsert:
     post:
       summary: Upload the data to be upserted in Okta
@@ -214,9 +209,9 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
-        - $ref: '#/components/parameters/pathIdentitySourceSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdentitySourceId'
+      - $ref: '#/components/parameters/pathIdentitySourceSessionId'
   /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/start-import:
     post:
       summary: Start the import from the identity source
@@ -250,9 +245,9 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathIdentitySourceId'
-        - $ref: '#/components/parameters/pathIdentitySourceSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdentitySourceId'
+      - $ref: '#/components/parameters/pathIdentitySourceSessionId'
 components:
   schemas:
     IdentitySourceSession:
@@ -284,6 +279,45 @@ components:
           readOnly: true
         status:
           $ref: '#/components/schemas/IdentitySourceSessionStatus'
+    BulkDeleteRequestBody:
+      type: object
+      properties:
+        entityType:
+          description: >-
+            The type of data to bulk delete in a session. Currently, only
+            `USERS` is supported.
+          type: string
+          enum:
+            - USERS
+        profiles:
+          type: array
+          description: Array of profiles to be deleted
+          items:
+            $ref: '#/components/schemas/IdentitySourceUserProfileForDelete'
+    BulkUpsertRequestBody:
+      type: object
+      properties:
+        entityType:
+          description: >-
+            The type of data to upsert into the session. Currently, only `USERS`
+            is supported.
+          type: string
+          enum:
+            - USERS
+        profiles:
+          type: array
+          description: Array of user profiles to be uploaded
+          items:
+            type: object
+            properties:
+              externalId:
+                type: string
+                description: >-
+                  The external ID of the entity that needs to be created or
+                  updated in Okta
+                maxLength: 512
+              profile:
+                $ref: '#/components/schemas/IdentitySourceUserProfileForUpsert'
     IdentitySourceSessionStatus:
       description: The current status of the identity source session
       type: string
@@ -338,26 +372,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    BulkDeleteRequestBody:
-      type: object
-      properties:
-        entityType:
-          description: >-
-            The type of data to bulk delete in a session. Currently, only
-            `USERS` is supported.
-          type: string
-          enum:
-            - USERS
-        profiles:
-          type: array
-          description: Array of profiles to be deleted
-          items:
-            $ref: '#/components/schemas/IdentitySourceUserProfileForDelete'
     IdentitySourceUserProfileForDelete:
       type: object
       properties:
@@ -365,30 +379,6 @@ components:
           type: string
           description: The external ID of the entity that needs to be deleted in Okta
           maxLength: 512
-    BulkUpsertRequestBody:
-      type: object
-      properties:
-        entityType:
-          description: >-
-            The type of data to upsert into the session. Currently, only `USERS`
-            is supported.
-          type: string
-          enum:
-            - USERS
-        profiles:
-          type: array
-          description: Array of user profiles to be uploaded
-          items:
-            type: object
-            properties:
-              externalId:
-                type: string
-                description: >-
-                  The external ID of the entity that needs to be created or
-                  updated in Okta
-                maxLength: 512
-              profile:
-                $ref: '#/components/schemas/IdentitySourceUserProfileForUpsert'
     IdentitySourceUserProfileForUpsert:
       description: >-
         Contains a set of external user attributes and their values that are
@@ -440,6 +430,11 @@ components:
           type: string
           description: Username of the user
           maxLength: 100
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -477,7 +472,23 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
+  parameters:
+    pathIdentitySourceId:
+      name: identitySourceId
+      in: path
+      required: true
+      description: The ID of the identity source for which the session is created
+      example: 0oa3l6l6WK6h0R0QW0g4
+      schema:
+        type: string
+    pathIdentitySourceSessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: The ID of the identity source session
+      example: aps1qqonvr2SZv6o70h8
+      schema:
+        type: string
   examples:
     ListSessionsResponseForGetSessions:
       value:
@@ -511,6 +522,42 @@ components:
           importType: INCREMENTAL
           created: '2022-04-04T19:56:05.000Z'
           lastUpdated: '2022-05-05T20:15:44.000Z'
+    GetSessionResponse:
+      value:
+        id: aps1qqonvr2SZv6o70h8
+        identitySourceId: 0oa3l6l6WK6h0R0QW0g4
+        status: CREATED
+        importType: INCREMENTAL
+        created: '2022-04-04T15:56:05.000Z'
+        lastUpdated: '2022-05-05T16:15:44.000Z'
+    bulkDeletePayload:
+      value:
+        entityType: USERS
+        profiles:
+          - externalId: EXT123456784C2IF
+          - externalId: EXT123456784C3IF
+          - externalId: EXT123456784C4IF
+    bulkUpsertPayload:
+      value:
+        entityType: USERS
+        profiles:
+          - externalId: EXT123456784C2IF
+            profile:
+              userName: isaac.brock@example.com
+              firstName: Isaac
+              lastName: Brock
+              email: isaac.brock@example.com
+              secondEmail: isaac2.brock@example.com
+              mobilePhone: 123-456-7890
+              homeAddress: Kirkland, WA
+    TriggerSessionResponse:
+      value:
+        - id: aps1qqonvr2SZv6o70h8
+          identitySourceId: 0oa3l6l6WK6h0R0QW0g4
+          status: TRIGGERED
+          importType: INCREMENTAL
+          created: '2022-04-04T15:56:05.000Z'
+          lastUpdated: '2022-05-05T18:15:44.000Z'
     ErrorAccessDenied:
       summary: Access Denied
       value:
@@ -535,21 +582,6 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
-    GetSessionResponse:
-      value:
-        id: aps1qqonvr2SZv6o70h8
-        identitySourceId: 0oa3l6l6WK6h0R0QW0g4
-        status: CREATED
-        importType: INCREMENTAL
-        created: '2022-04-04T15:56:05.000Z'
-        lastUpdated: '2022-05-05T16:15:44.000Z'
-    bulkDeletePayload:
-      value:
-        entityType: USERS
-        profiles:
-          - externalId: EXT123456784C2IF
-          - externalId: EXT123456784C3IF
-          - externalId: EXT123456784C4IF
     ErrorApiValidationFailed:
       summary: API Validation Failed
       value:
@@ -558,32 +590,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-    bulkUpsertPayload:
-      value:
-        entityType: USERS
-        profiles:
-          - externalId: EXT123456784C2IF
-            profile:
-              userName: isaac.brock@example.com
-              firstName: Isaac
-              lastName: Brock
-              email: isaac.brock@example.com
-              secondEmail: isaac2.brock@example.com
-              mobilePhone: 123-456-7890
-              homeAddress: Kirkland, WA
-    TriggerSessionResponse:
-      value:
-        - id: aps1qqonvr2SZv6o70h8
-          identitySourceId: 0oa3l6l6WK6h0R0QW0g4
-          status: TRIGGERED
-          importType: INCREMENTAL
-          created: '2022-04-04T15:56:05.000Z'
-          lastUpdated: '2022-05-05T18:15:44.000Z'
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

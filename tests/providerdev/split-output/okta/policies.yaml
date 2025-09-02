@@ -232,15 +232,19 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/simulateParameter'
+    parameters:
+      - $ref: '#/components/parameters/simulateParameter'
   /api/v1/policies/{policyId}:
     get:
       summary: Retrieve a policy
       description: Retrieves a policy
       operationId: getPolicy
       parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+        - name: expand
+          in: query
+          schema:
+            type: string
+            default: ''
       responses:
         '200':
           description: Success
@@ -342,8 +346,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
     delete:
       summary: Delete a policy
       description: Deletes a policy
@@ -366,8 +368,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/app:
     get:
       deprecated: true
@@ -404,8 +406,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/clone:
     post:
       summary: Clone an existing policy
@@ -454,8 +456,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/lifecycle/activate:
     post:
       summary: Activate a policy
@@ -480,8 +482,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/lifecycle/deactivate:
     post:
       summary: Deactivate a policy
@@ -506,8 +508,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/mappings:
     get:
       summary: List all resources mapped to a policy
@@ -540,8 +542,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
     post:
       summary: Map a resource to a policy
       description: Maps a resource to a policy identified by `policyId`
@@ -579,8 +579,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/policies/{policyId}/mappings/{mappingId}:
     get:
       summary: Retrieve a policy resource mapping
@@ -613,9 +613,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathPolicyMappingId'
     delete:
       summary: Delete a policy resource mapping
       description: >-
@@ -641,9 +638,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathPolicyMappingId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathPolicyMappingId'
   /api/v1/policies/{policyId}/rules:
     get:
       summary: List all policy rules
@@ -698,9 +695,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/limitParameter'
     post:
       summary: Create a policy rule
       description: >-
@@ -711,8 +705,12 @@ paths:
         `PROFILE_ENROLLMENT` or `POST_AUTH_SESSION` policies.
       operationId: createPolicyRule
       parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/limitParameter'
+        - name: activate
+          description: Set this parameter to `false` to create an `INACTIVE` rule.
+          in: query
+          schema:
+            type: boolean
+            default: true
       x-codegen-request-body-name: policyRule
       requestBody:
         content:
@@ -832,6 +830,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/limitParameter'
   /api/v1/policies/{policyId}/rules/{ruleId}:
     get:
       summary: Retrieve a policy rule
@@ -899,9 +900,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
     put:
       summary: Replace a policy rule
       description: >-
@@ -1016,9 +1014,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
     delete:
       summary: Delete a policy rule
       description: Deletes a policy rule identified by `policyId` and `ruleId`
@@ -1042,9 +1037,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
   /api/v1/policies/{policyId}/rules/{ruleId}/lifecycle/activate:
     post:
       summary: Activate a policy rule
@@ -1068,9 +1063,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
   /api/v1/policies/{policyId}/rules/{ruleId}/lifecycle/deactivate:
     post:
       summary: Deactivate a policy rule
@@ -1094,9 +1089,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
 components:
   schemas:
     Policy:
@@ -1167,142 +1162,6 @@ components:
           POST_AUTH_SESSION: '#/components/schemas/PostAuthSessionPolicy'
           ENTITY_RISK: '#/components/schemas/EntityRiskPolicy'
           DEVICE_SIGNAL_COLLECTION: '#/components/schemas/DeviceSignalCollectionPolicy'
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    PolicyType:
-      description: >-
-        All Okta orgs contain only one IdP discovery policy with an immutable
-        default rule routing to your org's sign-in page, one entity risk policy,
-        and one session protection policy.
-
-        Creating or replacing a policy with the `IDP_DISCOVERY` type, the
-        `ENTITY_RISK` type, or the `POST_AUTH_SESSION` type isn't supported.
-
-        The following policy types are available with Identity Engine:
-        `ACCESS_POLICY`, `PROFILE_ENROLLMENT`, `POST_AUTH_SESSION`, <x-lifecycle
-        class="ea"></x-lifecycle> `DEVICE_SIGNAL_COLLECTION`, and `ENTITY_RISK`.
-      type: string
-      enum:
-        - <x-lifecycle class="ea"></x-lifecycle> DEVICE_SIGNAL_COLLECTION
-        - ACCESS_POLICY
-        - ENTITY_RISK
-        - IDP_DISCOVERY
-        - MFA_ENROLL
-        - OKTA_SIGN_ON
-        - PASSWORD
-        - POST_AUTH_SESSION
-        - PROFILE_ENROLLMENT
-    PolicyLinks:
-      type: object
-      properties:
-        activate:
-          $ref: '#/components/schemas/HrefObjectActivateLink'
-        deactivate:
-          $ref: '#/components/schemas/HrefObjectDeactivateLink'
-        mappings:
-          $ref: '#/components/schemas/HrefObjectMappingsLink'
-        rules:
-          $ref: '#/components/schemas/HrefObjectRulesLink'
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    HrefObjectActivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to activate the resource
-    HrefObjectDeactivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to deactivate the resource
-    HrefObjectMappingsLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the mappings resource
-    HrefObjectRulesLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the rules resource
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     CreateOrUpdatePolicy:
       type: object
       properties:
@@ -1393,164 +1252,6 @@ components:
       items:
         $ref: '#/components/schemas/SimulatePolicyEvaluations'
       type: array
-    PolicyContext:
-      type: object
-      properties:
-        device:
-          type: object
-          properties:
-            platform:
-              type: string
-              description: The platform of the device, for example, IOS.
-            registered:
-              type: boolean
-              description: If the device is registered
-            managed:
-              type: boolean
-              description: If the device is managed
-            assuranceId:
-              type: string
-              description: The device assurance policy ID for the simulation
-        groups:
-          type: object
-          description: >-
-            An array of Group IDs for the simulate operation. Only user IDs or
-            Group IDs are allowed, not both.
-          properties:
-            ids:
-              type: array
-              items:
-                type: string
-                uniqueItems: true
-          required:
-            - ids
-        ip:
-          type: string
-          description: The network rule condition, zone, or IP address
-        risk:
-          type: object
-          description: The risk rule condition level
-          properties:
-            level:
-              type: string
-              enum:
-                - LOW
-                - MEDIUM
-                - HIGH
-        user:
-          type: object
-          description: >-
-            The user ID for the simulate operation. Only user IDs or Group IDs
-            are allowed, not both.
-          properties:
-            id:
-              type: string
-              description: The unique ID number for the user.
-          required:
-            - id
-        zones:
-          type: object
-          description: The zone ID under the network rule condition.
-          properties:
-            ids:
-              type: array
-              items:
-                type: string
-      required:
-        - user
-        - groups
-    PolicyTypeSimulation:
-      type: string
-      enum:
-        - ACCESS_POLICY
-        - MFA_ENROLL
-        - OKTA_SIGN_ON
-        - PROFILE_ENROLLMENT
-    SimulatePolicyEvaluations:
-      type: object
-      properties:
-        evaluated:
-          type: object
-          description: A list of evaluated but not matched policies and rules
-          properties:
-            policies:
-              $ref: '#/components/schemas/SimulateResultPolicies'
-        policyType:
-          type: array
-          description: The policy type of the simulate operation
-          items:
-            $ref: '#/components/schemas/PolicyTypeSimulation'
-        result:
-          $ref: '#/components/schemas/SimulatePolicyResult'
-        status:
-          $ref: '#/components/schemas/SimulateResultStatus'
-        undefined:
-          type: object
-          description: A list of undefined but not matched policies and rules
-          properties:
-            policies:
-              $ref: '#/components/schemas/SimulateResultPolicies'
-    SimulateResultPolicies:
-      items:
-        $ref: '#/components/schemas/SimulateResultPoliciesItems'
-      type: array
-    SimulatePolicyResult:
-      description: The result of the policy evaluation
-      type: object
-      properties:
-        policies:
-          $ref: '#/components/schemas/SimulateResultPolicies'
-    SimulateResultStatus:
-      description: The result of this entity evaluation
-      type: string
-      enum:
-        - MATCH
-        - NOT_MATCH
-        - UNDEFINED
-    SimulateResultPoliciesItems:
-      type: object
-      properties:
-        conditions:
-          type: array
-          description: List of all conditions involved for this policy evaluation
-          items:
-            $ref: '#/components/schemas/SimulateResultConditions'
-        id:
-          type: string
-          description: ID of the specified policy type
-        name:
-          type: string
-          description: Policy name
-        rules:
-          type: array
-          items:
-            $ref: '#/components/schemas/SimulateResultRules'
-        status:
-          $ref: '#/components/schemas/SimulateResultStatus'
-    SimulateResultConditions:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/SimulateResultStatus'
-        type:
-          type: string
-          description: The type of condition
-    SimulateResultRules:
-      type: object
-      properties:
-        conditions:
-          type: array
-          description: List of all conditions involved for this rule evaluation
-          items:
-            $ref: '#/components/schemas/SimulateResultConditions'
-        id:
-          type: string
-          description: The unique ID number of the policy rule
-        name:
-          type: string
-          description: The name of the policy rule
-        status:
-          $ref: '#/components/schemas/SimulateResultStatus'
     Application:
       type: object
       properties:
@@ -1793,6 +1494,250 @@ components:
           SAML_2_0: '#/components/schemas/SamlApplication'
           SECURE_PASSWORD_STORE: '#/components/schemas/SecurePasswordStoreApplication'
           WS_FEDERATION: '#/components/schemas/WsFederationApplication'
+    PolicyMapping:
+      type: object
+      properties:
+        id:
+          type: string
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                application:
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                    - description: Link to the mapped application
+                policy:
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                    - description: Link to the mapped policy
+              type: object
+    PolicyMappingRequest:
+      type: object
+      properties:
+        resourceId:
+          type: string
+          description: Unique identifier of the resource to map
+        resourceType:
+          $ref: '#/components/schemas/PolicyMappingResourceType'
+    PolicyRule:
+      type: object
+      properties:
+        created:
+          type: string
+          description: Timestamp when the rule was created
+          format: date-time
+          readOnly: true
+          nullable: true
+        id:
+          type: string
+          description: Identifier for the rule
+          readOnly: true
+        lastUpdated:
+          type: string
+          description: Timestamp when the rule was last modified
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          description: Name of the rule
+        priority:
+          type: integer
+          description: Priority of the rule
+          nullable: true
+        status:
+          allOf:
+            - $ref: '#/components/schemas/LifecycleStatus'
+            - description: >-
+                Whether or not the rule is active. Use the `activate` query
+                parameter to set the status of a rule.
+        system:
+          type: boolean
+          description: >-
+            Specifies whether Okta created the policy rule (`system=true`). You
+            can't delete policy rules that have `system` set to `true`.
+          default: false
+        type:
+          $ref: '#/components/schemas/PolicyRuleType'
+        _links:
+          $ref: '#/components/schemas/PolicyLinks'
+      discriminator:
+        propertyName: type
+        mapping:
+          ACCESS_POLICY: '#/components/schemas/AccessPolicyRule'
+          PASSWORD: '#/components/schemas/PasswordPolicyRule'
+          PROFILE_ENROLLMENT: '#/components/schemas/ProfileEnrollmentPolicyRule'
+          SIGN_ON: '#/components/schemas/OktaSignOnPolicyRule'
+          IDP_DISCOVERY: '#/components/schemas/IdpDiscoveryPolicyRule'
+          POST_AUTH_SESSION: '#/components/schemas/PostAuthSessionPolicyRule'
+          ENTITY_RISK: '#/components/schemas/EntityRiskPolicyRule'
+          MFA_ENROLL: '#/components/schemas/AuthenticatorEnrollmentPolicyRule'
+          DEVICE_SIGNAL_COLLECTION: '#/components/schemas/DeviceSignalCollectionPolicyRule'
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    PolicyType:
+      description: >-
+        All Okta orgs contain only one IdP discovery policy with an immutable
+        default rule routing to your org's sign-in page, one entity risk policy,
+        and one session protection policy.
+
+        Creating or replacing a policy with the `IDP_DISCOVERY` type, the
+        `ENTITY_RISK` type, or the `POST_AUTH_SESSION` type isn't supported.
+
+        The following policy types are available with Identity Engine:
+        `ACCESS_POLICY`, `PROFILE_ENROLLMENT`, `POST_AUTH_SESSION`, <x-lifecycle
+        class="ea"></x-lifecycle> `DEVICE_SIGNAL_COLLECTION`, and `ENTITY_RISK`.
+      type: string
+      enum:
+        - <x-lifecycle class="ea"></x-lifecycle> DEVICE_SIGNAL_COLLECTION
+        - ACCESS_POLICY
+        - ENTITY_RISK
+        - IDP_DISCOVERY
+        - MFA_ENROLL
+        - OKTA_SIGN_ON
+        - PASSWORD
+        - POST_AUTH_SESSION
+        - PROFILE_ENROLLMENT
+    PolicyLinks:
+      type: object
+      properties:
+        activate:
+          $ref: '#/components/schemas/HrefObjectActivateLink'
+        deactivate:
+          $ref: '#/components/schemas/HrefObjectDeactivateLink'
+        mappings:
+          $ref: '#/components/schemas/HrefObjectMappingsLink'
+        rules:
+          $ref: '#/components/schemas/HrefObjectRulesLink'
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    PolicyContext:
+      type: object
+      properties:
+        device:
+          type: object
+          properties:
+            platform:
+              type: string
+              description: The platform of the device, for example, IOS.
+            registered:
+              type: boolean
+              description: If the device is registered
+            managed:
+              type: boolean
+              description: If the device is managed
+            assuranceId:
+              type: string
+              description: The device assurance policy ID for the simulation
+        groups:
+          type: object
+          description: >-
+            An array of Group IDs for the simulate operation. Only user IDs or
+            Group IDs are allowed, not both.
+          properties:
+            ids:
+              type: array
+              items:
+                type: string
+                uniqueItems: true
+          required:
+            - ids
+        ip:
+          type: string
+          description: The network rule condition, zone, or IP address
+        risk:
+          type: object
+          description: The risk rule condition level
+          properties:
+            level:
+              type: string
+              enum:
+                - LOW
+                - MEDIUM
+                - HIGH
+        user:
+          type: object
+          description: >-
+            The user ID for the simulate operation. Only user IDs or Group IDs
+            are allowed, not both.
+          properties:
+            id:
+              type: string
+              description: The unique ID number for the user.
+          required:
+            - id
+        zones:
+          type: object
+          description: The zone ID under the network rule condition.
+          properties:
+            ids:
+              type: array
+              items:
+                type: string
+      required:
+        - user
+        - groups
+    PolicyTypeSimulation:
+      type: string
+      enum:
+        - ACCESS_POLICY
+        - MFA_ENROLL
+        - OKTA_SIGN_ON
+        - PROFILE_ENROLLMENT
+    SimulatePolicyEvaluations:
+      type: object
+      properties:
+        evaluated:
+          type: object
+          description: A list of evaluated but not matched policies and rules
+          properties:
+            policies:
+              $ref: '#/components/schemas/SimulateResultPolicies'
+        policyType:
+          type: array
+          description: The policy type of the simulate operation
+          items:
+            $ref: '#/components/schemas/PolicyTypeSimulation'
+        result:
+          $ref: '#/components/schemas/SimulatePolicyResult'
+        status:
+          $ref: '#/components/schemas/SimulateResultStatus'
+        undefined:
+          type: object
+          description: A list of undefined but not matched policies and rules
+          properties:
+            policies:
+              $ref: '#/components/schemas/SimulateResultPolicies'
     ApplicationAccessibility:
       description: Specifies access settings for the app
       type: object
@@ -1997,6 +1942,112 @@ components:
           $ref: '#/components/schemas/UsersLink'
       readOnly: true
       type: object
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    PolicyMappingResourceType:
+      description: >-
+        Specifies the type of resource to map. You can either map an app onto a
+        policy, or map a device signal collection policy onto an authentication
+        policy.
+      type: string
+      enum:
+        - ACCESS_POLICY
+        - APP
+    PolicyRuleType:
+      description: Rule type
+      type: string
+      enum:
+        - ACCESS_POLICY
+        - DEVICE_SIGNAL_COLLECTION
+        - ENTITY_RISK
+        - IDP_DISCOVERY
+        - MFA_ENROLL
+        - PASSWORD
+        - POST_AUTH_SESSION
+        - PROFILE_ENROLLMENT
+        - SIGN_ON
+    HrefObjectActivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to activate the resource
+    HrefObjectDeactivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to deactivate the resource
+    HrefObjectMappingsLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the mappings resource
+    HrefObjectRulesLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the rules resource
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    SimulateResultPolicies:
+      items:
+        $ref: '#/components/schemas/SimulateResultPoliciesItems'
+      type: array
+    SimulatePolicyResult:
+      description: The result of the policy evaluation
+      type: object
+      properties:
+        policies:
+          $ref: '#/components/schemas/SimulateResultPolicies'
+    SimulateResultStatus:
+      description: The result of this entity evaluation
+      type: string
+      enum:
+        - MATCH
+        - NOT_MATCH
+        - UNDEFINED
     ApplicationVisibilityHide:
       description: Hides the app for specific end-user apps
       type: object
@@ -2040,121 +2091,65 @@ components:
             Link to the [Application
             Users](/openapi/okta-management/management/tag/ApplicationUsers/#tag/ApplicationUsers/operation/listApplicationUsers)
             resource
-    PolicyMapping:
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
       type: object
       properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    SimulateResultPoliciesItems:
+      type: object
+      properties:
+        conditions:
+          type: array
+          description: List of all conditions involved for this policy evaluation
+          items:
+            $ref: '#/components/schemas/SimulateResultConditions'
         id:
           type: string
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                application:
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                    - description: Link to the mapped application
-                policy:
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                    - description: Link to the mapped policy
-              type: object
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    PolicyMappingRequest:
-      type: object
-      properties:
-        resourceId:
-          type: string
-          description: Unique identifier of the resource to map
-        resourceType:
-          $ref: '#/components/schemas/PolicyMappingResourceType'
-    PolicyMappingResourceType:
-      description: >-
-        Specifies the type of resource to map. You can either map an app onto a
-        policy, or map a device signal collection policy onto an authentication
-        policy.
-      type: string
-      enum:
-        - ACCESS_POLICY
-        - APP
-    PolicyRule:
-      type: object
-      properties:
-        created:
-          type: string
-          description: Timestamp when the rule was created
-          format: date-time
-          readOnly: true
-          nullable: true
-        id:
-          type: string
-          description: Identifier for the rule
-          readOnly: true
-        lastUpdated:
-          type: string
-          description: Timestamp when the rule was last modified
-          format: date-time
-          readOnly: true
-          nullable: true
+          description: ID of the specified policy type
         name:
           type: string
-          description: Name of the rule
-        priority:
-          type: integer
-          description: Priority of the rule
-          nullable: true
+          description: Policy name
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulateResultRules'
         status:
-          allOf:
-            - $ref: '#/components/schemas/LifecycleStatus'
-            - description: >-
-                Whether or not the rule is active. Use the `activate` query
-                parameter to set the status of a rule.
-        system:
-          type: boolean
-          description: >-
-            Specifies whether Okta created the policy rule (`system=true`). You
-            can't delete policy rules that have `system` set to `true`.
-          default: false
-        type:
-          $ref: '#/components/schemas/PolicyRuleType'
-        _links:
-          $ref: '#/components/schemas/PolicyLinks'
-      discriminator:
-        propertyName: type
-        mapping:
-          ACCESS_POLICY: '#/components/schemas/AccessPolicyRule'
-          PASSWORD: '#/components/schemas/PasswordPolicyRule'
-          PROFILE_ENROLLMENT: '#/components/schemas/ProfileEnrollmentPolicyRule'
-          SIGN_ON: '#/components/schemas/OktaSignOnPolicyRule'
-          IDP_DISCOVERY: '#/components/schemas/IdpDiscoveryPolicyRule'
-          POST_AUTH_SESSION: '#/components/schemas/PostAuthSessionPolicyRule'
-          ENTITY_RISK: '#/components/schemas/EntityRiskPolicyRule'
-          MFA_ENROLL: '#/components/schemas/AuthenticatorEnrollmentPolicyRule'
-          DEVICE_SIGNAL_COLLECTION: '#/components/schemas/DeviceSignalCollectionPolicyRule'
-    PolicyRuleType:
-      description: Rule type
+          $ref: '#/components/schemas/SimulateResultStatus'
+    HttpMethod:
       type: string
       enum:
-        - ACCESS_POLICY
-        - DEVICE_SIGNAL_COLLECTION
-        - ENTITY_RISK
-        - IDP_DISCOVERY
-        - MFA_ENROLL
-        - PASSWORD
-        - POST_AUTH_SESSION
-        - PROFILE_ENROLLMENT
-        - SIGN_ON
+        - DELETE
+        - GET
+        - POST
+        - PUT
+    SimulateResultConditions:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/SimulateResultStatus'
+        type:
+          type: string
+          description: The type of condition
+    SimulateResultRules:
+      type: object
+      properties:
+        conditions:
+          type: array
+          description: List of all conditions involved for this rule evaluation
+          items:
+            $ref: '#/components/schemas/SimulateResultConditions'
+        id:
+          type: string
+          description: The unique ID number of the policy rule
+        name:
+          type: string
+          description: The name of the policy rule
+        status:
+          $ref: '#/components/schemas/SimulateResultStatus'
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -2192,7 +2187,49 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    simulateParameter:
+      name: expand
+      description: >-
+        Use `expand=EVALUATED` to include a list of evaluated but not matched
+        policies and policy rules. Use `expand=RULE` to include details about
+        why a rule condition wasn't matched.
+      in: query
+      schema:
+        type: string
+        example: EVALUATED
+    pathPolicyId:
+      name: policyId
+      description: '`id` of the Policy'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00plrilJ7jZ66Gn0X0g3
+    pathPolicyMappingId:
+      name: mappingId
+      description: '`id` of the policy resource Mapping'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: maplr2rLjZ6NsGn1P0g3
+    limitParameter:
+      name: limit
+      in: query
+      schema:
+        type: string
+      description: >-
+        Defines the number of policy rules returned. See
+        [Pagination](https://developer.okta.com/docs/api/#pagination).
+    pathRuleId:
+      name: ruleId
+      description: '`id` of the policy rule'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ruld3hJ7jZh4fn0st0g3
   examples:
     password-policy-response:
       summary: PASSWORD
@@ -2601,22 +2638,6 @@ components:
               allow:
                 - POST
                 - GET
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     create-access-policy-response:
       summary: ACCESS_POLICY
       value:
@@ -2744,14 +2765,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     SimulatePolicyBody:
       summary: Simulate policy request body
       value:
@@ -2847,14 +2860,6 @@ components:
               policies: []
             evaluated:
               policies: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     get-entity-risk-policy-response:
       summary: ENTITY_RISK
       value:
@@ -5021,11 +5026,38 @@ components:
               allow:
                 - GET
                 - PUT
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

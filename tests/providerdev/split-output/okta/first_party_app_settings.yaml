@@ -34,8 +34,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathFirstPartyAppName'
     put:
       summary: Replace the Okta application settings
       description: >-
@@ -83,8 +81,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathFirstPartyAppName'
+    parameters:
+      - $ref: '#/components/parameters/pathFirstPartyAppName'
 components:
   schemas:
     AdminConsoleSettings:
@@ -166,7 +164,18 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
+  parameters:
+    pathFirstPartyAppName:
+      name: appName
+      description: |
+        The key name for the Okta app.<br>
+        Supported apps:
+          * Okta Admin Console (`admin-console`)
+      in: path
+      required: true
+      schema:
+        type: string
+        example: admin-console
   examples:
     AdminConsoleSettingsExample:
       summary: Default Okta Admin Console settings
@@ -197,11 +206,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

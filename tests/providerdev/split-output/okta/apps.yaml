@@ -215,7 +215,17 @@ paths:
       description: Retrieves an application from your Okta organization by `id`
       operationId: getApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: expand
+          in: query
+          description: >-
+            An optional query parameter to return the specified [Application
+            User](/openapi/okta-management/management/tag/ApplicationUsers/) in
+            the `_embedded` property.
+
+            Valid value: `expand=user/{userId}`
+          schema:
+            type: string
+            example: user/0oa1gjh63g214q0Hq0g4
       responses:
         '200':
           description: Success
@@ -323,8 +333,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     delete:
       summary: Delete an application
       description: Deletes an inactive application
@@ -348,8 +356,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/connections/default:
     get:
       summary: Retrieve the default provisioning connection
@@ -386,14 +394,16 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       summary: Update the default provisioning connection
       description: Updates the default provisioning connection for an app
       operationId: updateDefaultProvisioningConnectionForApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - in: query
+          name: activate
+          schema:
+            type: boolean
+          description: Activates the provisioning connection
       requestBody:
         content:
           application/json:
@@ -449,6 +459,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/connections/default/jwks:
     get:
       summary: >-
@@ -485,8 +497,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/connections/default/lifecycle/activate:
     post:
       summary: Activate the default provisioning connection
@@ -510,8 +522,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/connections/default/lifecycle/deactivate:
     post:
       summary: Deactivate the default provisioning connection
@@ -535,8 +547,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/csrs:
     get:
       summary: List all certificate signing requests
@@ -566,8 +578,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       summary: Generate a certificate signing request
       description: >-
@@ -641,8 +651,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/csrs/{csrId}:
     get:
       summary: Retrieve a certificate signing request
@@ -702,9 +712,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathCsrId'
     delete:
       summary: Revoke a certificate signing request
       description: >-
@@ -730,9 +737,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathCsrId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathCsrId'
   /api/v1/apps/{appId}/credentials/csrs/{csrId}/lifecycle/publish:
     post:
       summary: Publish a certificate signing request
@@ -815,9 +822,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathCsrId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathCsrId'
   /api/v1/apps/{appId}/credentials/jwks:
     get:
       summary: List all the OAuth 2.0 client JSON Web Keys
@@ -855,8 +862,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       summary: Add a JSON Web Key
       description: >-
@@ -940,8 +945,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/jwks/{keyId}:
     get:
       summary: Retrieve an OAuth 2.0 client JSON Web Key
@@ -977,9 +982,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
     delete:
       summary: Delete an OAuth 2.0 client JSON Web Key
       description: >-
@@ -1015,9 +1017,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/apps/{appId}/credentials/jwks/{keyId}/lifecycle/activate:
     post:
       summary: Activate an OAuth 2.0 client JSON Web Key
@@ -1057,9 +1059,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/apps/{appId}/credentials/jwks/{keyId}/lifecycle/deactivate:
     post:
       summary: Deactivate an OAuth 2.0 client JSON Web Key
@@ -1114,9 +1116,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/apps/{appId}/credentials/keys:
     get:
       summary: List all key credentials
@@ -1149,8 +1151,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/keys/generate:
     post:
       summary: Generate a key credential
@@ -1168,7 +1170,13 @@ paths:
         object](/openapi/okta-management/management/tag/Application/#tag/Application/operation/replaceApplication!path=4/credentials&t=request).
       operationId: generateApplicationKey
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: validityYears
+          description: Expiry years of the Application Key Credential
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 5
       responses:
         '201':
           description: Created
@@ -1203,6 +1211,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/keys/{keyId}:
     get:
       summary: Retrieve a key credential
@@ -1233,9 +1243,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathKeyId'
   /api/v1/apps/{appId}/credentials/keys/{keyId}/clone:
     post:
       summary: Clone a key credential
@@ -1251,8 +1261,13 @@ paths:
         > **Note:** Sharing certificates isn't a recommended security practice.
       operationId: cloneApplicationKey
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathKeyId'
+        - name: targetAid
+          in: query
+          description: Unique key of the target Application
+          required: true
+          schema:
+            type: string
+            example: 0ouuytCAJSSDELFTUIDS
       responses:
         '201':
           description: Created
@@ -1287,6 +1302,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathKeyId'
   /api/v1/apps/{appId}/credentials/secrets:
     get:
       summary: List all OAuth 2.0 client secrets
@@ -1321,8 +1339,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       summary: Create an OAuth 2.0 client secret
       description: >-
@@ -1393,8 +1409,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/credentials/secrets/{secretId}:
     get:
       summary: Retrieve an OAuth 2.0 client secret
@@ -1428,9 +1444,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathClientSecretId'
     delete:
       summary: Delete an OAuth 2.0 client secret
       description: >-
@@ -1466,9 +1479,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathClientSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathClientSecretId'
   /api/v1/apps/{appId}/credentials/secrets/{secretId}/lifecycle/activate:
     post:
       summary: Activate an OAuth 2.0 client secret
@@ -1501,9 +1514,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathClientSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathClientSecretId'
   /api/v1/apps/{appId}/credentials/secrets/{secretId}/lifecycle/deactivate:
     post:
       summary: Deactivate an OAuth 2.0 client secret
@@ -1547,9 +1560,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathClientSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathClientSecretId'
   /api/v1/apps/{appId}/cwo/connections:
     get:
       summary: Retrieve all Cross App Access connections
@@ -1558,7 +1571,27 @@ paths:
         with an app
       operationId: getAllCrossAppAccessConnections
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: after
+          in: query
+          required: false
+          description: >-
+            Specifies the pagination cursor for the next page of connection
+            results
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: |
+            Specifies the number of results to return per page. The values:
+              * -1: Return all results (up to system maximum)
+              * 0: Return an empty result set
+              * Positive integer: Return up to that many results (capped at system maximum)
+          schema:
+            type: integer
+            format: int32
+            default: -1
+            maximum: 200
       responses:
         '200':
           description: Success
@@ -1626,8 +1659,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/cwo/connections/{connectionId}:
     get:
       summary: Retrieve a Cross App Access connection
@@ -1660,9 +1693,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/connectionId'
     patch:
       summary: Update a Cross App Access connection
       description: |
@@ -1702,9 +1732,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/connectionId'
     delete:
       summary: Delete a Cross App Access connection
       description: |
@@ -1732,9 +1759,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/connectionId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/connectionId'
   /api/v1/apps/{appId}/features:
     get:
       summary: List all features
@@ -1783,8 +1810,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/features/{featureName}:
     get:
       summary: Retrieve a feature
@@ -1815,9 +1842,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathFeatureName'
     put:
       summary: Update a feature
       description: |
@@ -1868,9 +1892,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathFeatureName'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathFeatureName'
   /api/v1/apps/{appId}/federated-claims:
     get:
       summary: List all configured federated claims
@@ -1905,8 +1929,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       summary: Create a federated claim
       description: >-
@@ -1953,8 +1975,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/federated-claims/{claimId}:
     get:
       summary: Retrieve a federated claim
@@ -1988,9 +2010,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/claimId'
     put:
       summary: Replace a federated claim
       description: >-
@@ -2036,9 +2055,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/claimId'
     delete:
       summary: Delete a federated claim
       description: Deletes a federated claim by `claimId`
@@ -2063,16 +2079,16 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/claimId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/claimId'
   /api/v1/apps/{appId}/grants:
     get:
       summary: List all app grants
       description: Lists all scope consent Grants for the app
       operationId: listScopeConsentGrants
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - $ref: '#/components/parameters/queryAppGrantsExpand'
       responses:
         '200':
           description: Success
@@ -2141,16 +2157,15 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/grants/{grantId}:
     get:
       summary: Retrieve an app grant
       description: Retrieves a single scope consent Grant object for the app
       operationId: getScopeConsentGrant
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGrantId'
+        - $ref: '#/components/parameters/queryAppGrantsExpand'
       responses:
         '200':
           description: Success
@@ -2199,9 +2214,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGrantId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathGrantId'
   /api/v1/apps/{appId}/group-push/mappings:
     get:
       x-okta-lifecycle:
@@ -2211,7 +2226,48 @@ paths:
       description: Lists all group push mappings with pagination support
       operationId: listGroupPushMappings
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: after
+          description: Specifies the pagination cursor for the next page of mappings
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Specifies the number of results returned
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            maximum: 1000
+            minimum: 1
+        - name: lastUpdated
+          description: >-
+            Filters group push mappings by last updated date. The `lastUpdated`
+            parameter supports the following format: `YYYY-MM-DDTHH:mm:ssZ`.
+            This filters mappings updated on or after the specified date and
+            time in UTC.
+
+
+            If you don't specify a value, all group push mappings are returned.
+          in: query
+          schema:
+            type: string
+            example: '2025-01-01T00:00:00Z'
+        - name: sourceGroupId
+          description: >-
+            Filters group push mappings by source group ID. If you don't specify
+            a value, all group push mappings are returned.
+          in: query
+          schema:
+            type: string
+            example: 00g00000000000000000
+        - name: status
+          description: >-
+            Filters group push mappings by status. If you don't specify a value,
+            all group push mappings are returned.
+          in: query
+          schema:
+            $ref: '#/components/schemas/GroupPushMappingStatus'
       responses:
         '200':
           description: OK
@@ -2309,8 +2365,8 @@ paths:
             - okta.groups.manage
       tags:
         - GroupPushMapping
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/group-push/mappings/{mappingId}:
     get:
       x-okta-lifecycle:
@@ -2348,9 +2404,6 @@ paths:
             - okta.groups.read
       tags:
         - GroupPushMapping
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupPushMappingId'
     patch:
       x-okta-lifecycle:
         lifecycle: GA
@@ -2402,9 +2455,6 @@ paths:
             - okta.groups.manage
       tags:
         - GroupPushMapping
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupPushMappingId'
     delete:
       x-okta-lifecycle:
         lifecycle: GA
@@ -2415,8 +2465,15 @@ paths:
         an `INACTIVE` state.
       operationId: deleteGroupPushMapping
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupPushMappingId'
+        - in: query
+          name: deleteTargetGroup
+          description: >-
+            If set to `true`, the target group is also deleted. If set to
+            `false`, the target group isn't deleted.
+          required: true
+          schema:
+            type: boolean
+            default: false
       responses:
         '204':
           description: No Content
@@ -2443,13 +2500,39 @@ paths:
             - okta.groups.manage
       tags:
         - GroupPushMapping
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathGroupPushMappingId'
   /api/v1/apps/{appId}/groups:
     get:
       summary: List all application groups
       description: Lists all app group assignments
       operationId: listApplicationGroupAssignments
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: q
+          in: query
+          description: >-
+            Specifies a filter for a list of assigned groups returned based on
+            their names. The value of `q` is matched against the group `name`. 
+
+            This filter only supports the `startsWith` operation that matches
+            the `q` string against the beginning of the [group
+            name](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/#tag/Group/operation/listGroups!c=200&path=profile/name&t=response).
+          schema:
+            type: string
+            example: test
+        - name: after
+          in: query
+          description: >-
+            Specifies the pagination cursor for the `next` page of results.
+            Treat this as an opaque value obtained through the next link
+            relationship. See
+            [Pagination](https://developer.okta.com/docs/api/#pagination).
+          schema:
+            type: string
+            example: 16275000448691
+        - $ref: '#/components/parameters/queryGroupAssignmentLimit'
+        - $ref: '#/components/parameters/queryGroupAssignmentWithMetadataExpand'
       responses:
         '200':
           description: Success
@@ -2477,14 +2560,15 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/groups/{groupId}:
     get:
       summary: Retrieve an application group
       description: Retrieves an app group assignment
       operationId: getApplicationGroupAssignment
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupId'
+        - $ref: '#/components/parameters/queryGroupAssignmentWithGroupExpand'
       responses:
         '200':
           description: Success
@@ -2560,9 +2644,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupId'
     patch:
       summary: Update an application group
       description: Updates a group assignment to an app
@@ -2605,9 +2686,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupId'
     delete:
       summary: Unassign an application group
       description: Unassigns a Group from an app
@@ -2631,9 +2709,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathGroupId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/apps/{appId}/lifecycle/activate:
     post:
       summary: Activate an application
@@ -2658,8 +2736,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/lifecycle/deactivate:
     post:
       summary: Deactivate an application
@@ -2691,8 +2769,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/logo:
     post:
       summary: Upload an application logo
@@ -2766,8 +2844,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/policies/{policyId}:
     put:
       summary: Assign an authentication policy
@@ -2808,16 +2886,21 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/apps/{appId}/sso/saml/metadata:
     get:
       summary: Preview the application SAML metadata
       description: Previews the SSO SAML metadata for an application
       operationId: previewSAMLmetadataForApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - name: kid
+          in: query
+          required: true
+          schema:
+            type: string
+            example: mXtzOtml09Dg1ZCeKxTRBo3KrQuBWFkJ5oxhVagjTzo
       responses:
         '200':
           description: OK
@@ -2892,6 +2975,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/tokens:
     get:
       summary: List all application refresh tokens
@@ -2907,7 +2992,9 @@ paths:
         parse it).
       operationId: listOAuth2TokensForApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - $ref: '#/components/parameters/queryAppGrantsExpand'
+        - $ref: '#/components/parameters/queryAppAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: Success
@@ -2961,16 +3048,15 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/tokens/{tokenId}:
     get:
       summary: Retrieve an application token
       description: Retrieves a refresh token for the specified app
       operationId: getOAuth2TokenForApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathTokenId'
+        - $ref: '#/components/parameters/queryAppGrantsExpand'
       responses:
         '200':
           description: Success
@@ -3019,16 +3105,19 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathTokenId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathTokenId'
   /api/v1/apps/{appId}/users:
     get:
       summary: List all application users
       description: Lists all assigned users for an app
       operationId: listApplicationUsers
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
+        - $ref: '#/components/parameters/queryAppAfter'
+        - $ref: '#/components/parameters/queryAppLimit'
+        - $ref: '#/components/parameters/queryAppUserQ'
+        - $ref: '#/components/parameters/queryAppUserExpand'
       responses:
         '200':
           description: Success
@@ -3113,16 +3202,15 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/apps/{appId}/users/{userId}:
     get:
       summary: Retrieve an application user
       description: Retrieves a specific user assignment for a specific app
       operationId: getApplicationUser
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathAppUserId'
+        - $ref: '#/components/parameters/queryAppUserExpand'
       responses:
         '200':
           description: Success
@@ -3193,9 +3281,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathAppUserId'
     delete:
       summary: Unassign an application user
       description: >-
@@ -3217,8 +3302,13 @@ paths:
         target app.
       operationId: unassignUserFromApplication
       parameters:
-        - $ref: '#/components/parameters/pathAppId'
-        - $ref: '#/components/parameters/pathAppUserId'
+        - name: sendEmail
+          in: query
+          description: Sends a deactivation email to the administrator if `true`
+          schema:
+            type: boolean
+            default: false
+          x-okta-added-version: 1.5.0
       responses:
         '204':
           description: No Content
@@ -3238,6 +3328,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
+      - $ref: '#/components/parameters/pathAppUserId'
   /api/v1/apps/{appName}/{appId}/oauth2/callback:
     post:
       summary: Verify the provisioning connection
@@ -3250,8 +3343,18 @@ paths:
         and `slack` apps.
       operationId: verifyProvisioningConnectionForApplication
       parameters:
-        - $ref: '#/components/parameters/pathOAuthProvisioningAppName'
-        - $ref: '#/components/parameters/pathAppId'
+        - name: code
+          in: query
+          schema:
+            type: string
+            description: Unique string associated with each authentication request
+        - name: state
+          in: query
+          schema:
+            type: string
+            description: >-
+              A temporary code string that the client exchanges for an access
+              token
       responses:
         '204':
           description: No content
@@ -3270,6 +3373,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathOAuthProvisioningAppName'
+      - $ref: '#/components/parameters/pathAppId'
 components:
   schemas:
     Application:
@@ -3514,6 +3620,950 @@ components:
           SAML_2_0: '#/components/schemas/SamlApplication'
           SECURE_PASSWORD_STORE: '#/components/schemas/SecurePasswordStoreApplication'
           WS_FEDERATION: '#/components/schemas/WsFederationApplication'
+    ProvisioningConnectionResponse:
+      type: object
+      properties:
+        authScheme:
+          $ref: '#/components/schemas/ProvisioningConnectionTokenAuthScheme'
+        baseUrl:
+          type: string
+          description: Base URL
+        profile:
+          $ref: '#/components/schemas/ProvisioningConnectionResponseProfile'
+        status:
+          $ref: '#/components/schemas/ProvisioningConnectionStatus'
+        _links:
+          $ref: '#/components/schemas/LinksSelfLifecycleAndAuthorize'
+      required:
+        - profile
+        - status
+    ProvisioningConnectionTokenRequest:
+      title: Token-based connection
+      allOf:
+        - $ref: '#/components/schemas/ProvisioningConnectionRequest'
+        - description: Token-based provisioning connection request
+          properties:
+            baseUrl:
+              type: string
+              description: >-
+                Only used for the Zscaler 2.0 (`zscalerbyz`) app. The base URL
+                for the Zscaler 2.0 target app, which also contains the Zscaler
+                ID.
+              x-okta-lifecycle:
+                lifecycle: GA
+                isGenerallyAvailable: true
+            profile:
+              $ref: '#/components/schemas/ProvisioningConnectionTokenRequestProfile'
+          required:
+            - profile
+          type: object
+    ProvisioningConnectionOauthRequest:
+      title: OAuth 2.0-based connection
+      allOf:
+        - $ref: '#/components/schemas/ProvisioningConnectionRequest'
+        - description: OAuth 2.0-based provisioning connection request
+          properties:
+            profile:
+              $ref: '#/components/schemas/ProvisioningConnectionOauthRequestProfile'
+          required:
+            - profile
+          type: object
+    AppConnectionUserProvisionJWKResponse:
+      properties:
+        jwks:
+          $ref: '#/components/schemas/AppConnectionUserProvisionJWKList'
+      required:
+        - jwks
+      type: object
+    Csr:
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/createdProperty'
+        csr:
+          type: string
+          readOnly: true
+          example: >-
+            MIIC4DCCAcgCAQAwcTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xEzARBgNVBAoMCk9rdGEsIEluYy4xDDAKBgNVBAsMA0RldjESMBAGA1UEAwwJU1AgSXNzdWVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6m8jHVCr9/tKvvbFN59T4raoCs/78KRm4fSefHQOv1TKLXo4wTLbsqYWRWc5u0sd5orUMQgPQOyj3i6qh13mALY4BzrT057EG1BUNjGg29QgYlnOk2iX890e5BIDMQQEIKFrvOi2V8cLUkLvE2ydRn0VO1Q1frbUkYeStJYC5Api2JQsYRwa+1ZeDH1ITnIzUaugWhW2WB2lSnwZkenne5KtffxMPYVu+IhNRHoKaRA6Z51YNhMJIx17JM2hs/H4Ka3drk6kzDf7ofk/yBpb9yBWyU7CTSQhdoHidxqFprMDaT66W928t3AeOENHBuwn8c2K9WeGG+bELNyQRJVmawIDAQABoCowKAYJKoZIhvcNAQkOMRswGTAXBgNVHREEEDAOggxkZXYub2t0YS5jb20wDQYJKoZIhvcNAQELBQADggEBAA2hsVJRVM+A83X9MekjTnIbt19UNT8wX7wlE9jUKirWsxceLiZBpVGn9qfKhhVIpvdaIRSeoFYS2Kg/m1G6bCvjmZLcrQ5FcEBjZH2NKfNppGVnfC2ugtUkBtCB+UUzOhKhRKJtGugenKbP33zRWWIqnd2waF6Cy8TIuqQVPbwEDN9bCbAs7ND6CFYNguY7KYjWzQOeAR716eqpEEXuPYAS4nx/ty4ylonR8cv+gpq51rvq80A4k/36aoeM0Y6I4w64vhTfuvWW2UYFUD+/+y2FA2CSP4JfctySrf1s525v6fzTFZ3qZbB5OZQtP2b8xYWktMzywsxGKDoVDB4wkH4=
+        id:
+          type: string
+          readOnly: true
+          example: h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
+        kty:
+          type: string
+          readOnly: true
+          example: RSA
+        _links:
+          $ref: '#/components/schemas/CSRLinks'
+          readOnly: true
+          nullable: false
+    CsrMetadata:
+      type: object
+      properties:
+        subject:
+          $ref: '#/components/schemas/CsrMetadataSubject'
+        subjectAltNames:
+          $ref: '#/components/schemas/CsrMetadataSubjectAltNames'
+    AppCsrPkcs10:
+      description: Base64URL-encoded CSR in DER format
+      format: base64
+      type: string
+    JsonWebKey:
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/createdProperty'
+        e:
+          description: RSA key value (public exponent) for Key binding
+          type: string
+          readOnly: true
+        expiresAt:
+          description: Timestamp when the certificate expires
+          type: string
+          format: date-time
+          readOnly: true
+        kid:
+          description: Unique identifier for the certificate
+          type: string
+          readOnly: true
+        kty:
+          description: >-
+            Cryptographic algorithm family for the certificate's keypair. Valid
+            value: `RSA`
+          type: string
+          readOnly: true
+        lastUpdated:
+          type: string
+          format: date-time
+          $ref: '#/components/schemas/lastUpdatedProperty'
+        'n':
+          description: >-
+            RSA modulus value that is used by both the public and private keys
+            and provides a link between them
+          type: string
+        use:
+          description: 'Acceptable use of the certificate. Valid value: `sig`'
+          type: string
+          readOnly: true
+        x5c:
+          description: >-
+            X.509 certificate chain that contains a chain of one or more
+            certificates
+          type: array
+          items:
+            type: string
+          readOnly: true
+        x5t#S256:
+          description: >-
+            X.509 certificate SHA-256 thumbprint, which is the base64url-encoded
+            SHA-256 thumbprint (digest) of the DER encoding of an X.509
+            certificate
+          type: string
+          readOnly: true
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    OAuth2ClientJsonSigningKeyResponse:
+      title: Signing Key
+      description: >-
+        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
+        representation of a cryptographic key. Okta uses signing keys to verify
+        the signature of a JWT when provided for the `private_key_jwt` client
+        authentication method or for a signed authorize request object. Okta
+        supports both RSA and Elliptic Curve (EC) keys for signing tokens.
+      allOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyResponseBase'
+      oneOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRsaResponse'
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyECResponse'
+    OAuth2ClientJsonEncryptionKeyResponse:
+      title: Encryption Key
+      allOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyResponseBase'
+      description: >-
+        <x-lifecycle-container><x-lifecycle
+        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
+        (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON representation of
+        a cryptographic key. Okta uses an encryption key to encrypt an ID token
+        JWT minted by the org authorization server or custom authorization
+        server. Okta supports only RSA keys for encrypting tokens.
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: true
+      type: object
+      properties:
+        e:
+          type: string
+          description: RSA key value (exponent) for key binding
+          example: AQAB
+          nullable: false
+        kty:
+          type: string
+          description: Cryptographic algorithm family for the certificate's key pair
+          example: RSA
+          nullable: false
+          enum:
+            - RSA
+        'n':
+          type: string
+          description: RSA key value (modulus) for key binding
+          example: >-
+            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
+          nullable: false
+        use:
+          type: string
+          description: Acceptable use of the JSON Web Key
+          example: enc
+          nullable: false
+          enum:
+            - enc
+    OAuth2ClientJsonSigningKeyRequest:
+      title: Signing Key
+      allOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
+      oneOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRsaRequest'
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyECRequest'
+      description: >-
+        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
+        representation of a cryptographic key. Okta uses signing keys to verify
+        the signature of a JWT when provided for the `private_key_jwt` client
+        authentication method or for a signed authorize request object. Okta
+        supports both RSA and Elliptic Curve (EC) keys for signing tokens.
+      type: object
+      properties:
+        alg:
+          type: string
+          description: Algorithm used in the key
+          example: RS256
+          nullable: false
+        use:
+          type: string
+          description: Acceptable use of the JSON Web Key
+          example: sig
+          nullable: false
+          enum:
+            - sig
+    OAuth2ClientJsonEncryptionKeyRequest:
+      title: Encryption Key
+      allOf:
+        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
+      description: >-
+        <x-lifecycle-container><x-lifecycle
+        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
+        (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON representation of
+        a cryptographic key. Okta uses an encryption key to encrypt an ID token
+        JWT minted by the org authorization server or custom authorization
+        server. Okta supports only RSA keys for encrypting tokens.
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: true
+      type: object
+      properties:
+        e:
+          type: string
+          description: RSA key value (exponent) for key binding
+          example: AQAB
+          nullable: false
+        kty:
+          type: string
+          description: Cryptographic algorithm family for the certificate's key pair
+          example: RSA
+          nullable: false
+          enum:
+            - RSA
+        'n':
+          type: string
+          description: RSA key value (modulus) for key binding
+          example: >-
+            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
+          nullable: false
+        use:
+          type: string
+          description: Acceptable use of the JSON Web Key
+          example: enc
+          nullable: false
+          enum:
+            - enc
+    OAuth2ClientSecret:
+      type: object
+      properties:
+        client_secret:
+          type: string
+          description: The OAuth 2.0 client secret string
+          example: DRUFXGF9XbLn......a3x3POBiIxDreBCdZuFs5B
+          readOnly: true
+          nullable: false
+        created:
+          type: string
+          description: Timestamp when the OAuth Client 2.0 Secret was created
+          example: '2023-02-21T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        id:
+          type: string
+          description: The unique ID of the OAuth Client Secret
+          example: ocs2f4zrZbs8nUa7p0g4
+          readOnly: true
+          nullable: false
+        lastUpdated:
+          type: string
+          description: Timestamp when the OAuth Client 2.0 Secret was updated
+          example: '2023-02-21T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        secret_hash:
+          type: string
+          description: OAuth 2.0 client secret string hash
+          example: yk4SVx4sUWVJVbHt6M-UPA
+          readOnly: true
+          nullable: false
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: Status of the OAuth 2.0 Client Secret
+          example: ACTIVE
+          nullable: false
+          default: ACTIVE
+        _links:
+          $ref: '#/components/schemas/OAuthClientSecretLinks'
+          readOnly: true
+          nullable: false
+    OAuth2ClientSecretRequestBody:
+      type: object
+      properties:
+        client_secret:
+          type: string
+          description: The OAuth 2.0 client secret string
+          example: DRUFXGF9XbLn......a3x3POBiIxDreBCdZuFs5B
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: Status of the OAuth 2.0 Client Secret
+          example: ACTIVE
+    OrgCrossAppAccessConnection:
+      description: Connection object for Cross App Access connections
+      type: object
+      properties:
+        created:
+          type: string
+          description: The ISO 8601 formatted date and time when the connection was created
+          format: date-time
+          readOnly: true
+          example: '2024-10-15T10:30:00.000Z'
+        id:
+          type: string
+          description: Unique identifier for the connection
+          readOnly: true
+          example: cwofxqCAJWWGELFTYASJ
+        lastUpdated:
+          type: string
+          description: >-
+            The ISO 8601 formatted date and time when the connection was last
+            updated
+          format: date-time
+          readOnly: true
+          example: '2024-10-15T14:20:00.000Z'
+        requestingAppInstanceId:
+          type: string
+          description: ID of the requesting app instance
+          example: 0oafxqCAJWWGELFTYASJ
+        resourceAppInstanceId:
+          type: string
+          description: ID of the resource app instance
+          example: 0oafxqCBJWWGELFTYASK
+        status:
+          description: Indicates if the Cross App Access connection is active or inactive
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          example: ACTIVE
+    OrgCrossAppAccessConnectionPatchRequest:
+      description: Patch request object for Cross App Access Connections
+      type: object
+      properties:
+        status:
+          type: string
+          description: Requested value of Cross App Access connection status
+          enum:
+            - ACTIVE
+            - INACTIVE
+          example: ACTIVE
+      required:
+        - status
+    ApplicationFeature:
+      description: |
+        The Feature object is used to configure app feature settings.
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the feature
+          example: Settings for provisioning users from Okta to a downstream app
+          readOnly: true
+        name:
+          $ref: '#/components/schemas/ApplicationFeatureType'
+          readOnly: true
+        status:
+          allOf:
+            - $ref: '#/components/schemas/EnabledStatus'
+            - default: DISABLED
+            - example: ENABLED
+            - readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - readOnly: true
+      discriminator:
+        propertyName: name
+        mapping:
+          USER_PROVISIONING: '#/components/schemas/UserProvisioningApplicationFeature'
+          INBOUND_PROVISIONING: '#/components/schemas/InboundProvisioningApplicationFeature'
+    CapabilitiesObject:
+      title: USER_PROVISIONING
+      description: Defines the configurations for the USER_PROVISIONING feature
+      type: object
+      properties:
+        create:
+          $ref: '#/components/schemas/CapabilitiesCreateObject'
+        update:
+          $ref: '#/components/schemas/CapabilitiesUpdateObject'
+    CapabilitiesInboundProvisioningObject:
+      title: INBOUND_PROVISIONING
+      description: Defines the configuration for the INBOUND_PROVISIONING feature
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: true
+      type: object
+      properties:
+        importRules:
+          $ref: '#/components/schemas/CapabilitiesImportRulesObject'
+        importSettings:
+          $ref: '#/components/schemas/CapabilitiesImportSettingsObject'
+      required:
+        - importSettings
+        - importRules
+    FederatedClaim:
+      type: object
+      properties:
+        created:
+          type: string
+          description: Timestamp when the federated claim was created
+          example: '2024-02-29T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        expression:
+          type: string
+          description: The Okta Expression Language expression to be evaluated at runtime
+          example: appuser.entitlements.role
+          readOnly: false
+          nullable: false
+        id:
+          type: string
+          description: The unique ID of the federated claim
+          example: ofc2f4zrZbs8nUa7p0g4
+          readOnly: true
+          nullable: false
+        lastUpdated:
+          type: string
+          description: Timestamp when the federated claim was updated
+          example: '2023-02-21T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        name:
+          type: string
+          description: The name of the claim to be used in the produced token
+          example: roleg
+          readOnly: false
+          nullable: false
+    FederatedClaimRequestBody:
+      type: object
+      properties:
+        expression:
+          type: string
+          description: The Okta Expression Language expression to be evaluated at runtime
+          example: appuser.entitlements.role
+        name:
+          type: string
+          description: The name of the claim to be used in the produced token
+          example: role
+    OAuth2ScopeConsentGrant:
+      description: Grant object that represents an app consent scope grant
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: Client ID of the app integration
+          readOnly: true
+          example: oag3ih1zrm1cBFOiq0h6
+        created:
+          $ref: '#/components/schemas/createdProperty'
+        createdBy:
+          $ref: '#/components/schemas/OAuth2Actor'
+        id:
+          type: string
+          description: ID of the Grant object
+          readOnly: true
+          example: oag3ih1zrm1cBFOiq0h6
+        issuer:
+          type: string
+          description: >-
+            The issuer of your org authorization server. This is typically your
+            Okta domain.
+          example: https://my_test_okta_org.oktapreview.com
+        lastUpdated:
+          $ref: '#/components/schemas/lastUpdatedProperty'
+        scopeId:
+          type: string
+          description: >-
+            The name of the [Okta
+            scope](https://developer.okta.com/docs/api/oauth2/#oauth-20-scopes)
+            for which consent is granted
+          example: okta.users.read
+        source:
+          $ref: '#/components/schemas/OAuth2ScopeConsentGrantSource'
+        status:
+          $ref: '#/components/schemas/GrantOrTokenStatus'
+        userId:
+          type: string
+          description: User ID that granted consent (if `source` is `END_USER`)
+          readOnly: true
+          example: 00u5t60iloOHN9pBi0h7
+        _embedded:
+          type: object
+          description: Embedded resources related to the Grant
+          properties:
+            scope:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The name of the Okta scope for which consent is granted
+                  example: okta.users.read
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - type: object
+              properties:
+                app:
+                  description: Link to the app resource
+                  allOf:
+                    - $ref: '#/components/schemas/AppResourceHrefObject'
+                client:
+                  description: Link to the client resource
+                  allOf:
+                    - $ref: '#/components/schemas/AppResourceHrefObject'
+                scope:
+                  description: Link to the scope resource
+                  allOf:
+                    - $ref: '#/components/schemas/ScopeResourceHrefObject'
+                user:
+                  description: Link to the user resource
+                  allOf:
+                    - $ref: '#/components/schemas/UserResourceHrefObject'
+                authorizationServer:
+                  description: Link to the authorization server resource
+                  allOf:
+                    - $ref: >-
+                        #/components/schemas/AuthorizationServerResourceHrefObject
+            - readOnly: true
+      required:
+        - issuer
+        - scopeId
+    GroupPushMappingStatus:
+      description: The status of the group push mapping
+      type: string
+      enum:
+        - ACTIVE
+        - ERROR
+        - INACTIVE
+      x-enumDescriptions:
+        ACTIVE: >-
+          The group push mapping is active and Okta pushes membership changes to
+          the target group
+        INACTIVE: >-
+          The group push mapping is inactive and Okta doesn't push membership
+          changes to the target group
+        ERROR: >-
+          The group push mapping is in an error state and Okta doesn't push
+          membership changes to the target group
+    GroupPushMapping:
+      type: object
+      properties:
+        appConfig:
+          type: object
+          readOnly: true
+          $ref: '#/components/schemas/AppConfig'
+        created:
+          description: Timestamp when the group push mapping was created
+          type: string
+          format: date-time
+          readOnly: true
+        errorSummary:
+          description: The error message summary if the latest push failed
+          type: string
+          readOnly: true
+        id:
+          description: The ID of the group push mapping
+          type: string
+          readOnly: true
+        lastPush:
+          description: Timestamp when the group push mapping was pushed
+          type: string
+          format: date-time
+          readOnly: true
+        lastUpdated:
+          description: Timestamp when the group push mapping was last updated
+          type: string
+          format: date-time
+          readOnly: true
+        sourceGroupId:
+          description: The ID of the source group for the group push mapping
+          type: string
+          readOnly: true
+        status:
+          description: The status of the group push mapping
+          type: string
+          $ref: '#/components/schemas/GroupPushMappingStatus'
+          readOnly: true
+        targetGroupId:
+          description: The ID of the target group for the group push mapping
+          type: string
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/GroupPushMappingLinks'
+    CreateGroupPushMappingRequest:
+      type: object
+      properties:
+        appConfig:
+          type: object
+          $ref: '#/components/schemas/AppConfig'
+        sourceGroupId:
+          description: The ID of the source group for the group push mapping
+          type: string
+        status:
+          type: string
+          $ref: '#/components/schemas/GroupPushMappingStatusUpsert'
+        targetGroupId:
+          description: >-
+            The ID of the existing target group for the group push mapping. This
+            is used to link to an existing group. Required if `targetGroupName`
+            is not provided.
+          type: string
+        targetGroupName:
+          description: >-
+            The name of the target group for the group push mapping. This is
+            used when creating a new downstream group. If the group already
+            exists, it links to the existing group. Required if `targetGroupId`
+            is not provided.
+          type: string
+      required:
+        - sourceGroupId
+    UpdateGroupPushMappingRequest:
+      type: object
+      properties:
+        status:
+          description: >-
+            The status of the group push mapping.
+
+
+            If changing the group push mapping status to `ACTIVE`, Okta performs
+            an initial push to the target group, and then begins pushing
+            membership changes. 
+
+
+            If changing the group push mapping status to `INACTIVE`, Okta stops
+            pushing membership changes to the target group.
+          type: string
+          $ref: '#/components/schemas/GroupPushMappingStatusUpsert'
+      required:
+        - status
+    ApplicationGroupAssignment:
+      title: Application Group Assignment
+      description: >-
+        The Application Group object that defines a group of users' app-specific
+        profile and credentials for an app
+      type: object
+      properties:
+        id:
+          type: string
+          description: >-
+            ID of the
+            [group](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/)
+          readOnly: true
+          example: 00g4hb1HChfUriNgW0g4
+        lastUpdated:
+          allOf:
+            - $ref: '#/components/schemas/lastUpdatedProperty'
+            - example: '2014-06-24T15:28:14.000Z'
+        priority:
+          type: integer
+          description: >-
+            Priority assigned to the group. If an app has more than one group
+            assigned to the same user, then the group with the higher priority
+            has its profile applied to the [application
+            user](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/ApplicationUsers/).
+
+            If a priority value isn't specified, then the next highest priority
+            is assigned by default.
+
+            See [Assign attribute group
+            priority](https://help.okta.com/okta_help.htm?type=oie&id=ext-usgp-app-group-priority)
+            and the [sample priority use
+            case](https://help.okta.com/okta_help.htm?type=oie&id=ext-usgp-combine-values-use).
+          example: 99
+        profile:
+          $ref: '#/components/schemas/GroupAssignmentProfile'
+        _embedded:
+          type: object
+          description: >-
+            Embedded resource related to the Application Group using the [JSON
+            Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification.
+
+            If the `expand=group` query parameter is specified, then the
+            [group](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/)
+            object is embedded. 
+
+            If the `expand=metadata` query parameter is specified, then the
+            group assignment metadata is embedded.
+          additionalProperties:
+            type: object
+            properties: {}
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - type: object
+              properties:
+                app:
+                  $ref: '#/components/schemas/HrefObjectAppLink'
+                group:
+                  $ref: '#/components/schemas/HrefObjectGroupLink'
+    JsonPatchOperation:
+      description: The update action
+      type: object
+      properties:
+        op:
+          $ref: '#/components/schemas/PatchAction'
+        path:
+          type: string
+          description: The resource path of the attribute to update
+        value:
+          type: object
+          description: The update operation value
+    OAuth2RefreshToken:
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: Client ID
+        created:
+          $ref: '#/components/schemas/createdProperty'
+        expiresAt:
+          type: string
+          description: Expiration time of the OAuth 2.0 Token
+          format: date-time
+          readOnly: true
+        id:
+          type: string
+          description: ID of the Token object
+          readOnly: true
+          example: oar579Mcp7OUsNTlo0g3
+        issuer:
+          type: string
+          description: The complete URL of the authorization server that issued the Token
+          example: https://{yourOktaDomain}/oauth2/ausain6z9zIedDCxB0h7
+        lastUpdated:
+          $ref: '#/components/schemas/lastUpdatedProperty'
+        scopes:
+          type: array
+          description: The scope names attached to the Token
+          items:
+            type: string
+            example: offline_access
+        status:
+          $ref: '#/components/schemas/GrantOrTokenStatus'
+        userId:
+          type: string
+          description: The ID of the user associated with the Token
+          example: 00u5t60iloOHN9pBi0h7
+        _embedded:
+          type: object
+          description: >-
+            The embedded resources related to the object if the `expand` query
+            parameter is specified
+          properties:
+            scopes:
+              type: array
+              description: The scope objects attached to the Token
+              items:
+                $ref: '#/components/schemas/OAuth2RefreshTokenScope'
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - type: object
+              properties:
+                app:
+                  description: Link to the app resource
+                  allOf:
+                    - $ref: '#/components/schemas/AppResourceHrefObject'
+                revoke:
+                  description: Link to revoke the refresh Token
+                  allOf:
+                    - $ref: '#/components/schemas/RevokeRefreshTokenHrefObject'
+                    - properties:
+                        hints:
+                          properties:
+                            allow:
+                              items:
+                                enum:
+                                  - DELETE
+                                default: DELETE
+                          type: object
+                      type: object
+                client:
+                  description: Link to the client resource
+                  allOf:
+                    - $ref: '#/components/schemas/AppResourceHrefObject'
+                user:
+                  description: Link to the user resource
+                  allOf:
+                    - $ref: '#/components/schemas/UserResourceHrefObject'
+                authorizationServer:
+                  description: Link to the Token authorization server resource
+                  allOf:
+                    - $ref: >-
+                        #/components/schemas/AuthorizationServerResourceHrefObject
+    AppUser:
+      title: Application User
+      description: >-
+        The application user object defines a user's app-specific profile and
+        credentials for an app
+      type: object
+      properties:
+        created:
+          allOf:
+            - $ref: '#/components/schemas/createdProperty'
+            - example: '2014-06-24T15:27:59.000Z'
+        credentials:
+          $ref: '#/components/schemas/AppUserCredentials'
+        externalId:
+          type: string
+          description: >-
+            The ID of the user in the target app that's linked to the Okta
+            application user object.
+
+            This value is the native app-specific identifier or primary key for
+            the user in the target app.
+
+
+            The `externalId` is set during import when the user is confirmed
+            (reconciled) or during provisioning when the user is created in the
+            target app.
+
+            This value isn't populated for SSO app assignments (for example,
+            SAML or SWA) because it isn't synchronized with a target app.
+          readOnly: true
+          example: 70c14cc17d3745e8a9f98d599a68329c
+        id:
+          type: string
+          description: Unique identifier for the Okta user
+          example: 00u11z6WHMYCGPCHCRFK
+        lastSync:
+          type: string
+          description: >-
+            Timestamp of the last synchronization operation. This value is only
+            updated for apps with the `IMPORT_PROFILE_UPDATES` or `PUSH
+            PROFILE_UPDATES` feature.
+          format: date-time
+          readOnly: true
+          example: '2014-06-24T15:27:59.000Z'
+        lastUpdated:
+          allOf:
+            - $ref: '#/components/schemas/lastUpdatedProperty'
+            - example: '2014-06-24T15:28:14.000Z'
+        passwordChanged:
+          type: string
+          description: Timestamp when the application user password was last changed
+          format: date-time
+          readOnly: true
+          nullable: true
+          example: '2014-06-24T15:27:59.000Z'
+        profile:
+          $ref: '#/components/schemas/AppUserProfile'
+        scope:
+          type: string
+          description: >-
+            Indicates if the assignment is direct (`USER`) or by group
+            membership (`GROUP`).
+          enum:
+            - USER
+            - GROUP
+          example: USER
+        status:
+          $ref: '#/components/schemas/AppUserStatus'
+        statusChanged:
+          type: string
+          description: Timestamp when the application user status was last changed
+          format: date-time
+          readOnly: true
+          example: '2014-06-24T15:28:14.000Z'
+        syncState:
+          $ref: '#/components/schemas/AppUserSyncState'
+        _embedded:
+          type: object
+          description: >-
+            Embedded resources related to the application user using the [JSON
+            Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          additionalProperties:
+            type: object
+            properties: {}
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/LinksAppAndUser'
+    AppUserAssignRequest:
+      allOf:
+        - $ref: '#/components/schemas/AppUser'
+        - required:
+            - id
+    AppUserUpdateRequest:
+      oneOf:
+        - $ref: '#/components/schemas/AppUserCredentialsRequestPayload'
+        - $ref: '#/components/schemas/AppUserProfileRequestPayload'
     ApplicationAccessibility:
       description: Specifies access settings for the app
       type: object
@@ -3718,152 +4768,6 @@ components:
           $ref: '#/components/schemas/UsersLink'
       readOnly: true
       type: object
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    ApplicationVisibilityHide:
-      description: Hides the app for specific end-user apps
-      type: object
-      properties:
-        iOS:
-          type: boolean
-          description: Okta Mobile for iOS or Android (pre-dates Android)
-          default: false
-          example: false
-        web:
-          type: boolean
-          description: Okta End-User Dashboard on a web browser
-          default: false
-          example: true
-    AccessPolicyLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app access policy resource
-    HrefObjectActivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to activate the resource
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    HrefObjectDeactivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to deactivate the resource
-    GroupsLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [Application
-            Groups](/openapi/okta-management/management/tag/ApplicationGroups/#tag/ApplicationGroups/operation/listApplicationGroupAssignments)
-            resource
-    HelpLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app help resource
-    MetadataLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [SAML
-            metadata](/openapi/okta-management/management/tag/ApplicationSSO/#tag/ApplicationSSO/operation/previewSAMLmetadataForApplication)
-            for SSO
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    UsersLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [Application
-            Users](/openapi/okta-management/management/tag/ApplicationUsers/#tag/ApplicationUsers/operation/listApplicationUsers)
-            resource
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
-    ProvisioningConnectionResponse:
-      type: object
-      properties:
-        authScheme:
-          $ref: '#/components/schemas/ProvisioningConnectionTokenAuthScheme'
-        baseUrl:
-          type: string
-          description: Base URL
-        profile:
-          $ref: '#/components/schemas/ProvisioningConnectionResponseProfile'
-        status:
-          $ref: '#/components/schemas/ProvisioningConnectionStatus'
-        _links:
-          $ref: '#/components/schemas/LinksSelfLifecycleAndAuthorize'
-      required:
-        - profile
-        - status
     ProvisioningConnectionTokenAuthScheme:
       description: >-
         A token is used to authenticate with the app. This property is only
@@ -3901,132 +4805,6 @@ components:
           properties:
             authorize:
               $ref: '#/components/schemas/HrefObjectAuthorizeLink'
-    ProvisioningConnectionAuthScheme:
-      description: Defines the method of authentication
-      type: string
-      enum:
-        - OAUTH2
-        - TOKEN
-        - UNKNOWN
-      x-enumDescriptions:
-        TOKEN: A token is used to authenticate with the app.
-        OAUTH2: OAuth 2.0 is used to authenticate with the app.
-        UNKNOWN: >-
-          The authentication scheme used by the app isn't supported, or the app
-          doesn't support provisioning.
-    Org2OrgProvisioningOAuthSigningSettings:
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: false
-        SKUs: []
-      title: Org2Org Provisioning OAuth Signing Settings
-      description: |-
-        Only used for the Okta Org2Org (`okta_org2org`) app.
-
-        The signing key rotation setting.
-      type: object
-      properties:
-        rotationMode:
-          $ref: '#/components/schemas/ConnectionsSigningRotationMode'
-      required:
-        - rotationMode
-    LinksSelfAndLifecycle:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            activate:
-              $ref: '#/components/schemas/HrefObjectActivateLink'
-            deactivate:
-              $ref: '#/components/schemas/HrefObjectDeactivateLink'
-    HrefObjectAuthorizeLink:
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: true
-      description: Link to authorize scopes
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHintsGuidanceObject'
-        href:
-          type: string
-          description: Link URI
-      required:
-        - href
-      readOnly: true
-    ConnectionsSigningRotationMode:
-      description: The signing key rotation setting for the provisioning connection
-      type: string
-      enum:
-        - AUTO
-        - MANUAL
-      x-enumDescriptions:
-        AUTO: >-
-          Okta manages key rotation for the provisioning connection. Use the
-          [Retrieve a JWKS for the default provisioning
-          connection](/openapi/okta-management/management/tag/ApplicationConnections/#tag/ApplicationConnections/operation/getUserProvisioningConnectionJWKS)
-          endpoint for the latest key credentials.
-        MANUAL: >-
-          You need to rotate the keys for your provisioning connection manually
-          based on your own schedule. See [Key
-          rotation](https://developer.okta.com/docs/concepts/key-rotation/).
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    HrefHintsGuidanceObject:
-      allOf:
-        - $ref: '#/components/schemas/HrefHints'
-        - description: Describes allowed HTTP verbs and guidance for the `href`
-        - type: object
-          properties:
-            guidance:
-              type: array
-              description: >
-                Specifies the URI to invoke for granting scope consent required
-                to complete the OAuth 2.0 connection
-              items:
-                type: string
-    ProvisioningConnectionTokenRequest:
-      title: Token-based connection
-      allOf:
-        - $ref: '#/components/schemas/ProvisioningConnectionRequest'
-        - description: Token-based provisioning connection request
-          properties:
-            baseUrl:
-              type: string
-              description: >-
-                Only used for the Zscaler 2.0 (`zscalerbyz`) app. The base URL
-                for the Zscaler 2.0 target app, which also contains the Zscaler
-                ID.
-              x-okta-lifecycle:
-                lifecycle: GA
-                isGenerallyAvailable: true
-            profile:
-              $ref: '#/components/schemas/ProvisioningConnectionTokenRequestProfile'
-          required:
-            - profile
-          type: object
-    ProvisioningConnectionOauthRequest:
-      title: OAuth 2.0-based connection
-      allOf:
-        - $ref: '#/components/schemas/ProvisioningConnectionRequest'
-        - description: OAuth 2.0-based provisioning connection request
-          properties:
-            profile:
-              $ref: '#/components/schemas/ProvisioningConnectionOauthRequestProfile'
-          required:
-            - profile
-          type: object
     ProvisioningConnectionRequest:
       type: object
     ProvisioningConnectionTokenRequestProfile:
@@ -4055,35 +4833,6 @@ components:
       required:
         - authScheme
       type: object
-    ProvisioningConnectionOauthAuthScheme:
-      description: OAuth 2.0 is used to authenticate with the app.
-      type: string
-      enum:
-        - OAUTH2
-    Office365ProvisioningSettings:
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: true
-      title: Microsoft Office 365 provisioning settings
-      description: Settings required for the Microsoft Office 365 provisioning connection
-      type: object
-      properties:
-        adminPassword:
-          type: string
-          description: Microsoft Office 365 global administrator password
-        adminUsername:
-          type: string
-          description: Microsoft Office 365 global administrator username
-      required:
-        - adminUsername
-        - adminPassword
-    AppConnectionUserProvisionJWKResponse:
-      properties:
-        jwks:
-          $ref: '#/components/schemas/AppConnectionUserProvisionJWKList'
-      required:
-        - jwks
-      type: object
     AppConnectionUserProvisionJWKList:
       properties:
         keys:
@@ -4093,91 +4842,12 @@ components:
       required:
         - keys
       type: object
-    JsonWebKey:
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/createdProperty'
-        e:
-          description: RSA key value (public exponent) for Key binding
-          type: string
-          readOnly: true
-        expiresAt:
-          description: Timestamp when the certificate expires
-          type: string
-          format: date-time
-          readOnly: true
-        kid:
-          description: Unique identifier for the certificate
-          type: string
-          readOnly: true
-        kty:
-          description: >-
-            Cryptographic algorithm family for the certificate's keypair. Valid
-            value: `RSA`
-          type: string
-          readOnly: true
-        lastUpdated:
-          type: string
-          format: date-time
-          $ref: '#/components/schemas/lastUpdatedProperty'
-        'n':
-          description: >-
-            RSA modulus value that is used by both the public and private keys
-            and provides a link between them
-          type: string
-        use:
-          description: 'Acceptable use of the certificate. Valid value: `sig`'
-          type: string
-          readOnly: true
-        x5c:
-          description: >-
-            X.509 certificate chain that contains a chain of one or more
-            certificates
-          type: array
-          items:
-            type: string
-          readOnly: true
-        x5t#S256:
-          description: >-
-            X.509 certificate SHA-256 thumbprint, which is the base64url-encoded
-            SHA-256 thumbprint (digest) of the DER encoding of an X.509
-            certificate
-          type: string
-          readOnly: true
     createdProperty:
       description: Timestamp when the object was created
       format: date-time
       example: '2017-03-28T01:11:10.000Z'
       type: string
       readOnly: true
-    lastUpdatedProperty:
-      format: date-time
-      description: Timestamp when the object was last updated
-      type: string
-      readOnly: true
-    Csr:
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/createdProperty'
-        csr:
-          type: string
-          readOnly: true
-          example: >-
-            MIIC4DCCAcgCAQAwcTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xEzARBgNVBAoMCk9rdGEsIEluYy4xDDAKBgNVBAsMA0RldjESMBAGA1UEAwwJU1AgSXNzdWVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6m8jHVCr9/tKvvbFN59T4raoCs/78KRm4fSefHQOv1TKLXo4wTLbsqYWRWc5u0sd5orUMQgPQOyj3i6qh13mALY4BzrT057EG1BUNjGg29QgYlnOk2iX890e5BIDMQQEIKFrvOi2V8cLUkLvE2ydRn0VO1Q1frbUkYeStJYC5Api2JQsYRwa+1ZeDH1ITnIzUaugWhW2WB2lSnwZkenne5KtffxMPYVu+IhNRHoKaRA6Z51YNhMJIx17JM2hs/H4Ka3drk6kzDf7ofk/yBpb9yBWyU7CTSQhdoHidxqFprMDaT66W928t3AeOENHBuwn8c2K9WeGG+bELNyQRJVmawIDAQABoCowKAYJKoZIhvcNAQkOMRswGTAXBgNVHREEEDAOggxkZXYub2t0YS5jb20wDQYJKoZIhvcNAQELBQADggEBAA2hsVJRVM+A83X9MekjTnIbt19UNT8wX7wlE9jUKirWsxceLiZBpVGn9qfKhhVIpvdaIRSeoFYS2Kg/m1G6bCvjmZLcrQ5FcEBjZH2NKfNppGVnfC2ugtUkBtCB+UUzOhKhRKJtGugenKbP33zRWWIqnd2waF6Cy8TIuqQVPbwEDN9bCbAs7ND6CFYNguY7KYjWzQOeAR716eqpEEXuPYAS4nx/ty4ylonR8cv+gpq51rvq80A4k/36aoeM0Y6I4w64vhTfuvWW2UYFUD+/+y2FA2CSP4JfctySrf1s525v6fzTFZ3qZbB5OZQtP2b8xYWktMzywsxGKDoVDB4wkH4=
-        id:
-          type: string
-          readOnly: true
-          example: h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
-        kty:
-          type: string
-          readOnly: true
-          example: RSA
-        _links:
-          $ref: '#/components/schemas/CSRLinks'
-          readOnly: true
-          nullable: false
     CSRLinks:
       description: >-
         Specifies link relations (see [Web
@@ -4193,68 +4863,6 @@ components:
           $ref: '#/components/schemas/HrefCsrSelfLink'
       readOnly: true
       type: object
-    HrefCsrPublishLink:
-      title: Link Object
-      description: Link to publish CSR
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/CsrPublishHrefHints'
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/apps/0oad5lTSBOMUBOBVVQSC/credentials/csrs/h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50/lifecycle/publish
-      required:
-        - href
-      readOnly: true
-    HrefCsrSelfLink:
-      title: Link Object
-      description: Link to the resource (self)
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/CsrSelfHrefHints'
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/apps/0oad5lTSBOMUBOBVVQSC/credentials/csrs/h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
-      required:
-        - href
-      readOnly: true
-    CsrPublishHrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            type: string
-            enum:
-              - POST
-    CsrSelfHrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            type: string
-            enum:
-              - GET
-              - DELETE
-    CsrMetadata:
-      type: object
-      properties:
-        subject:
-          $ref: '#/components/schemas/CsrMetadataSubject'
-        subjectAltNames:
-          $ref: '#/components/schemas/CsrMetadataSubjectAltNames'
-    AppCsrPkcs10:
-      description: Base64URL-encoded CSR in DER format
-      format: base64
-      type: string
     CsrMetadataSubject:
       type: object
       properties:
@@ -4293,61 +4901,16 @@ components:
           items:
             type: string
             example: dev.okta.com
-    OAuth2ClientJsonSigningKeyResponse:
-      title: Signing Key
-      description: >-
-        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
-        representation of a cryptographic key. Okta uses signing keys to verify
-        the signature of a JWT when provided for the `private_key_jwt` client
-        authentication method or for a signed authorize request object. Okta
-        supports both RSA and Elliptic Curve (EC) keys for signing tokens.
-      allOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyResponseBase'
-      oneOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRsaResponse'
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyECResponse'
-    OAuth2ClientJsonEncryptionKeyResponse:
-      title: Encryption Key
-      allOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyResponseBase'
-      description: >-
-        <x-lifecycle-container><x-lifecycle
-        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
-        (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON representation of
-        a cryptographic key. Okta uses an encryption key to encrypt an ID token
-        JWT minted by the org authorization server or custom authorization
-        server. Okta supports only RSA keys for encrypting tokens.
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: true
+    lastUpdatedProperty:
+      format: date-time
+      description: Timestamp when the object was last updated
+      type: string
+      readOnly: true
+    ErrorCause:
       type: object
       properties:
-        e:
+        errorSummary:
           type: string
-          description: RSA key value (exponent) for key binding
-          example: AQAB
-          nullable: false
-        kty:
-          type: string
-          description: Cryptographic algorithm family for the certificate's key pair
-          example: RSA
-          nullable: false
-          enum:
-            - RSA
-        'n':
-          type: string
-          description: RSA key value (modulus) for key binding
-          example: >-
-            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
-          nullable: false
-        use:
-          type: string
-          description: Acceptable use of the JSON Web Key
-          example: enc
-          nullable: false
-          enum:
-            - enc
     OAuth2ClientJsonWebKeyResponseBase:
       type: object
       properties:
@@ -4437,95 +5000,6 @@ components:
           example: ACTIVE
           nullable: false
           default: ACTIVE
-    OAuthClientSecretLinks:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of an application using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      properties:
-        activate:
-          $ref: '#/components/schemas/HrefObjectActivateLink'
-        deactivate:
-          $ref: '#/components/schemas/HrefObjectDeactivateLink'
-        delete:
-          $ref: '#/components/schemas/HrefObjectDeleteLink'
-      readOnly: true
-      type: object
-    HrefObjectDeleteLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to delete the resource
-    OAuth2ClientJsonSigningKeyRequest:
-      title: Signing Key
-      allOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
-      oneOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRsaRequest'
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyECRequest'
-      description: >-
-        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
-        representation of a cryptographic key. Okta uses signing keys to verify
-        the signature of a JWT when provided for the `private_key_jwt` client
-        authentication method or for a signed authorize request object. Okta
-        supports both RSA and Elliptic Curve (EC) keys for signing tokens.
-      type: object
-      properties:
-        alg:
-          type: string
-          description: Algorithm used in the key
-          example: RS256
-          nullable: false
-        use:
-          type: string
-          description: Acceptable use of the JSON Web Key
-          example: sig
-          nullable: false
-          enum:
-            - sig
-    OAuth2ClientJsonEncryptionKeyRequest:
-      title: Encryption Key
-      allOf:
-        - $ref: '#/components/schemas/OAuth2ClientJsonWebKeyRequestBase'
-      description: >-
-        <x-lifecycle-container><x-lifecycle
-        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
-        (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON representation of
-        a cryptographic key. Okta uses an encryption key to encrypt an ID token
-        JWT minted by the org authorization server or custom authorization
-        server. Okta supports only RSA keys for encrypting tokens.
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: true
-      type: object
-      properties:
-        e:
-          type: string
-          description: RSA key value (exponent) for key binding
-          example: AQAB
-          nullable: false
-        kty:
-          type: string
-          description: Cryptographic algorithm family for the certificate's key pair
-          example: RSA
-          nullable: false
-          enum:
-            - RSA
-        'n':
-          type: string
-          description: RSA key value (modulus) for key binding
-          example: >-
-            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
-          nullable: false
-        use:
-          type: string
-          description: Acceptable use of the JSON Web Key
-          example: enc
-          nullable: false
-          enum:
-            - enc
     OAuth2ClientJsonWebKeyRsaRequest:
       title: RSA Signing Key
       description: An RSA signing key
@@ -4571,145 +5045,23 @@ components:
         'y':
           type: string
           description: The public y coordinate for the elliptic curve point
-    OAuth2ClientSecret:
-      type: object
+    OAuthClientSecretLinks:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of an application using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
       properties:
-        client_secret:
-          type: string
-          description: The OAuth 2.0 client secret string
-          example: DRUFXGF9XbLn......a3x3POBiIxDreBCdZuFs5B
-          readOnly: true
-          nullable: false
-        created:
-          type: string
-          description: Timestamp when the OAuth Client 2.0 Secret was created
-          example: '2023-02-21T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        id:
-          type: string
-          description: The unique ID of the OAuth Client Secret
-          example: ocs2f4zrZbs8nUa7p0g4
-          readOnly: true
-          nullable: false
-        lastUpdated:
-          type: string
-          description: Timestamp when the OAuth Client 2.0 Secret was updated
-          example: '2023-02-21T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        secret_hash:
-          type: string
-          description: OAuth 2.0 client secret string hash
-          example: yk4SVx4sUWVJVbHt6M-UPA
-          readOnly: true
-          nullable: false
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: Status of the OAuth 2.0 Client Secret
-          example: ACTIVE
-          nullable: false
-          default: ACTIVE
-        _links:
-          $ref: '#/components/schemas/OAuthClientSecretLinks'
-          readOnly: true
-          nullable: false
-    OAuth2ClientSecretRequestBody:
+        activate:
+          $ref: '#/components/schemas/HrefObjectActivateLink'
+        deactivate:
+          $ref: '#/components/schemas/HrefObjectDeactivateLink'
+        delete:
+          $ref: '#/components/schemas/HrefObjectDeleteLink'
+      readOnly: true
       type: object
-      properties:
-        client_secret:
-          type: string
-          description: The OAuth 2.0 client secret string
-          example: DRUFXGF9XbLn......a3x3POBiIxDreBCdZuFs5B
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: Status of the OAuth 2.0 Client Secret
-          example: ACTIVE
-    OrgCrossAppAccessConnection:
-      description: Connection object for Cross App Access connections
-      type: object
-      properties:
-        created:
-          type: string
-          description: The ISO 8601 formatted date and time when the connection was created
-          format: date-time
-          readOnly: true
-          example: '2024-10-15T10:30:00.000Z'
-        id:
-          type: string
-          description: Unique identifier for the connection
-          readOnly: true
-          example: cwofxqCAJWWGELFTYASJ
-        lastUpdated:
-          type: string
-          description: >-
-            The ISO 8601 formatted date and time when the connection was last
-            updated
-          format: date-time
-          readOnly: true
-          example: '2024-10-15T14:20:00.000Z'
-        requestingAppInstanceId:
-          type: string
-          description: ID of the requesting app instance
-          example: 0oafxqCAJWWGELFTYASJ
-        resourceAppInstanceId:
-          type: string
-          description: ID of the resource app instance
-          example: 0oafxqCBJWWGELFTYASK
-        status:
-          description: Indicates if the Cross App Access connection is active or inactive
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          example: ACTIVE
-    OrgCrossAppAccessConnectionPatchRequest:
-      description: Patch request object for Cross App Access Connections
-      type: object
-      properties:
-        status:
-          type: string
-          description: Requested value of Cross App Access connection status
-          enum:
-            - ACTIVE
-            - INACTIVE
-          example: ACTIVE
-      required:
-        - status
-    ApplicationFeature:
-      description: |
-        The Feature object is used to configure app feature settings.
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the feature
-          example: Settings for provisioning users from Okta to a downstream app
-          readOnly: true
-        name:
-          $ref: '#/components/schemas/ApplicationFeatureType'
-          readOnly: true
-        status:
-          allOf:
-            - $ref: '#/components/schemas/EnabledStatus'
-            - default: DISABLED
-            - example: ENABLED
-            - readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - readOnly: true
-      discriminator:
-        propertyName: name
-        mapping:
-          USER_PROVISIONING: '#/components/schemas/UserProvisioningApplicationFeature'
-          INBOUND_PROVISIONING: '#/components/schemas/InboundProvisioningApplicationFeature'
     ApplicationFeatureType:
       description: >
         Key name of the feature
@@ -4740,30 +5092,19 @@ components:
       enum:
         - DISABLED
         - ENABLED
-    CapabilitiesObject:
-      title: USER_PROVISIONING
-      description: Defines the configurations for the USER_PROVISIONING feature
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
       type: object
       properties:
-        create:
-          $ref: '#/components/schemas/CapabilitiesCreateObject'
-        update:
-          $ref: '#/components/schemas/CapabilitiesUpdateObject'
-    CapabilitiesInboundProvisioningObject:
-      title: INBOUND_PROVISIONING
-      description: Defines the configuration for the INBOUND_PROVISIONING feature
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: true
-      type: object
-      properties:
-        importRules:
-          $ref: '#/components/schemas/CapabilitiesImportRulesObject'
-        importSettings:
-          $ref: '#/components/schemas/CapabilitiesImportSettingsObject'
-      required:
-        - importSettings
-        - importRules
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
     CapabilitiesCreateObject:
       description: >
         Determines whether Okta assigns a new app account to each user managed
@@ -4802,293 +5143,6 @@ components:
           $ref: '#/components/schemas/ImportScheduleObject'
         username:
           $ref: '#/components/schemas/ImportUsernameObject'
-    LifecycleCreateSettingObject:
-      description: >-
-        Determines whether to update a user in the app when a user in Okta is
-        updated
-      type: object
-      properties:
-        status:
-          allOf:
-            - $ref: '#/components/schemas/EnabledStatus'
-            - default: DISABLED
-    LifecycleDeactivateSettingObject:
-      description: Determines whether deprovisioning occurs when the app is unassigned
-      type: object
-      properties:
-        status:
-          allOf:
-            - $ref: '#/components/schemas/EnabledStatus'
-            - default: DISABLED
-    PasswordSettingObject:
-      description: >-
-        Determines whether Okta creates and pushes a password in the app for
-        each assigned user
-      type: object
-      properties:
-        change:
-          $ref: '#/components/schemas/ChangeEnum'
-        seed:
-          $ref: '#/components/schemas/SeedEnum'
-        status:
-          allOf:
-            - $ref: '#/components/schemas/EnabledStatus'
-            - default: DISABLED
-            - example: ENABLED
-    ProfileSettingObject:
-      description: >
-        This setting determines whether a user in the app gets updated when
-        they're updated in Okta.
-
-
-        If enabled, Okta updates a user's attributes in the app when the app is
-        assigned.
-
-        Future changes made to the Okta user's profile automatically overwrite
-        the corresponding attribute value in the app.
-      type: object
-      properties:
-        status:
-          allOf:
-            - $ref: '#/components/schemas/EnabledStatus'
-            - example: DISABLED
-            - default: DISABLED
-    CapabilitiesImportRulesUserCreateAndMatchObject:
-      description: Rules for matching and creating users
-      type: object
-      properties:
-        allowPartialMatch:
-          type: boolean
-          description: >-
-            Allows user import upon partial matching. Partial matching occurs
-            when the first and last names of an imported user match those of an
-            existing Okta user, even if the username or email attributes don't
-            match.
-        autoActivateNewUsers:
-          type: boolean
-          description: If set to `true`, imported new users are automatically activated.
-        autoConfirmExactMatch:
-          type: boolean
-          description: >-
-            If set to `true`, exact-matched users are automatically confirmed on
-            activation. If set to `false`, exact-matched users need to be
-            confirmed manually.
-        autoConfirmNewUsers:
-          type: boolean
-          description: >-
-            If set to `true`, imported new users are automatically confirmed on
-            activation. This doesn't apply to imported users that already exist
-            in Okta.
-        autoConfirmPartialMatch:
-          type: boolean
-          description: >-
-            If set to `true`, partially matched users are automatically
-            confirmed on activation. If set to `false`, partially matched users
-            need to be confirmed manually.
-        exactMatchCriteria:
-          type: string
-          description: Determines the attribute to match users
-          enum:
-            - EMAIL
-            - USERNAME
-    ImportScheduleObject:
-      description: Import schedule configuration
-      type: object
-      properties:
-        fullImport:
-          allOf:
-            - $ref: '#/components/schemas/ImportScheduleSettings'
-            - description: Determines the full import schedule
-        incrementalImport:
-          allOf:
-            - $ref: '#/components/schemas/ImportScheduleSettings'
-            - description: Determines the incremental import schedule
-        status:
-          $ref: '#/components/schemas/EnabledStatus'
-    ImportUsernameObject:
-      description: Determines the Okta username for the imported user
-      type: object
-      properties:
-        userNameExpression:
-          type: string
-          description: >-
-            For `usernameFormat=CUSTOM`, specifies the Okta Expression Language
-            statement for a username format that imported users use to sign in
-            to Okta
-        usernameFormat:
-          type: string
-          description: Determines the username format when users sign in to Okta
-          default: EMAIL
-          enum:
-            - EMAIL
-            - CUSTOM
-      required:
-        - usernameFormat
-    ChangeEnum:
-      description: >-
-        Determines whether a change in a user's password also updates the user's
-        password in the app
-      default: KEEP_EXISTING
-      example: CHANGE
-      type: string
-      enum:
-        - CHANGE
-        - KEEP_EXISTING
-    SeedEnum:
-      description: >-
-        Determines whether the generated password is the user's Okta password or
-        a randomly generated password
-      default: RANDOM
-      example: OKTA
-      type: string
-      enum:
-        - OKTA
-        - RANDOM
-    ImportScheduleSettings:
-      type: object
-      properties:
-        expression:
-          type: string
-          description: The import schedule in UNIX cron format
-          example: 00 21 * * Mon,Thu,Fri,Sat
-        timezone:
-          type: string
-          description: >-
-            The import schedule time zone in Internet Assigned Numbers Authority
-            (IANA) time zone name format
-          minLength: 1
-          maxLength: 64
-          example: America/Los_Angeles
-      required:
-        - expression
-    FederatedClaim:
-      type: object
-      properties:
-        created:
-          type: string
-          description: Timestamp when the federated claim was created
-          example: '2024-02-29T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        expression:
-          type: string
-          description: The Okta Expression Language expression to be evaluated at runtime
-          example: appuser.entitlements.role
-          readOnly: false
-          nullable: false
-        id:
-          type: string
-          description: The unique ID of the federated claim
-          example: ofc2f4zrZbs8nUa7p0g4
-          readOnly: true
-          nullable: false
-        lastUpdated:
-          type: string
-          description: Timestamp when the federated claim was updated
-          example: '2023-02-21T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        name:
-          type: string
-          description: The name of the claim to be used in the produced token
-          example: roleg
-          readOnly: false
-          nullable: false
-    FederatedClaimRequestBody:
-      type: object
-      properties:
-        expression:
-          type: string
-          description: The Okta Expression Language expression to be evaluated at runtime
-          example: appuser.entitlements.role
-        name:
-          type: string
-          description: The name of the claim to be used in the produced token
-          example: role
-    OAuth2ScopeConsentGrant:
-      description: Grant object that represents an app consent scope grant
-      type: object
-      properties:
-        clientId:
-          type: string
-          description: Client ID of the app integration
-          readOnly: true
-          example: oag3ih1zrm1cBFOiq0h6
-        created:
-          $ref: '#/components/schemas/createdProperty'
-        createdBy:
-          $ref: '#/components/schemas/OAuth2Actor'
-        id:
-          type: string
-          description: ID of the Grant object
-          readOnly: true
-          example: oag3ih1zrm1cBFOiq0h6
-        issuer:
-          type: string
-          description: >-
-            The issuer of your org authorization server. This is typically your
-            Okta domain.
-          example: https://my_test_okta_org.oktapreview.com
-        lastUpdated:
-          $ref: '#/components/schemas/lastUpdatedProperty'
-        scopeId:
-          type: string
-          description: >-
-            The name of the [Okta
-            scope](https://developer.okta.com/docs/api/oauth2/#oauth-20-scopes)
-            for which consent is granted
-          example: okta.users.read
-        source:
-          $ref: '#/components/schemas/OAuth2ScopeConsentGrantSource'
-        status:
-          $ref: '#/components/schemas/GrantOrTokenStatus'
-        userId:
-          type: string
-          description: User ID that granted consent (if `source` is `END_USER`)
-          readOnly: true
-          example: 00u5t60iloOHN9pBi0h7
-        _embedded:
-          type: object
-          description: Embedded resources related to the Grant
-          properties:
-            scope:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: The name of the Okta scope for which consent is granted
-                  example: okta.users.read
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - type: object
-              properties:
-                app:
-                  description: Link to the app resource
-                  allOf:
-                    - $ref: '#/components/schemas/AppResourceHrefObject'
-                client:
-                  description: Link to the client resource
-                  allOf:
-                    - $ref: '#/components/schemas/AppResourceHrefObject'
-                scope:
-                  description: Link to the scope resource
-                  allOf:
-                    - $ref: '#/components/schemas/ScopeResourceHrefObject'
-                user:
-                  description: Link to the user resource
-                  allOf:
-                    - $ref: '#/components/schemas/UserResourceHrefObject'
-                authorizationServer:
-                  description: Link to the authorization server resource
-                  allOf:
-                    - $ref: >-
-                        #/components/schemas/AuthorizationServerResourceHrefObject
-            - readOnly: true
-      required:
-        - issuer
-        - scopeId
     OAuth2Actor:
       description: User that created the object
       type: object
@@ -5165,68 +5219,6 @@ components:
           type: string
           description: Link name
           example: Example Authorization Server
-    GroupPushMappingStatus:
-      description: The status of the group push mapping
-      type: string
-      enum:
-        - ACTIVE
-        - ERROR
-        - INACTIVE
-      x-enumDescriptions:
-        ACTIVE: >-
-          The group push mapping is active and Okta pushes membership changes to
-          the target group
-        INACTIVE: >-
-          The group push mapping is inactive and Okta doesn't push membership
-          changes to the target group
-        ERROR: >-
-          The group push mapping is in an error state and Okta doesn't push
-          membership changes to the target group
-    GroupPushMapping:
-      type: object
-      properties:
-        appConfig:
-          type: object
-          readOnly: true
-          $ref: '#/components/schemas/AppConfig'
-        created:
-          description: Timestamp when the group push mapping was created
-          type: string
-          format: date-time
-          readOnly: true
-        errorSummary:
-          description: The error message summary if the latest push failed
-          type: string
-          readOnly: true
-        id:
-          description: The ID of the group push mapping
-          type: string
-          readOnly: true
-        lastPush:
-          description: Timestamp when the group push mapping was pushed
-          type: string
-          format: date-time
-          readOnly: true
-        lastUpdated:
-          description: Timestamp when the group push mapping was last updated
-          type: string
-          format: date-time
-          readOnly: true
-        sourceGroupId:
-          description: The ID of the source group for the group push mapping
-          type: string
-          readOnly: true
-        status:
-          description: The status of the group push mapping
-          type: string
-          $ref: '#/components/schemas/GroupPushMappingStatus'
-          readOnly: true
-        targetGroupId:
-          description: The ID of the target group for the group push mapping
-          type: string
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/GroupPushMappingLinks'
     AppConfig:
       description: >-
         Additional app configuration for group push mappings. Currently only
@@ -5252,46 +5244,6 @@ components:
               $ref: '#/components/schemas/HrefObjectGroupLink'
           type: object
       type: object
-    AppConfigType:
-      description: The type of the app configuration
-      type: string
-      enum:
-        - ACTIVE_DIRECTORY
-    HrefObjectAppLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app resource
-    HrefObjectGroupLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the group resource
-    CreateGroupPushMappingRequest:
-      type: object
-      properties:
-        appConfig:
-          type: object
-          $ref: '#/components/schemas/AppConfig'
-        sourceGroupId:
-          description: The ID of the source group for the group push mapping
-          type: string
-        status:
-          type: string
-          $ref: '#/components/schemas/GroupPushMappingStatusUpsert'
-        targetGroupId:
-          description: >-
-            The ID of the existing target group for the group push mapping. This
-            is used to link to an existing group. Required if `targetGroupName`
-            is not provided.
-          type: string
-        targetGroupName:
-          description: >-
-            The name of the target group for the group push mapping. This is
-            used when creating a new downstream group. If the group already
-            exists, it links to the existing group. Required if `targetGroupId`
-            is not provided.
-          type: string
-      required:
-        - sourceGroupId
     GroupPushMappingStatusUpsert:
       description: The status of the group push mapping
       title: GroupPushMappingStatus
@@ -5300,88 +5252,6 @@ components:
       enum:
         - ACTIVE
         - INACTIVE
-    UpdateGroupPushMappingRequest:
-      type: object
-      properties:
-        status:
-          description: >-
-            The status of the group push mapping.
-
-
-            If changing the group push mapping status to `ACTIVE`, Okta performs
-            an initial push to the target group, and then begins pushing
-            membership changes. 
-
-
-            If changing the group push mapping status to `INACTIVE`, Okta stops
-            pushing membership changes to the target group.
-          type: string
-          $ref: '#/components/schemas/GroupPushMappingStatusUpsert'
-      required:
-        - status
-    ApplicationGroupAssignment:
-      title: Application Group Assignment
-      description: >-
-        The Application Group object that defines a group of users' app-specific
-        profile and credentials for an app
-      type: object
-      properties:
-        id:
-          type: string
-          description: >-
-            ID of the
-            [group](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/)
-          readOnly: true
-          example: 00g4hb1HChfUriNgW0g4
-        lastUpdated:
-          allOf:
-            - $ref: '#/components/schemas/lastUpdatedProperty'
-            - example: '2014-06-24T15:28:14.000Z'
-        priority:
-          type: integer
-          description: >-
-            Priority assigned to the group. If an app has more than one group
-            assigned to the same user, then the group with the higher priority
-            has its profile applied to the [application
-            user](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/ApplicationUsers/).
-
-            If a priority value isn't specified, then the next highest priority
-            is assigned by default.
-
-            See [Assign attribute group
-            priority](https://help.okta.com/okta_help.htm?type=oie&id=ext-usgp-app-group-priority)
-            and the [sample priority use
-            case](https://help.okta.com/okta_help.htm?type=oie&id=ext-usgp-combine-values-use).
-          example: 99
-        profile:
-          $ref: '#/components/schemas/GroupAssignmentProfile'
-        _embedded:
-          type: object
-          description: >-
-            Embedded resource related to the Application Group using the [JSON
-            Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification.
-
-            If the `expand=group` query parameter is specified, then the
-            [group](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/)
-            object is embedded. 
-
-            If the `expand=metadata` query parameter is specified, then the
-            group assignment metadata is embedded.
-          additionalProperties:
-            type: object
-            properties: {}
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - type: object
-              properties:
-                app:
-                  $ref: '#/components/schemas/HrefObjectAppLink'
-                group:
-                  $ref: '#/components/schemas/HrefObjectGroupLink'
     GroupAssignmentProfile:
       description: >-
         Specifies the profile properties applied to [application
@@ -5393,18 +5263,14 @@ components:
         [profile](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/getUser!c=200&path=profile&t=response).
       additionalProperties: true
       type: object
-    JsonPatchOperation:
-      description: The update action
-      type: object
-      properties:
-        op:
-          $ref: '#/components/schemas/PatchAction'
-        path:
-          type: string
-          description: The resource path of the attribute to update
-        value:
-          type: object
-          description: The update operation value
+    HrefObjectAppLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app resource
+    HrefObjectGroupLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the group resource
     PatchAction:
       description: The operation (PATCH action)
       type: string
@@ -5414,90 +5280,6 @@ components:
       x-enumDescriptions:
         remove: Removes the attribute in `path`
         replace: Replaces the attribute in content `path` with the content in `value`
-    OAuth2RefreshToken:
-      type: object
-      properties:
-        clientId:
-          type: string
-          description: Client ID
-        created:
-          $ref: '#/components/schemas/createdProperty'
-        expiresAt:
-          type: string
-          description: Expiration time of the OAuth 2.0 Token
-          format: date-time
-          readOnly: true
-        id:
-          type: string
-          description: ID of the Token object
-          readOnly: true
-          example: oar579Mcp7OUsNTlo0g3
-        issuer:
-          type: string
-          description: The complete URL of the authorization server that issued the Token
-          example: https://{yourOktaDomain}/oauth2/ausain6z9zIedDCxB0h7
-        lastUpdated:
-          $ref: '#/components/schemas/lastUpdatedProperty'
-        scopes:
-          type: array
-          description: The scope names attached to the Token
-          items:
-            type: string
-            example: offline_access
-        status:
-          $ref: '#/components/schemas/GrantOrTokenStatus'
-        userId:
-          type: string
-          description: The ID of the user associated with the Token
-          example: 00u5t60iloOHN9pBi0h7
-        _embedded:
-          type: object
-          description: >-
-            The embedded resources related to the object if the `expand` query
-            parameter is specified
-          properties:
-            scopes:
-              type: array
-              description: The scope objects attached to the Token
-              items:
-                $ref: '#/components/schemas/OAuth2RefreshTokenScope'
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - type: object
-              properties:
-                app:
-                  description: Link to the app resource
-                  allOf:
-                    - $ref: '#/components/schemas/AppResourceHrefObject'
-                revoke:
-                  description: Link to revoke the refresh Token
-                  allOf:
-                    - $ref: '#/components/schemas/RevokeRefreshTokenHrefObject'
-                    - properties:
-                        hints:
-                          properties:
-                            allow:
-                              items:
-                                enum:
-                                  - DELETE
-                                default: DELETE
-                          type: object
-                      type: object
-                client:
-                  description: Link to the client resource
-                  allOf:
-                    - $ref: '#/components/schemas/AppResourceHrefObject'
-                user:
-                  description: Link to the user resource
-                  allOf:
-                    - $ref: '#/components/schemas/UserResourceHrefObject'
-                authorizationServer:
-                  description: Link to the Token authorization server resource
-                  allOf:
-                    - $ref: >-
-                        #/components/schemas/AuthorizationServerResourceHrefObject
     OAuth2RefreshTokenScope:
       type: object
       properties:
@@ -5542,107 +5324,6 @@ components:
           description: Link URI
           example: >-
             https://{yourOktaDomain}/api/v1/users/00u5t60iloOHN9pBi0h7/clients/0oabskvc6442nkvQO0h7/tokens/oar579Mcp7OUsNTlo0g3
-    OfflineAccessScopeResourceHrefObject:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/authorizationServers/ausain6z9zIedDCxB0h7/scopes/scppb56cIl4GvGxy70g3
-        title:
-          type: string
-          description: Link name
-          example: offline_access
-    AppUser:
-      title: Application User
-      description: >-
-        The application user object defines a user's app-specific profile and
-        credentials for an app
-      type: object
-      properties:
-        created:
-          allOf:
-            - $ref: '#/components/schemas/createdProperty'
-            - example: '2014-06-24T15:27:59.000Z'
-        credentials:
-          $ref: '#/components/schemas/AppUserCredentials'
-        externalId:
-          type: string
-          description: >-
-            The ID of the user in the target app that's linked to the Okta
-            application user object.
-
-            This value is the native app-specific identifier or primary key for
-            the user in the target app.
-
-
-            The `externalId` is set during import when the user is confirmed
-            (reconciled) or during provisioning when the user is created in the
-            target app.
-
-            This value isn't populated for SSO app assignments (for example,
-            SAML or SWA) because it isn't synchronized with a target app.
-          readOnly: true
-          example: 70c14cc17d3745e8a9f98d599a68329c
-        id:
-          type: string
-          description: Unique identifier for the Okta user
-          example: 00u11z6WHMYCGPCHCRFK
-        lastSync:
-          type: string
-          description: >-
-            Timestamp of the last synchronization operation. This value is only
-            updated for apps with the `IMPORT_PROFILE_UPDATES` or `PUSH
-            PROFILE_UPDATES` feature.
-          format: date-time
-          readOnly: true
-          example: '2014-06-24T15:27:59.000Z'
-        lastUpdated:
-          allOf:
-            - $ref: '#/components/schemas/lastUpdatedProperty'
-            - example: '2014-06-24T15:28:14.000Z'
-        passwordChanged:
-          type: string
-          description: Timestamp when the application user password was last changed
-          format: date-time
-          readOnly: true
-          nullable: true
-          example: '2014-06-24T15:27:59.000Z'
-        profile:
-          $ref: '#/components/schemas/AppUserProfile'
-        scope:
-          type: string
-          description: >-
-            Indicates if the assignment is direct (`USER`) or by group
-            membership (`GROUP`).
-          enum:
-            - USER
-            - GROUP
-          example: USER
-        status:
-          $ref: '#/components/schemas/AppUserStatus'
-        statusChanged:
-          type: string
-          description: Timestamp when the application user status was last changed
-          format: date-time
-          readOnly: true
-          example: '2014-06-24T15:28:14.000Z'
-        syncState:
-          $ref: '#/components/schemas/AppUserSyncState'
-        _embedded:
-          type: object
-          description: >-
-            Embedded resources related to the application user using the [JSON
-            Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          additionalProperties:
-            type: object
-            properties: {}
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/LinksAppAndUser'
     AppUserCredentials:
       description: >
         Specifies a user's credentials for the app.
@@ -5804,30 +5485,6 @@ components:
         user:
           $ref: '#/components/schemas/HrefObjectUserLink'
       readOnly: true
-    AppUserPasswordCredential:
-      description: >-
-        The user's password. This is a write-only property. An empty `password`
-        object is returned to indicate that a password value exists.
-      type: object
-      properties:
-        value:
-          description: Password value
-          type: string
-          format: password
-          writeOnly: true
-    HrefObjectUserLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the user resource
-    AppUserAssignRequest:
-      allOf:
-        - $ref: '#/components/schemas/AppUser'
-        - required:
-            - id
-    AppUserUpdateRequest:
-      oneOf:
-        - $ref: '#/components/schemas/AppUserCredentialsRequestPayload'
-        - $ref: '#/components/schemas/AppUserProfileRequestPayload'
     AppUserCredentialsRequestPayload:
       title: Credentials
       description: Updates the assigned user credentials
@@ -5850,6 +5507,463 @@ components:
       properties:
         profile:
           $ref: '#/components/schemas/AppUserProfile'
+    OAuthProvisioningEnabledApp:
+      description: Application name for the provisioning connection
+      type: string
+      enum:
+        - google
+        - office365
+        - slack
+        - zoomus
+    ApplicationVisibilityHide:
+      description: Hides the app for specific end-user apps
+      type: object
+      properties:
+        iOS:
+          type: boolean
+          description: Okta Mobile for iOS or Android (pre-dates Android)
+          default: false
+          example: false
+        web:
+          type: boolean
+          description: Okta End-User Dashboard on a web browser
+          default: false
+          example: true
+    AccessPolicyLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app access policy resource
+    HrefObjectActivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to activate the resource
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    HrefObjectDeactivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to deactivate the resource
+    GroupsLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [Application
+            Groups](/openapi/okta-management/management/tag/ApplicationGroups/#tag/ApplicationGroups/operation/listApplicationGroupAssignments)
+            resource
+    HelpLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app help resource
+    MetadataLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [SAML
+            metadata](/openapi/okta-management/management/tag/ApplicationSSO/#tag/ApplicationSSO/operation/previewSAMLmetadataForApplication)
+            for SSO
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    UsersLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [Application
+            Users](/openapi/okta-management/management/tag/ApplicationUsers/#tag/ApplicationUsers/operation/listApplicationUsers)
+            resource
+    ProvisioningConnectionAuthScheme:
+      description: Defines the method of authentication
+      type: string
+      enum:
+        - OAUTH2
+        - TOKEN
+        - UNKNOWN
+      x-enumDescriptions:
+        TOKEN: A token is used to authenticate with the app.
+        OAUTH2: OAuth 2.0 is used to authenticate with the app.
+        UNKNOWN: >-
+          The authentication scheme used by the app isn't supported, or the app
+          doesn't support provisioning.
+    Org2OrgProvisioningOAuthSigningSettings:
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: false
+        SKUs: []
+      title: Org2Org Provisioning OAuth Signing Settings
+      description: |-
+        Only used for the Okta Org2Org (`okta_org2org`) app.
+
+        The signing key rotation setting.
+      type: object
+      properties:
+        rotationMode:
+          $ref: '#/components/schemas/ConnectionsSigningRotationMode'
+      required:
+        - rotationMode
+    LinksSelfAndLifecycle:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            activate:
+              $ref: '#/components/schemas/HrefObjectActivateLink'
+            deactivate:
+              $ref: '#/components/schemas/HrefObjectDeactivateLink'
+    HrefObjectAuthorizeLink:
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: true
+      description: Link to authorize scopes
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHintsGuidanceObject'
+        href:
+          type: string
+          description: Link URI
+      required:
+        - href
+      readOnly: true
+    ProvisioningConnectionOauthAuthScheme:
+      description: OAuth 2.0 is used to authenticate with the app.
+      type: string
+      enum:
+        - OAUTH2
+    Office365ProvisioningSettings:
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: true
+      title: Microsoft Office 365 provisioning settings
+      description: Settings required for the Microsoft Office 365 provisioning connection
+      type: object
+      properties:
+        adminPassword:
+          type: string
+          description: Microsoft Office 365 global administrator password
+        adminUsername:
+          type: string
+          description: Microsoft Office 365 global administrator username
+      required:
+        - adminUsername
+        - adminPassword
+    HrefCsrPublishLink:
+      title: Link Object
+      description: Link to publish CSR
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/CsrPublishHrefHints'
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/apps/0oad5lTSBOMUBOBVVQSC/credentials/csrs/h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50/lifecycle/publish
+      required:
+        - href
+      readOnly: true
+    HrefCsrSelfLink:
+      title: Link Object
+      description: Link to the resource (self)
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/CsrSelfHrefHints'
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/apps/0oad5lTSBOMUBOBVVQSC/credentials/csrs/h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
+      required:
+        - href
+      readOnly: true
+    HrefObjectDeleteLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to delete the resource
+    LifecycleCreateSettingObject:
+      description: >-
+        Determines whether to update a user in the app when a user in Okta is
+        updated
+      type: object
+      properties:
+        status:
+          allOf:
+            - $ref: '#/components/schemas/EnabledStatus'
+            - default: DISABLED
+    LifecycleDeactivateSettingObject:
+      description: Determines whether deprovisioning occurs when the app is unassigned
+      type: object
+      properties:
+        status:
+          allOf:
+            - $ref: '#/components/schemas/EnabledStatus'
+            - default: DISABLED
+    PasswordSettingObject:
+      description: >-
+        Determines whether Okta creates and pushes a password in the app for
+        each assigned user
+      type: object
+      properties:
+        change:
+          $ref: '#/components/schemas/ChangeEnum'
+        seed:
+          $ref: '#/components/schemas/SeedEnum'
+        status:
+          allOf:
+            - $ref: '#/components/schemas/EnabledStatus'
+            - default: DISABLED
+            - example: ENABLED
+    ProfileSettingObject:
+      description: >
+        This setting determines whether a user in the app gets updated when
+        they're updated in Okta.
+
+
+        If enabled, Okta updates a user's attributes in the app when the app is
+        assigned.
+
+        Future changes made to the Okta user's profile automatically overwrite
+        the corresponding attribute value in the app.
+      type: object
+      properties:
+        status:
+          allOf:
+            - $ref: '#/components/schemas/EnabledStatus'
+            - example: DISABLED
+            - default: DISABLED
+    CapabilitiesImportRulesUserCreateAndMatchObject:
+      description: Rules for matching and creating users
+      type: object
+      properties:
+        allowPartialMatch:
+          type: boolean
+          description: >-
+            Allows user import upon partial matching. Partial matching occurs
+            when the first and last names of an imported user match those of an
+            existing Okta user, even if the username or email attributes don't
+            match.
+        autoActivateNewUsers:
+          type: boolean
+          description: If set to `true`, imported new users are automatically activated.
+        autoConfirmExactMatch:
+          type: boolean
+          description: >-
+            If set to `true`, exact-matched users are automatically confirmed on
+            activation. If set to `false`, exact-matched users need to be
+            confirmed manually.
+        autoConfirmNewUsers:
+          type: boolean
+          description: >-
+            If set to `true`, imported new users are automatically confirmed on
+            activation. This doesn't apply to imported users that already exist
+            in Okta.
+        autoConfirmPartialMatch:
+          type: boolean
+          description: >-
+            If set to `true`, partially matched users are automatically
+            confirmed on activation. If set to `false`, partially matched users
+            need to be confirmed manually.
+        exactMatchCriteria:
+          type: string
+          description: Determines the attribute to match users
+          enum:
+            - EMAIL
+            - USERNAME
+    ImportScheduleObject:
+      description: Import schedule configuration
+      type: object
+      properties:
+        fullImport:
+          allOf:
+            - $ref: '#/components/schemas/ImportScheduleSettings'
+            - description: Determines the full import schedule
+        incrementalImport:
+          allOf:
+            - $ref: '#/components/schemas/ImportScheduleSettings'
+            - description: Determines the incremental import schedule
+        status:
+          $ref: '#/components/schemas/EnabledStatus'
+    ImportUsernameObject:
+      description: Determines the Okta username for the imported user
+      type: object
+      properties:
+        userNameExpression:
+          type: string
+          description: >-
+            For `usernameFormat=CUSTOM`, specifies the Okta Expression Language
+            statement for a username format that imported users use to sign in
+            to Okta
+        usernameFormat:
+          type: string
+          description: Determines the username format when users sign in to Okta
+          default: EMAIL
+          enum:
+            - EMAIL
+            - CUSTOM
+      required:
+        - usernameFormat
+    AppConfigType:
+      description: The type of the app configuration
+      type: string
+      enum:
+        - ACTIVE_DIRECTORY
+    OfflineAccessScopeResourceHrefObject:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/authorizationServers/ausain6z9zIedDCxB0h7/scopes/scppb56cIl4GvGxy70g3
+        title:
+          type: string
+          description: Link name
+          example: offline_access
+    AppUserPasswordCredential:
+      description: >-
+        The user's password. This is a write-only property. An empty `password`
+        object is returned to indicate that a password value exists.
+      type: object
+      properties:
+        value:
+          description: Password value
+          type: string
+          format: password
+          writeOnly: true
+    HrefObjectUserLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the user resource
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    ConnectionsSigningRotationMode:
+      description: The signing key rotation setting for the provisioning connection
+      type: string
+      enum:
+        - AUTO
+        - MANUAL
+      x-enumDescriptions:
+        AUTO: >-
+          Okta manages key rotation for the provisioning connection. Use the
+          [Retrieve a JWKS for the default provisioning
+          connection](/openapi/okta-management/management/tag/ApplicationConnections/#tag/ApplicationConnections/operation/getUserProvisioningConnectionJWKS)
+          endpoint for the latest key credentials.
+        MANUAL: >-
+          You need to rotate the keys for your provisioning connection manually
+          based on your own schedule. See [Key
+          rotation](https://developer.okta.com/docs/concepts/key-rotation/).
+    HrefHintsGuidanceObject:
+      allOf:
+        - $ref: '#/components/schemas/HrefHints'
+        - description: Describes allowed HTTP verbs and guidance for the `href`
+        - type: object
+          properties:
+            guidance:
+              type: array
+              description: >
+                Specifies the URI to invoke for granting scope consent required
+                to complete the OAuth 2.0 connection
+              items:
+                type: string
+    CsrPublishHrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+            enum:
+              - POST
+    CsrSelfHrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+            enum:
+              - GET
+              - DELETE
+    ChangeEnum:
+      description: >-
+        Determines whether a change in a user's password also updates the user's
+        password in the app
+      default: KEEP_EXISTING
+      example: CHANGE
+      type: string
+      enum:
+        - CHANGE
+        - KEEP_EXISTING
+    SeedEnum:
+      description: >-
+        Determines whether the generated password is the user's Okta password or
+        a randomly generated password
+      default: RANDOM
+      example: OKTA
+      type: string
+      enum:
+        - OKTA
+        - RANDOM
+    ImportScheduleSettings:
+      type: object
+      properties:
+        expression:
+          type: string
+          description: The import schedule in UNIX cron format
+          example: 00 21 * * Mon,Thu,Fri,Sat
+        timezone:
+          type: string
+          description: >-
+            The import schedule time zone in Internet Assigned Numbers Authority
+            (IANA) time zone name format
+          minLength: 1
+          maxLength: 64
+          example: America/Los_Angeles
+      required:
+        - expression
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -5935,6 +6049,69 @@ components:
       schema:
         type: string
         example: user/0oa1gjh63g214q0Hq0g4
+    pathAppId:
+      name: appId
+      description: Application ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oafxqCAJWWGELFTYASJ
+    pathCsrId:
+      name: csrId
+      description: '`id` of the CSR'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: fd7x1h7uTcZFx22rU1f7
+    pathJsonWebKeyId:
+      name: keyId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: Unique `id` of the Custom Authorization Server JSON Web Key
+      example: apk2f4zrZbs8nUa7p0g4
+    pathKeyId:
+      name: keyId
+      description: ID of the Key Credential for the application
+      in: path
+      required: true
+      schema:
+        type: string
+        example: sjP9eiETijYz110VkhHN
+    pathClientSecretId:
+      name: secretId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: Unique `id` of the OAuth 2.0 Client Secret
+      example: ocs2f4zrZbs8nUa7p0g4
+    connectionId:
+      name: connectionId
+      description: Connection ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oafxqCAJWWGELFTYASJ
+    pathFeatureName:
+      name: featureName
+      description: Name of the Feature
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ApplicationFeatureType'
+    claimId:
+      name: claimId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: The unique `id` of the federated claim
+      example: ofc2f4zrZbs8nUa7p0g4
     queryAppGrantsExpand:
       name: expand
       in: query
@@ -5944,6 +6121,22 @@ components:
       schema:
         type: string
         example: scope
+    pathGrantId:
+      name: grantId
+      description: Grant ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: iJoqkwx50mrgX4T9LcaH
+    pathGroupPushMappingId:
+      name: mappingId
+      description: Group push mapping ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: gPm00000000000000000
     queryGroupAssignmentLimit:
       name: limit
       in: query
@@ -5990,6 +6183,14 @@ components:
         metadata:
           value: metadata
           summary: Embedded group assignment metadata
+    pathGroupId:
+      name: groupId
+      description: The `id` of the group
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00g1emaKYZTWRYYRRTSK
     queryGroupAssignmentWithGroupExpand:
       name: expand
       in: query
@@ -6009,6 +6210,14 @@ components:
         metadata:
           value: metadata
           summary: Embedded group assignment metadata
+    pathPolicyId:
+      name: policyId
+      description: '`id` of the Policy'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00plrilJ7jZ66Gn0X0g3
     queryAppAfter:
       name: after
       in: query
@@ -6028,6 +6237,14 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathTokenId:
+      name: tokenId
+      description: '`id` of Token'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: sHHSth53yJAyNSTQKDJZ
     queryAppLimit:
       name: limit
       in: query
@@ -6076,6 +6293,20 @@ components:
       schema:
         type: string
         example: user
+    pathAppUserId:
+      name: userId
+      description: ID of an existing Okta user
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00u13okQOVWZJGDOAUVR
+    pathOAuthProvisioningAppName:
+      name: appName
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/OAuthProvisioningEnabledApp'
   examples:
     GetApplicationsByUserResponseEx:
       summary: Retrieve apps assigned to a user
@@ -6784,22 +7015,6 @@ components:
             deactivate:
               href: >-
                 https://testorgone.okta.com/api/v1/apps/0oa7vicvor8YSr9Hc0w6/lifecycle/deactivate
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     BookmarkEx:
       summary: BOOKMARK
       value:
@@ -7692,14 +7907,6 @@ components:
           emOptInStatus: DISABLED
         profile:
           label: oauth2 client app 1
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     GetApplicationsResponseEx:
       summary: Retrieve an app
       value:
@@ -7817,14 +8024,6 @@ components:
             href: >-
               https://testorgone.okta.com/api/v1/apps/0oa1gjh63g214q0Hq0g4/sso/saml/metadata
             type: application/xml
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     BookmarkPutEx:
       summary: BOOKMARK
       value:
@@ -8853,14 +9052,6 @@ components:
               use: sig
               e: AQAB
               'n': AJncrKuine49_CEVR4GPn.....zOrouIUCSMlRL0HU=
-    ErrorInvalidTokenProvided:
-      summary: Invalid Token Provided
-      value:
-        errorCode: E0000011
-        errorSummary: Invalid token provided
-        errorLink: E0000011
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     AppCsrPkcs10Response:
       summary: CSR in DER format
       value: >-
@@ -9818,6 +10009,14 @@ components:
             href: https://{yourOktaDomain}/api/v1/groups/00g00000000000000000
           targetGroup:
             href: https://{yourOktaDomain}/api/v1/groups/00g00000000000000001
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
     RetrieveGroupPushMappingResponse_Example:
       value:
         created: '2025-01-01T00:00:00Z'
@@ -10430,21 +10629,6 @@ components:
             href: https://{yourOktaDomain}/api/v1/apps/{appId}
           user:
             href: https://{yourOktaDomain}/api/v1/users/00u15s1KDETTQMQYABRL
-    ErrorAppUserForbiddenAction:
-      summary: Forbidden action
-      description: >-
-        If the `PUSH_NEW_USERS` or `PUSH_PROFILE_UPDATES` feature is enabled and
-        the request specifies a value for a profile-mapped (Universal Directory)
-        attribute that doesn't match the mapped value, then a 403 error is
-        returned.
-      value:
-        errorCode: E0000075
-        errorSummary: >-
-          Cannot modify the firstName attribute because it has a field mapping
-          and profile push is enabled.
-        errorLink: E0000075
-        errorId: sampleWXiR_K-WwaTKhlgBQ
-        errorCauses: []
     AppUserProvExpandResponse:
       summary: Application user expand example
       value:
@@ -10627,6 +10811,53 @@ components:
             href: https://{yourOktaDomain}/api/v1/apps/{appId}
           user:
             href: https://{yourOktaDomain}/api/v1/users/00ud4tVDDXYVKPXKVLCO
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
+    ErrorInvalidTokenProvided:
+      summary: Invalid Token Provided
+      value:
+        errorCode: E0000011
+        errorSummary: Invalid token provided
+        errorLink: E0000011
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorAppUserForbiddenAction:
+      summary: Forbidden action
+      description: >-
+        If the `PUSH_NEW_USERS` or `PUSH_PROFILE_UPDATES` feature is enabled and
+        the request specifies a value for a profile-mapped (Universal Directory)
+        attribute that doesn't match the mapped value, then a 403 error is
+        returned.
+      value:
+        errorCode: E0000075
+        errorSummary: >-
+          Cannot modify the firstName attribute because it has a field mapping
+          and profile push is enabled.
+        errorLink: E0000075
+        errorId: sampleWXiR_K-WwaTKhlgBQ
+        errorCauses: []
     ErrorAppUserUpdateBadRequest:
       summary: Bad request
       description: >-
@@ -10639,11 +10870,6 @@ components:
         errorId: oaeUM77NBynQQu4C_qT5ngjGQ
         errorCauses:
           errorSummary: User level credentials should not be provided for this scheme.
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

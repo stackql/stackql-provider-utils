@@ -83,8 +83,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiTokenId'
     put:
       summary: Upsert an API token network condition
       description: Upserts an API Token Network Condition by `apiTokenId`
@@ -129,8 +127,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiTokenId'
     delete:
       summary: Revoke an API token
       description: Revokes an API token by `apiTokenId`
@@ -153,8 +149,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiTokenId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiTokenId'
 components:
   schemas:
     ApiToken:
@@ -209,6 +205,46 @@ components:
           $ref: '#/components/schemas/LinksSelf'
       required:
         - name
+    ApiTokenUpdate:
+      title: API Token Update
+      description: >-
+        An API Token Update Object for an Okta user. This token is NOT scoped
+        any further and can be used for any API that the user has permissions to
+        call.
+      type: object
+      properties:
+        clientName:
+          type: string
+          description: The client name associated with the API Token
+          readOnly: true
+        created:
+          type: string
+          description: The creation date of the API Token
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          description: The name associated with the API Token
+        network:
+          type: object
+          description: The Network Condition of the API Token
+          properties:
+            connection:
+              type: string
+              description: The connection type of the Network Condition
+            include:
+              type: array
+              description: List of included IP network zones
+              items:
+                type: string
+            exclude:
+              type: array
+              description: List of excluded IP network zones
+              items:
+                type: string
+        userId:
+          type: string
+          description: The userId of the user who created the API Token
     TimeDuration:
       description: >-
         A time duration specified as an [ISO 8601
@@ -306,46 +342,6 @@ components:
         - GET
         - POST
         - PUT
-    ApiTokenUpdate:
-      title: API Token Update
-      description: >-
-        An API Token Update Object for an Okta user. This token is NOT scoped
-        any further and can be used for any API that the user has permissions to
-        call.
-      type: object
-      properties:
-        clientName:
-          type: string
-          description: The client name associated with the API Token
-          readOnly: true
-        created:
-          type: string
-          description: The creation date of the API Token
-          format: date-time
-          readOnly: true
-        name:
-          type: string
-          description: The name associated with the API Token
-        network:
-          type: object
-          description: The Network Condition of the API Token
-          properties:
-            connection:
-              type: string
-              description: The connection type of the Network Condition
-            include:
-              type: array
-              description: List of included IP network zones
-              items:
-                type: string
-            exclude:
-              type: array
-              description: List of excluded IP network zones
-              items:
-                type: string
-        userId:
-          type: string
-          description: The userId of the user who created the API Token
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -383,7 +379,15 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
+  parameters:
+    pathApiTokenId:
+      name: apiTokenId
+      in: path
+      schema:
+        type: string
+        example: 00Tabcdefg1234567890
+      required: true
+      description: id of the API Token
   examples:
     ApiTokenListMetadataResponse:
       value:
@@ -429,22 +433,6 @@ components:
               hints:
                 allow:
                   - GET
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     ApiTokenMetadataResponse:
       value:
         name: My API Token
@@ -469,6 +457,22 @@ components:
             hints:
               allow:
                 - GET
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -485,11 +489,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

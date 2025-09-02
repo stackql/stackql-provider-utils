@@ -155,8 +155,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathPushProviderId'
     put:
       summary: Replace a push provider
       description: Replaces a push provider by `pushProviderId`
@@ -204,8 +202,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathPushProviderId'
     delete:
       summary: Delete a push provider
       description: >-
@@ -244,8 +240,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathPushProviderId'
+    parameters:
+      - $ref: '#/components/parameters/pathPushProviderId'
 components:
   schemas:
     ProviderType:
@@ -277,19 +273,6 @@ components:
         mapping:
           APNS: '#/components/schemas/APNSPushProvider'
           FCM: '#/components/schemas/FCMPushProvider'
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
     Error:
       title: Error
       type: object
@@ -315,15 +298,28 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
     ErrorCause:
       type: object
       properties:
         errorSummary:
           type: string
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
     HrefObject:
       title: Link Object
       additionalProperties: true
@@ -405,24 +401,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathPushProviderId:
+      in: path
+      name: pushProviderId
+      required: true
+      description: Id of the push provider
+      schema:
+        type: string
   examples:
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     PushProviderAPNsRequest:
       value:
         name: APNs Example
@@ -491,6 +478,31 @@ components:
                 - DELETE
                 - GET
                 - PUT
+    ErrorPushProviderUsedByCustomAppAuthenticator:
+      value:
+        errorCode: E0000187
+        errorSummary: >-
+          Cannot delete push provider because it is being used by a custom app
+          authenticator.
+        errorLink: E0000187
+        errorId: oaenwA1ra80S9W-pvbh4m6haA
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
     ErrorApiValidationFailed:
       summary: API Validation Failed
       value:
@@ -507,20 +519,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-    ErrorPushProviderUsedByCustomAppAuthenticator:
-      value:
-        errorCode: E0000187
-        errorSummary: >-
-          Cannot delete push provider because it is being used by a custom app
-          authenticator.
-        errorLink: E0000187
-        errorId: oaenwA1ra80S9W-pvbh4m6haA
-        errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

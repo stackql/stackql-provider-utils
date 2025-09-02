@@ -68,6 +68,11 @@ paths:
       security: []
       tags:
         - AssociatedDomainCustomizations
+    x-okta-lifecycle:
+      lifecycle: EA
+      isGenerallyAvailable: false
+      SKUs:
+        - Okta Identity Engine
   /.well-known/assetlinks.json:
     get:
       summary: Retrieve the customized assetlinks.json URI content
@@ -90,6 +95,11 @@ paths:
       security: []
       tags:
         - AssociatedDomainCustomizations
+    x-okta-lifecycle:
+      lifecycle: EA
+      isGenerallyAvailable: false
+      SKUs:
+        - Okta Identity Engine
   /.well-known/okta-organization:
     get:
       summary: Retrieve the Org metadata
@@ -176,6 +186,11 @@ paths:
       security: []
       tags:
         - AssociatedDomainCustomizations
+    x-okta-lifecycle:
+      lifecycle: EA
+      isGenerallyAvailable: false
+      SKUs:
+        - Okta Identity Engine
 components:
   schemas:
     WellKnownAppAuthenticatorConfiguration:
@@ -217,6 +232,109 @@ components:
           description: The type of authenticator
           enum:
             - app
+    PublicAppleAppSiteWellKnownURI:
+      description: The well-known URI content in JSON object format
+      type: object
+    PublicAssetLinksWellKnownURI:
+      description: The well-known URI content in a JSON array of objects format
+      type: array
+      properties:
+        items:
+          type: object
+    WellKnownOrgMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Org unique identifier
+        pipeline:
+          $ref: '#/components/schemas/PipelineType'
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
+            object using the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            alternate:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to the custom domain org URL
+            organization:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: Link to the org URL
+    WellKnownSSFMetadata:
+      title: Shared Signals Framework Metadata
+      description: >-
+        Metadata about Okta as a transmitter and relevant information for
+        configuration.
+      type: object
+      properties:
+        authorization_schemes:
+          type: array
+          description: >-
+            An array of JSON objects that specify the authorization scheme
+            properties supported by the transmitter
+          items:
+            $ref: '#/components/schemas/WellKnownSSFMetadataSpecUrn'
+        configuration_endpoint:
+          type: string
+          format: uri
+          description: The URL of the SSF Stream configuration endpoint
+          example: https://{yourOktaDomain}/api/v1/ssf/stream
+        default_subjects:
+          type: string
+          description: >-
+            A string that indicates the default behavior of newly created
+            streams
+          enum:
+            - ALL
+            - NONE
+          x-enumDescriptions:
+            ALL: >-
+              Indicates that any subjects that are appropriate for the stream
+              are added to the stream by default.
+            NONE: Indicates that no subjects are added by default
+        delivery_methods_supported:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: An array of supported SET delivery methods
+          example:
+            - https://schemas.openid.net/secevent/risc/delivery-method/push
+            - urn:ietf:rfc:8935
+        issuer:
+          type: string
+          description: >-
+            The issuer used in Security Event Tokens. This value is set as `iss`
+            in the claim.
+          example: https://{yourOktaDomain}
+        jwks_uri:
+          type: string
+          description: >-
+            The URL of the JSON Web Key Set (JWKS) that contains the signing
+            keys for validating the signatures of Security Event Tokens (SETs)
+          format: uri
+          example: https://{yourOktaDomain}/oauth2/v1/keys
+        spec_version:
+          type: string
+          description: >-
+            The version identifying the implementer's draft or final
+            specification implemented by the transmitter
+          example: 1_0-ID3
+        verification_endpoint:
+          type: string
+          format: uri
+          description: The URL of the SSF Stream verification endpoint
+          example: https://{yourOktaDomain}/api/v1/ssf/stream/verification
+    PublicWebauthnSiteWellKnownURI:
+      description: The well-known URI content in JSON object format
+      type: object
     AuthenticatorKeyEnum:
       description: A human-readable string that identifies the authenticator
       type: string
@@ -295,67 +413,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    PushMethodKeyProtection:
-      description: Indicates whether you must use a hardware key store
-      type: string
-      enum:
-        - ANY
-        - HARDWARE
-    AuthenticatorMethodAlgorithm:
-      type: string
-      enum:
-        - ES256
-        - RS256
-    AuthenticatorMethodTransactionType:
-      type: string
-      enum:
-        - CIBA
-        - LOGIN
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    PublicAppleAppSiteWellKnownURI:
-      description: The well-known URI content in JSON object format
-      type: object
-    PublicAssetLinksWellKnownURI:
-      description: The well-known URI content in a JSON array of objects format
-      type: array
-      properties:
-        items:
-          type: object
-    WellKnownOrgMetadata:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Org unique identifier
-        pipeline:
-          $ref: '#/components/schemas/PipelineType'
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for this
-            object using the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            alternate:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to the custom domain org URL
-            organization:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: Link to the org URL
     PipelineType:
       description: The Okta authentication pipeline of the org
       type: string
@@ -396,6 +453,40 @@ components:
           readOnly: true
       required:
         - href
+    WellKnownSSFMetadataSpecUrn:
+      type: object
+      properties:
+        spec_urn:
+          type: string
+          format: uri
+          description: The URN that describes the specification of the protocol being used
+          example: urn:ietf:rfc:6749
+    PushMethodKeyProtection:
+      description: Indicates whether you must use a hardware key store
+      type: string
+      enum:
+        - ANY
+        - HARDWARE
+    AuthenticatorMethodAlgorithm:
+      type: string
+      enum:
+        - ES256
+        - RS256
+    AuthenticatorMethodTransactionType:
+      type: string
+      enum:
+        - CIBA
+        - LOGIN
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     HrefHints:
       description: Describes allowed HTTP verbs for the `href`
       type: object
@@ -411,82 +502,6 @@ components:
         - GET
         - POST
         - PUT
-    WellKnownSSFMetadata:
-      title: Shared Signals Framework Metadata
-      description: >-
-        Metadata about Okta as a transmitter and relevant information for
-        configuration.
-      type: object
-      properties:
-        authorization_schemes:
-          type: array
-          description: >-
-            An array of JSON objects that specify the authorization scheme
-            properties supported by the transmitter
-          items:
-            $ref: '#/components/schemas/WellKnownSSFMetadataSpecUrn'
-        configuration_endpoint:
-          type: string
-          format: uri
-          description: The URL of the SSF Stream configuration endpoint
-          example: https://{yourOktaDomain}/api/v1/ssf/stream
-        default_subjects:
-          type: string
-          description: >-
-            A string that indicates the default behavior of newly created
-            streams
-          enum:
-            - ALL
-            - NONE
-          x-enumDescriptions:
-            ALL: >-
-              Indicates that any subjects that are appropriate for the stream
-              are added to the stream by default.
-            NONE: Indicates that no subjects are added by default
-        delivery_methods_supported:
-          type: array
-          items:
-            type: string
-            format: uri
-          description: An array of supported SET delivery methods
-          example:
-            - https://schemas.openid.net/secevent/risc/delivery-method/push
-            - urn:ietf:rfc:8935
-        issuer:
-          type: string
-          description: >-
-            The issuer used in Security Event Tokens. This value is set as `iss`
-            in the claim.
-          example: https://{yourOktaDomain}
-        jwks_uri:
-          type: string
-          description: >-
-            The URL of the JSON Web Key Set (JWKS) that contains the signing
-            keys for validating the signatures of Security Event Tokens (SETs)
-          format: uri
-          example: https://{yourOktaDomain}/oauth2/v1/keys
-        spec_version:
-          type: string
-          description: >-
-            The version identifying the implementer's draft or final
-            specification implemented by the transmitter
-          example: 1_0-ID3
-        verification_endpoint:
-          type: string
-          format: uri
-          description: The URL of the SSF Stream verification endpoint
-          example: https://{yourOktaDomain}/api/v1/ssf/stream/verification
-    WellKnownSSFMetadataSpecUrn:
-      type: object
-      properties:
-        spec_urn:
-          type: string
-          format: uri
-          description: The URN that describes the specification of the protocol being used
-          example: urn:ietf:rfc:6749
-    PublicWebauthnSiteWellKnownURI:
-      description: The well-known URI content in JSON object format
-      type: object
   responses:
     ErrorMissingRequiredParameter400:
       description: Bad Request
@@ -533,7 +548,6 @@ components:
           examples:
             AccessDenied:
               $ref: '#/components/examples/ErrorAccessDenied'
-  parameters: {}
   examples:
     WellKnownAppAuthenticatorConfigurationCustomApp:
       value:
@@ -555,22 +569,6 @@ components:
                   - ES256
                 keyProtection: ANY
           appAuthenticatorEnrollEndpoint: https://{yourOktaDomain}/idp/myaccount/app-authenticators
-    ErrorMissingRequiredParameter:
-      summary: Missing Required Parameter
-      value:
-        errorCode: E0000028
-        errorSummary: The request is missing a required parameter.
-        errorLink: E0000028
-        errorId: sampleiCF-l7mr9XqM1NQ
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     PublicAppleAppSiteWellKnownURIResponse:
       value:
         authsrv:
@@ -588,14 +586,6 @@ components:
     PublicAssetLinksWellKnownURIResponse:
       value:
         - key1: value1
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     WellKnownOrgMetadataResponseCustomUrlOie:
       value:
         id: 00o47wwoytgsDqEtz0g7
@@ -626,6 +616,34 @@ components:
         authorization_schemes:
           - spec_urn: urn:ietf:rfc:6749
         default_subjects: ALL
+    PublicWebauthnWellKnownURIResponse:
+      value:
+        origins:
+          - https://example1.com
+    ErrorMissingRequiredParameter:
+      summary: Missing Required Parameter
+      value:
+        errorCode: E0000028
+        errorSummary: The request is missing a required parameter.
+        errorLink: E0000028
+        errorId: sampleiCF-l7mr9XqM1NQ
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
     ErrorInvalidTokenProvided:
       summary: Invalid Token Provided
       value:
@@ -642,15 +660,6 @@ components:
         errorLink: E0000006
         errorId: sampleNUSD_8fdkFd8fs8SDBK
         errorCauses: []
-    PublicWebauthnWellKnownURIResponse:
-      value:
-        origins:
-          - https://example1.com
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -55,8 +55,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/appInstanceId'
+    parameters:
+      - $ref: '#/components/parameters/appInstanceId'
 components:
   schemas:
     AgentAction:
@@ -160,7 +160,14 @@ components:
           examples:
             AgentTimeOut:
               $ref: '#/components/examples/ErrorAgentTimeOut'
-  parameters: {}
+  parameters:
+    appInstanceId:
+      name: appInstanceId
+      in: path
+      description: ID of the Active Directory app instance in Okta
+      schema:
+        type: string
+      required: true
   examples:
     add-user-request:
       summary: Add user to group
@@ -209,11 +216,6 @@ components:
         errorLink: E0000237
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -83,8 +83,8 @@ paths:
             - okta.deviceIntegrations.read
       tags:
         - DeviceIntegrations
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceIntegrationId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceIntegrationId'
   /api/v1/device-integrations/{deviceIntegrationId}/lifecycle/activate:
     post:
       x-okta-lifecycle:
@@ -130,8 +130,8 @@ paths:
             - okta.deviceIntegrations.manage
       tags:
         - DeviceIntegrations
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceIntegrationId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceIntegrationId'
   /api/v1/device-integrations/{deviceIntegrationId}/lifecycle/deactivate:
     post:
       x-okta-lifecycle:
@@ -168,8 +168,8 @@ paths:
             - okta.deviceIntegrations.manage
       tags:
         - DeviceIntegrations
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceIntegrationId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceIntegrationId'
 components:
   schemas:
     DeviceIntegrations:
@@ -409,32 +409,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathDeviceIntegrationId:
+      in: path
+      name: deviceIntegrationId
+      required: true
+      description: The ID of the device integration
+      schema:
+        type: string
   examples:
-    ErrorInvalidTokenProvided:
-      summary: Invalid Token Provided
-      value:
-        errorCode: E0000011
-        errorSummary: Invalid token provided
-        errorLink: E0000011
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     DeviceIntegrationCrowdStrikeResponse:
       summary: Response of a device integration for CrowdStrike
       value:
@@ -572,6 +555,30 @@ components:
             hints:
               allow:
                 - POST
+    ErrorInvalidTokenProvided:
+      summary: Invalid Token Provided
+      value:
+        errorCode: E0000011
+        errorSummary: Invalid token provided
+        errorLink: E0000011
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -580,11 +587,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

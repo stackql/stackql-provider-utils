@@ -91,7 +91,7 @@ paths:
       description: Retrieves a brand by `brandId`
       operationId: getBrand
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+        - $ref: '#/components/parameters/queryExpandBrand'
       responses:
         '200':
           description: Successfully retrieved the brand
@@ -168,8 +168,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     delete:
       summary: Delete a brand
       description: Deletes a brand by `brandId`
@@ -203,8 +201,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/domains:
     get:
       summary: List all domains associated with a brand
@@ -232,8 +230,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/error:
     get:
       summary: Retrieve the error page sub-resources
@@ -263,9 +261,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/queryExpandPageRoot'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/queryExpandPageRoot'
   /api/v1/brands/{brandId}/pages/error/customized:
     get:
       summary: Retrieve the customized error page
@@ -300,8 +298,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     put:
       summary: Replace the customized error page
       description: >-
@@ -343,8 +339,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     delete:
       summary: Delete the customized error page
       description: >-
@@ -370,8 +364,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/error/default:
     get:
       summary: Retrieve the default error page
@@ -401,8 +395,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/error/preview:
     get:
       summary: Retrieve the preview error page preview
@@ -438,8 +432,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     put:
       summary: Replace the preview error page
       description: >-
@@ -482,8 +474,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     delete:
       summary: Delete the preview error page
       description: >-
@@ -510,8 +500,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/sign-in:
     get:
       summary: Retrieve the sign-in page sub-resources
@@ -541,9 +531,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/queryExpandPageRoot'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/queryExpandPageRoot'
   /api/v1/brands/{brandId}/pages/sign-in/customized:
     get:
       summary: Retrieve the customized sign-in page
@@ -578,8 +568,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     put:
       summary: Replace the customized sign-in page
       description: >-
@@ -621,8 +609,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     delete:
       summary: Delete the customized sign-in page
       description: >-
@@ -648,8 +634,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/sign-in/default:
     get:
       summary: Retrieve the default sign-in page
@@ -679,8 +665,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/sign-in/preview:
     get:
       summary: Retrieve the preview sign-in page preview
@@ -716,8 +702,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     put:
       summary: Replace the preview sign-in page
       description: >-
@@ -760,8 +744,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     delete:
       summary: Delete the preview sign-in page
       description: >-
@@ -788,8 +770,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/sign-in/widget-versions:
     get:
       summary: List all Sign-In Widget versions
@@ -820,8 +802,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/pages/sign-out/customized:
     get:
       summary: Retrieve the sign-out page settings
@@ -849,8 +831,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
     put:
       summary: Replace the sign-out page settings
       description: Replaces the sign-out page settings
@@ -885,15 +865,17 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/templates/email:
     get:
       summary: List all email templates
       description: Lists all supported email templates
       operationId: listEmailTemplates
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
+        - $ref: '#/components/parameters/queryExpandEmailTemplate'
       responses:
         '200':
           description: Successfully returned the list of email templates.
@@ -929,14 +911,15 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/templates/email/{templateName}:
     get:
       summary: Retrieve an email template
       description: Retrieves the details of an email template by name
       operationId: getEmailTemplate
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+        - $ref: '#/components/parameters/queryExpandEmailTemplate'
       responses:
         '200':
           description: Successfully retrieved the email template.
@@ -962,6 +945,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/templates/email/{templateName}/customizations:
     get:
       summary: List all email customizations
@@ -975,8 +961,8 @@ paths:
         customizations for Okta-supported languages are returned.
       operationId: listEmailCustomizations
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: >-
@@ -1067,9 +1053,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
     delete:
       summary: Delete all email customizations
       description: >
@@ -1100,9 +1083,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/templates/email/{templateName}/customizations/{customizationId}:
     get:
       summary: Retrieve an email customization
@@ -1139,10 +1122,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
-        - $ref: '#/components/parameters/pathCustomizationId'
     put:
       summary: Replace an email customization
       description: >
@@ -1208,10 +1187,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
-        - $ref: '#/components/parameters/pathCustomizationId'
     delete:
       summary: Delete an email customization
       description: >
@@ -1253,10 +1228,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
-        - $ref: '#/components/parameters/pathCustomizationId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
+      - $ref: '#/components/parameters/pathCustomizationId'
   /api/v1/brands/{brandId}/templates/email/{templateName}/customizations/{customizationId}/preview:
     get:
       summary: Retrieve a preview of an email customization
@@ -1295,10 +1270,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
-        - $ref: '#/components/parameters/pathCustomizationId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
+      - $ref: '#/components/parameters/pathCustomizationId'
   /api/v1/brands/{brandId}/templates/email/{templateName}/default-content:
     get:
       summary: Retrieve an email template default content
@@ -1314,8 +1289,7 @@ paths:
         - An additional language is specified for the `language` parameter
       operationId: getEmailDefaultContent
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+        - $ref: '#/components/parameters/queryLanguage'
       responses:
         '200':
           description: Successfully retrieved the email template's default content.
@@ -1341,6 +1315,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/templates/email/{templateName}/default-content/preview:
     get:
       summary: Retrieve a preview of the email template default content
@@ -1358,8 +1335,7 @@ paths:
         - An additional language is specified for the `language` parameter
       operationId: getEmailDefaultPreview
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+        - $ref: '#/components/parameters/queryLanguage'
       responses:
         '200':
           description: >-
@@ -1388,6 +1364,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/templates/email/{templateName}/settings:
     get:
       summary: Retrieve the email template settings
@@ -1418,9 +1397,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
     put:
       summary: Replace the email template settings
       description: Replaces an email template's settings
@@ -1477,9 +1453,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/templates/email/{templateName}/test:
     post:
       summary: Send a test email
@@ -1509,8 +1485,7 @@ paths:
         used. This only applies to super admins.
       operationId: sendTestEmail
       parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathTemplateName'
+        - $ref: '#/components/parameters/queryLanguage'
       responses:
         '204':
           description: Successfully sent a test email.
@@ -1530,6 +1505,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathTemplateName'
   /api/v1/brands/{brandId}/themes:
     get:
       summary: List all themes
@@ -1567,8 +1545,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
   /api/v1/brands/{brandId}/themes/{themeId}:
     get:
       summary: Retrieve a theme
@@ -1599,9 +1577,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
     put:
       summary: Replace a theme
       description: Replaces a theme for a brand
@@ -1643,9 +1618,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathThemeId'
   /api/v1/brands/{brandId}/themes/{themeId}/background-image:
     post:
       summary: Upload the background image
@@ -1692,9 +1667,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
     delete:
       summary: Delete the background image
       description: Deletes a theme background image
@@ -1718,9 +1690,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathThemeId'
   /api/v1/brands/{brandId}/themes/{themeId}/favicon:
     post:
       summary: Upload the favicon
@@ -1765,9 +1737,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
     delete:
       summary: Delete the favicon
       description: Deletes a theme favicon. The theme will use the default Okta favicon.
@@ -1791,9 +1760,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathThemeId'
   /api/v1/brands/{brandId}/themes/{themeId}/logo:
     post:
       summary: Upload the logo
@@ -1844,9 +1813,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
     delete:
       summary: Delete the logo
       description: Deletes a Theme logo. The theme will use the default Okta logo.
@@ -1870,9 +1836,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathThemeId'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathThemeId'
   /api/v1/brands/{brandId}/well-known-uris:
     get:
       summary: Retrieve all the well-known URIs
@@ -1907,9 +1873,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/queryExpandWellKnownUris'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/queryExpandWellKnownUris'
   /api/v1/brands/{brandId}/well-known-uris/{path}:
     get:
       summary: Retrieve the well-known URI of a specific brand
@@ -1951,10 +1917,10 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathWellKnownUriPath'
-        - $ref: '#/components/parameters/queryExpandWellKnownUri'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathWellKnownUriPath'
+      - $ref: '#/components/parameters/queryExpandWellKnownUri'
   /api/v1/brands/{brandId}/well-known-uris/{path}/customized:
     get:
       summary: Retrieve the customized content of the specified well-known URI
@@ -1998,9 +1964,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathWellKnownUriPath'
     put:
       summary: Replace the customized well-known URI of the specific path
       description: >-
@@ -2074,9 +2037,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathBrandId'
-        - $ref: '#/components/parameters/pathWellKnownUriPath'
+    parameters:
+      - $ref: '#/components/parameters/pathBrandId'
+      - $ref: '#/components/parameters/pathWellKnownUriPath'
 components:
   schemas:
     BrandWithEmbedded:
@@ -2105,6 +2068,15 @@ components:
                 themes:
                   $ref: '#/components/schemas/HrefObject'
               type: object
+    CreateBrandRequest:
+      title: CreateBrandRequest
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Brand
+      required:
+        - name
     Brand:
       type: object
       properties:
@@ -2142,6 +2114,366 @@ components:
             Removes "Powered by Okta" from the sign-in page in redirect
             authentication deployments, and "© [current year] Okta, Inc." from
             the Okta End-User Dashboard
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    BrandRequest:
+      type: object
+      properties:
+        agreeToCustomPrivacyPolicy:
+          type: boolean
+          description: >-
+            Consent for updating the custom privacy URL. Not required when
+            resetting the URL.
+        customPrivacyPolicyUrl:
+          type: string
+          description: Custom privacy policy URL
+        defaultApp:
+          $ref: '#/components/schemas/DefaultApp'
+        emailDomainId:
+          type: string
+          description: The ID of the email domain
+        locale:
+          $ref: '#/components/schemas/Language'
+        name:
+          type: string
+          description: The name of the Brand
+        removePoweredByOkta:
+          type: boolean
+          default: false
+          description: >-
+            Removes "Powered by Okta" from the sign-in page in redirect
+            authentication deployments, and "© [current year] Okta, Inc." from
+            the Okta End-User Dashboard
+      required:
+        - name
+    BrandDomains:
+      title: BrandDomains
+      items:
+        $ref: '#/components/schemas/DomainResponse'
+      type: array
+    PageRoot:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            default:
+              $ref: '#/components/schemas/CustomizablePage'
+            customized:
+              $ref: '#/components/schemas/CustomizablePage'
+            customizedUrl:
+              type: string
+              format: uri
+            preview:
+              $ref: '#/components/schemas/CustomizablePage'
+            previewUrl:
+              type: string
+              format: uri
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                default:
+                  $ref: '#/components/schemas/HrefObject'
+                customized:
+                  $ref: '#/components/schemas/HrefObject'
+                preview:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    ErrorPage:
+      allOf:
+        - $ref: '#/components/schemas/CustomizablePage'
+        - type: object
+          properties:
+            contentSecurityPolicySetting:
+              $ref: '#/components/schemas/ContentSecurityPolicySetting'
+    SignInPage:
+      allOf:
+        - $ref: '#/components/schemas/CustomizablePage'
+        - type: object
+          properties:
+            contentSecurityPolicySetting:
+              $ref: '#/components/schemas/ContentSecurityPolicySetting'
+            widgetCustomizations:
+              type: object
+              properties:
+                signInLabel:
+                  type: string
+                  description: The label for the sign in widget
+                usernameLabel:
+                  type: string
+                  description: The label for the username field
+                usernameInfoTip:
+                  type: string
+                  description: The label for the username information tip
+                passwordLabel:
+                  type: string
+                  description: The label for the password field
+                passwordInfoTip:
+                  type: string
+                  description: The label for the password information tip
+                showPasswordVisibilityToggle:
+                  type: boolean
+                  description: Allows users to see their passwords as they type
+                showUserIdentifier:
+                  type: boolean
+                  description: >-
+                    Allows the user's identifier to appear on authentication and
+                    enrollment pages
+                forgotPasswordLabel:
+                  type: string
+                  description: The label for the forgot password page
+                forgotPasswordUrl:
+                  type: string
+                  description: The forgot password URL
+                unlockAccountLabel:
+                  type: string
+                  description: The label for the unlock account link
+                unlockAccountUrl:
+                  type: string
+                  description: The unlock account URL
+                helpLabel:
+                  type: string
+                  description: The label for the help link
+                helpUrl:
+                  type: string
+                  description: The help link URL
+                customLink1Label:
+                  type: string
+                  description: The label for the first custom link
+                customLink1Url:
+                  type: string
+                  description: The URL for the first custom link
+                customLink2Label:
+                  type: string
+                  description: The label for the second custom link
+                customLink2Url:
+                  type: string
+                  description: The URL for the second custom link
+                authenticatorPageCustomLinkLabel:
+                  type: string
+                  description: The label for the authenticator page custom link
+                authenticatorPageCustomLinkUrl:
+                  type: string
+                  description: The URL for the authenticator page custom link
+                classicRecoveryFlowEmailOrUsernameLabel:
+                  type: string
+                  description: >-
+                    The label for the username field in the classic recovery
+                    flow
+                widgetGeneration:
+                  $ref: '#/components/schemas/WidgetGeneration'
+                postAuthKeepMeSignedInPrompt:
+                  $ref: '#/components/schemas/PostAuthKeepMeSignedInPrompt'
+                classicFooterHelpTitle:
+                  type: string
+                  description: >-
+                    The title of the footer link on the sign-in page. Only
+                    applicable for Classic Engine orgs.
+            widgetVersion:
+              $ref: '#/components/schemas/Version'
+    HostedPage:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/HostedPageType'
+        url:
+          type: string
+      required:
+        - type
+    EmailTemplateResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+          description: The name of this email template
+        _embedded:
+          type: object
+          properties:
+            settings:
+              $ref: '#/components/schemas/EmailSettingsResponse'
+            customizationCount:
+              type: integer
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                settings:
+                  $ref: '#/components/schemas/HrefObject'
+                defaultContent:
+                  $ref: '#/components/schemas/HrefObject'
+                customizations:
+                  $ref: '#/components/schemas/HrefObject'
+                test:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    EmailCustomization:
+      allOf:
+        - $ref: '#/components/schemas/EmailContent'
+        - type: object
+          properties:
+            created:
+              type: string
+              format: date-time
+              readOnly: true
+              description: The UTC time at which this email customization was created.
+            id:
+              type: string
+              readOnly: true
+              description: A unique identifier for this email customization
+            isDefault:
+              type: boolean
+              description: >-
+                Whether this is the default customization for the email
+                template. Each customized email template must have exactly one
+                default customization. Defaults to `true` for the first
+                customization and `false` thereafter.
+            language:
+              $ref: '#/components/schemas/Language'
+            lastUpdated:
+              type: string
+              format: date-time
+              readOnly: true
+              description: The UTC time at which this email customization was last updated.
+            _links:
+              allOf:
+                - $ref: '#/components/schemas/LinksSelf'
+                - properties:
+                    self:
+                      $ref: '#/components/schemas/HrefObject'
+                    template:
+                      $ref: '#/components/schemas/HrefObject'
+                    preview:
+                      $ref: '#/components/schemas/HrefObject'
+                    test:
+                      $ref: '#/components/schemas/HrefObject'
+                  type: object
+          required:
+            - language
+    EmailPreview:
+      type: object
+      properties:
+        body:
+          type: string
+          readOnly: true
+          description: The email's HTML body
+        subject:
+          type: string
+          readOnly: true
+          description: The email's subject
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                contentSource:
+                  $ref: '#/components/schemas/HrefObject'
+                template:
+                  $ref: '#/components/schemas/HrefObject'
+                test:
+                  $ref: '#/components/schemas/HrefObject'
+                defaultContent:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    EmailDefaultContent:
+      allOf:
+        - $ref: '#/components/schemas/EmailContent'
+        - type: object
+          properties:
+            _links:
+              type: object
+              allOf:
+                - $ref: '#/components/schemas/LinksSelf'
+                - properties:
+                    template:
+                      $ref: '#/components/schemas/HrefObject'
+                    preview:
+                      $ref: '#/components/schemas/HrefObject'
+                    test:
+                      $ref: '#/components/schemas/HrefObject'
+                  type: object
+    EmailSettingsResponse:
+      type: object
+      properties:
+        recipients:
+          type: string
+          enum:
+            - ALL_USERS
+            - ADMINS_ONLY
+            - NO_USERS
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                self:
+                  $ref: '#/components/schemas/HrefObject'
+                template:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    EmailSettings:
+      type: object
+      properties:
+        recipients:
+          type: string
+          enum:
+            - ALL_USERS
+            - ADMINS_ONLY
+            - NO_USERS
+      required:
+        - recipients
+    Error409:
+      description: Conflict error object
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          description: >-
+            Another request has already been received for the settings for this
+            email template
+          readOnly: true
+        errorCode:
+          type: string
+          description: E0000254
+          readOnly: true
+        errorId:
+          type: string
+          description: sampleH3iLB6bpBcbnV9E09Fy
+          readOnly: true
+        errorLink:
+          type: string
+          description: E0000254
+          readOnly: true
+        errorSummary:
+          type: string
+          description: >-
+            Another request has already been received for the settings for this
+            email template
+          readOnly: true
     ThemeResponse:
       type: object
       properties:
@@ -2181,6 +2513,107 @@ components:
           $ref: '#/components/schemas/SignInPageTouchPointVariant'
         _links:
           $ref: '#/components/schemas/LinksSelf'
+    UpdateThemeRequest:
+      type: object
+      properties:
+        emailTemplateTouchPointVariant:
+          $ref: '#/components/schemas/EmailTemplateTouchPointVariant'
+        endUserDashboardTouchPointVariant:
+          $ref: '#/components/schemas/EndUserDashboardTouchPointVariant'
+        errorPageTouchPointVariant:
+          $ref: '#/components/schemas/ErrorPageTouchPointVariant'
+        loadingPageTouchPointVariant:
+          $ref: '#/components/schemas/LoadingPageTouchPointVariant'
+        primaryColorContrastHex:
+          type: string
+          description: Primary color contrast hex code
+          default: null
+        primaryColorHex:
+          type: string
+          description: Primary color hex code
+          default: null
+        secondaryColorContrastHex:
+          type: string
+          description: Secondary color contrast hex code
+          default: null
+        secondaryColorHex:
+          type: string
+          description: Secondary color hex code
+          default: null
+        signInPageTouchPointVariant:
+          $ref: '#/components/schemas/SignInPageTouchPointVariant'
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+      required:
+        - primaryColorHex
+        - secondaryColorHex
+        - signInPageTouchPointVariant
+        - endUserDashboardTouchPointVariant
+        - errorPageTouchPointVariant
+        - emailTemplateTouchPointVariant
+    ImageUploadResponse:
+      type: object
+      properties:
+        url:
+          readOnly: true
+          type: string
+    WellKnownURIsRoot:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            apple-app-site-association:
+              type: object
+              description: Contains the customized well-known URI content and links
+              properties:
+                customized:
+                  $ref: '#/components/schemas/WellKnownURIObjectResponse'
+            assetlinks.json:
+              type: object
+              description: Contains the customized well-known URI content and links
+              properties:
+                customized:
+                  $ref: '#/components/schemas/WellKnownURIArrayResponse'
+            webauthn:
+              type: object
+              description: Contains the customized well-known URI content and links
+              properties:
+                customized:
+                  $ref: '#/components/schemas/WellKnownURIObjectResponse'
+          readOnly: true
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                apple-app-site-association:
+                  $ref: '#/components/schemas/HrefObject'
+                assetlinks.json:
+                  $ref: '#/components/schemas/HrefObject'
+                webauthn:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    WellKnownURIObjectResponse:
+      type: object
+      properties:
+        representation:
+          type: object
+          description: The well-known URI content in JSON format
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                self:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    WellKnownURIRequest:
+      type: object
+      properties:
+        representation:
+          type: object
+          description: The well-known URI content in JSON object format
+      required:
+        - representation
     DomainResponse:
       description: The properties that define an individual domain.
       type: object
@@ -2270,31 +2703,6 @@ components:
           readOnly: true
       required:
         - href
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
     DefaultApp:
       type: object
       properties:
@@ -2312,6 +2720,117 @@ components:
         The language specified as an [IETF BCP 47 language
         tag](https://datatracker.ietf.org/doc/html/rfc5646)
       type: string
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    CustomizablePage:
+      type: object
+      properties:
+        pageContent:
+          type: string
+          description: The HTML for the page
+    ContentSecurityPolicySetting:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - enforced
+            - report_only
+        reportUri:
+          type: string
+        srcList:
+          type: array
+          items:
+            type: string
+    WidgetGeneration:
+      description: The generation of the Sign-in Widget
+      type: string
+      enum:
+        - G2
+        - G3
+    PostAuthKeepMeSignedInPrompt:
+      x-okta-lifecycle:
+        lifecycle: LIMITED_GA
+        isGenerallyAvailable: false
+        SKUs:
+          - Okta Identity Engine
+      type: object
+      properties:
+        acceptButtonText:
+          type: string
+          description: The label on the accept button when prompting for Stay signed in
+        rejectButtonText:
+          type: string
+          description: The label on the reject button when prompting for Stay signed in
+        subtitle:
+          type: string
+          description: The subtitle on the Sign-In Widget when prompting for Stay signed in
+        title:
+          type: string
+          description: The title on the Sign-In Widget when prompting for Stay signed in
+    Version:
+      description: The version specified as a [Semantic Version](https://semver.org/).
+      type: string
+      pattern: >-
+        ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+    HostedPageType:
+      type: string
+      enum:
+        - EXTERNALLY_HOSTED
+        - OKTA_DEFAULT
+    EmailContent:
+      type: object
+      properties:
+        body:
+          type: string
+          description: >
+            The HTML body of the email. May contain [variable
+            references](https://velocity.apache.org/engine/1.7/user-guide.html#references). 
+
+
+            <x-lifecycle class="ea"></x-lifecycle> Not required if Custom
+            languages for Okta Email Templates is enabled. A `null` body is
+            replaced with a default value from one of the following in priority
+            order:
+
+
+            1. An existing default email customization, if one exists
+
+            2. Okta-provided translated content for the specified language, if
+            one exists
+
+            3. Okta-provided translated content for the brand locale, if it's
+            set 
+
+            4. Okta-provided content in English
+        subject:
+          type: string
+          description: >
+            The email subject. May contain [variable
+            references](https://velocity.apache.org/engine/1.7/user-guide.html#references).
+
+
+            <x-lifecycle class="ea"></x-lifecycle> Not required if Custom
+            languages for Okta Email Templates is enabled. A `null` subject is
+            replaced with a default value from one of the following in priority
+            order:
+
+
+            1. An existing default email customization, if one exists
+
+            2. Okta-provided translated content for the specified language, if
+            one exists
+
+            3. Okta-provided translated content for the brand locale, if it's
+            set
+
+            4. Okta-provided content in English
+      required:
+        - subject
+        - body
     EmailTemplateTouchPointVariant:
       description: >
         Variant for email templates. You can publish a theme for email templates
@@ -2405,6 +2924,19 @@ components:
         OKTA_DEFAULT: >-
           Uses the Okta logo and favicon with no background image. Uses the Okta
           colors on the Okta sign-in page.
+    WellKnownURIArrayResponse:
+      type: object
+      properties:
+        representation:
+          type: array
+          description: The well-known URI content in a JSON array of objects format
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                self:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
     DomainCertificateSourceType:
       description: >-
         Certificate source type that indicates whether the certificate is
@@ -2517,11 +3049,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HttpMethod'
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     DNSRecordType:
       example: TXT
       type: string
@@ -2540,570 +3067,6 @@ components:
         - GET
         - POST
         - PUT
-    CreateBrandRequest:
-      title: CreateBrandRequest
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the Brand
-      required:
-        - name
-    BrandRequest:
-      type: object
-      properties:
-        agreeToCustomPrivacyPolicy:
-          type: boolean
-          description: >-
-            Consent for updating the custom privacy URL. Not required when
-            resetting the URL.
-        customPrivacyPolicyUrl:
-          type: string
-          description: Custom privacy policy URL
-        defaultApp:
-          $ref: '#/components/schemas/DefaultApp'
-        emailDomainId:
-          type: string
-          description: The ID of the email domain
-        locale:
-          $ref: '#/components/schemas/Language'
-        name:
-          type: string
-          description: The name of the Brand
-        removePoweredByOkta:
-          type: boolean
-          default: false
-          description: >-
-            Removes "Powered by Okta" from the sign-in page in redirect
-            authentication deployments, and "© [current year] Okta, Inc." from
-            the Okta End-User Dashboard
-      required:
-        - name
-    BrandDomains:
-      title: BrandDomains
-      items:
-        $ref: '#/components/schemas/DomainResponse'
-      type: array
-    PageRoot:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            default:
-              $ref: '#/components/schemas/CustomizablePage'
-            customized:
-              $ref: '#/components/schemas/CustomizablePage'
-            customizedUrl:
-              type: string
-              format: uri
-            preview:
-              $ref: '#/components/schemas/CustomizablePage'
-            previewUrl:
-              type: string
-              format: uri
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                default:
-                  $ref: '#/components/schemas/HrefObject'
-                customized:
-                  $ref: '#/components/schemas/HrefObject'
-                preview:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    CustomizablePage:
-      type: object
-      properties:
-        pageContent:
-          type: string
-          description: The HTML for the page
-    ErrorPage:
-      allOf:
-        - $ref: '#/components/schemas/CustomizablePage'
-        - type: object
-          properties:
-            contentSecurityPolicySetting:
-              $ref: '#/components/schemas/ContentSecurityPolicySetting'
-    ContentSecurityPolicySetting:
-      type: object
-      properties:
-        mode:
-          type: string
-          enum:
-            - enforced
-            - report_only
-        reportUri:
-          type: string
-        srcList:
-          type: array
-          items:
-            type: string
-    SignInPage:
-      allOf:
-        - $ref: '#/components/schemas/CustomizablePage'
-        - type: object
-          properties:
-            contentSecurityPolicySetting:
-              $ref: '#/components/schemas/ContentSecurityPolicySetting'
-            widgetCustomizations:
-              type: object
-              properties:
-                signInLabel:
-                  type: string
-                  description: The label for the sign in widget
-                usernameLabel:
-                  type: string
-                  description: The label for the username field
-                usernameInfoTip:
-                  type: string
-                  description: The label for the username information tip
-                passwordLabel:
-                  type: string
-                  description: The label for the password field
-                passwordInfoTip:
-                  type: string
-                  description: The label for the password information tip
-                showPasswordVisibilityToggle:
-                  type: boolean
-                  description: Allows users to see their passwords as they type
-                showUserIdentifier:
-                  type: boolean
-                  description: >-
-                    Allows the user's identifier to appear on authentication and
-                    enrollment pages
-                forgotPasswordLabel:
-                  type: string
-                  description: The label for the forgot password page
-                forgotPasswordUrl:
-                  type: string
-                  description: The forgot password URL
-                unlockAccountLabel:
-                  type: string
-                  description: The label for the unlock account link
-                unlockAccountUrl:
-                  type: string
-                  description: The unlock account URL
-                helpLabel:
-                  type: string
-                  description: The label for the help link
-                helpUrl:
-                  type: string
-                  description: The help link URL
-                customLink1Label:
-                  type: string
-                  description: The label for the first custom link
-                customLink1Url:
-                  type: string
-                  description: The URL for the first custom link
-                customLink2Label:
-                  type: string
-                  description: The label for the second custom link
-                customLink2Url:
-                  type: string
-                  description: The URL for the second custom link
-                authenticatorPageCustomLinkLabel:
-                  type: string
-                  description: The label for the authenticator page custom link
-                authenticatorPageCustomLinkUrl:
-                  type: string
-                  description: The URL for the authenticator page custom link
-                classicRecoveryFlowEmailOrUsernameLabel:
-                  type: string
-                  description: >-
-                    The label for the username field in the classic recovery
-                    flow
-                widgetGeneration:
-                  $ref: '#/components/schemas/WidgetGeneration'
-                postAuthKeepMeSignedInPrompt:
-                  $ref: '#/components/schemas/PostAuthKeepMeSignedInPrompt'
-                classicFooterHelpTitle:
-                  type: string
-                  description: >-
-                    The title of the footer link on the sign-in page. Only
-                    applicable for Classic Engine orgs.
-            widgetVersion:
-              $ref: '#/components/schemas/Version'
-    WidgetGeneration:
-      description: The generation of the Sign-in Widget
-      type: string
-      enum:
-        - G2
-        - G3
-    PostAuthKeepMeSignedInPrompt:
-      x-okta-lifecycle:
-        lifecycle: LIMITED_GA
-        isGenerallyAvailable: false
-        SKUs:
-          - Okta Identity Engine
-      type: object
-      properties:
-        acceptButtonText:
-          type: string
-          description: The label on the accept button when prompting for Stay signed in
-        rejectButtonText:
-          type: string
-          description: The label on the reject button when prompting for Stay signed in
-        subtitle:
-          type: string
-          description: The subtitle on the Sign-In Widget when prompting for Stay signed in
-        title:
-          type: string
-          description: The title on the Sign-In Widget when prompting for Stay signed in
-    Version:
-      description: The version specified as a [Semantic Version](https://semver.org/).
-      type: string
-      pattern: >-
-        ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
-    HostedPage:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/HostedPageType'
-        url:
-          type: string
-      required:
-        - type
-    HostedPageType:
-      type: string
-      enum:
-        - EXTERNALLY_HOSTED
-        - OKTA_DEFAULT
-    EmailTemplateResponse:
-      type: object
-      properties:
-        name:
-          type: string
-          readOnly: true
-          description: The name of this email template
-        _embedded:
-          type: object
-          properties:
-            settings:
-              $ref: '#/components/schemas/EmailSettingsResponse'
-            customizationCount:
-              type: integer
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                settings:
-                  $ref: '#/components/schemas/HrefObject'
-                defaultContent:
-                  $ref: '#/components/schemas/HrefObject'
-                customizations:
-                  $ref: '#/components/schemas/HrefObject'
-                test:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    EmailSettingsResponse:
-      type: object
-      properties:
-        recipients:
-          type: string
-          enum:
-            - ALL_USERS
-            - ADMINS_ONLY
-            - NO_USERS
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                self:
-                  $ref: '#/components/schemas/HrefObject'
-                template:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    EmailCustomization:
-      allOf:
-        - $ref: '#/components/schemas/EmailContent'
-        - type: object
-          properties:
-            created:
-              type: string
-              format: date-time
-              readOnly: true
-              description: The UTC time at which this email customization was created.
-            id:
-              type: string
-              readOnly: true
-              description: A unique identifier for this email customization
-            isDefault:
-              type: boolean
-              description: >-
-                Whether this is the default customization for the email
-                template. Each customized email template must have exactly one
-                default customization. Defaults to `true` for the first
-                customization and `false` thereafter.
-            language:
-              $ref: '#/components/schemas/Language'
-            lastUpdated:
-              type: string
-              format: date-time
-              readOnly: true
-              description: The UTC time at which this email customization was last updated.
-            _links:
-              allOf:
-                - $ref: '#/components/schemas/LinksSelf'
-                - properties:
-                    self:
-                      $ref: '#/components/schemas/HrefObject'
-                    template:
-                      $ref: '#/components/schemas/HrefObject'
-                    preview:
-                      $ref: '#/components/schemas/HrefObject'
-                    test:
-                      $ref: '#/components/schemas/HrefObject'
-                  type: object
-          required:
-            - language
-    EmailContent:
-      type: object
-      properties:
-        body:
-          type: string
-          description: >
-            The HTML body of the email. May contain [variable
-            references](https://velocity.apache.org/engine/1.7/user-guide.html#references). 
-
-
-            <x-lifecycle class="ea"></x-lifecycle> Not required if Custom
-            languages for Okta Email Templates is enabled. A `null` body is
-            replaced with a default value from one of the following in priority
-            order:
-
-
-            1. An existing default email customization, if one exists
-
-            2. Okta-provided translated content for the specified language, if
-            one exists
-
-            3. Okta-provided translated content for the brand locale, if it's
-            set 
-
-            4. Okta-provided content in English
-        subject:
-          type: string
-          description: >
-            The email subject. May contain [variable
-            references](https://velocity.apache.org/engine/1.7/user-guide.html#references).
-
-
-            <x-lifecycle class="ea"></x-lifecycle> Not required if Custom
-            languages for Okta Email Templates is enabled. A `null` subject is
-            replaced with a default value from one of the following in priority
-            order:
-
-
-            1. An existing default email customization, if one exists
-
-            2. Okta-provided translated content for the specified language, if
-            one exists
-
-            3. Okta-provided translated content for the brand locale, if it's
-            set
-
-            4. Okta-provided content in English
-      required:
-        - subject
-        - body
-    EmailPreview:
-      type: object
-      properties:
-        body:
-          type: string
-          readOnly: true
-          description: The email's HTML body
-        subject:
-          type: string
-          readOnly: true
-          description: The email's subject
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                contentSource:
-                  $ref: '#/components/schemas/HrefObject'
-                template:
-                  $ref: '#/components/schemas/HrefObject'
-                test:
-                  $ref: '#/components/schemas/HrefObject'
-                defaultContent:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    EmailDefaultContent:
-      allOf:
-        - $ref: '#/components/schemas/EmailContent'
-        - type: object
-          properties:
-            _links:
-              type: object
-              allOf:
-                - $ref: '#/components/schemas/LinksSelf'
-                - properties:
-                    template:
-                      $ref: '#/components/schemas/HrefObject'
-                    preview:
-                      $ref: '#/components/schemas/HrefObject'
-                    test:
-                      $ref: '#/components/schemas/HrefObject'
-                  type: object
-    EmailSettings:
-      type: object
-      properties:
-        recipients:
-          type: string
-          enum:
-            - ALL_USERS
-            - ADMINS_ONLY
-            - NO_USERS
-      required:
-        - recipients
-    Error409:
-      description: Conflict error object
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          description: >-
-            Another request has already been received for the settings for this
-            email template
-          readOnly: true
-        errorCode:
-          type: string
-          description: E0000254
-          readOnly: true
-        errorId:
-          type: string
-          description: sampleH3iLB6bpBcbnV9E09Fy
-          readOnly: true
-        errorLink:
-          type: string
-          description: E0000254
-          readOnly: true
-        errorSummary:
-          type: string
-          description: >-
-            Another request has already been received for the settings for this
-            email template
-          readOnly: true
-    UpdateThemeRequest:
-      type: object
-      properties:
-        emailTemplateTouchPointVariant:
-          $ref: '#/components/schemas/EmailTemplateTouchPointVariant'
-        endUserDashboardTouchPointVariant:
-          $ref: '#/components/schemas/EndUserDashboardTouchPointVariant'
-        errorPageTouchPointVariant:
-          $ref: '#/components/schemas/ErrorPageTouchPointVariant'
-        loadingPageTouchPointVariant:
-          $ref: '#/components/schemas/LoadingPageTouchPointVariant'
-        primaryColorContrastHex:
-          type: string
-          description: Primary color contrast hex code
-          default: null
-        primaryColorHex:
-          type: string
-          description: Primary color hex code
-          default: null
-        secondaryColorContrastHex:
-          type: string
-          description: Secondary color contrast hex code
-          default: null
-        secondaryColorHex:
-          type: string
-          description: Secondary color hex code
-          default: null
-        signInPageTouchPointVariant:
-          $ref: '#/components/schemas/SignInPageTouchPointVariant'
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-      required:
-        - primaryColorHex
-        - secondaryColorHex
-        - signInPageTouchPointVariant
-        - endUserDashboardTouchPointVariant
-        - errorPageTouchPointVariant
-        - emailTemplateTouchPointVariant
-    ImageUploadResponse:
-      type: object
-      properties:
-        url:
-          readOnly: true
-          type: string
-    WellKnownURIsRoot:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            apple-app-site-association:
-              type: object
-              description: Contains the customized well-known URI content and links
-              properties:
-                customized:
-                  $ref: '#/components/schemas/WellKnownURIObjectResponse'
-            assetlinks.json:
-              type: object
-              description: Contains the customized well-known URI content and links
-              properties:
-                customized:
-                  $ref: '#/components/schemas/WellKnownURIArrayResponse'
-            webauthn:
-              type: object
-              description: Contains the customized well-known URI content and links
-              properties:
-                customized:
-                  $ref: '#/components/schemas/WellKnownURIObjectResponse'
-          readOnly: true
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                apple-app-site-association:
-                  $ref: '#/components/schemas/HrefObject'
-                assetlinks.json:
-                  $ref: '#/components/schemas/HrefObject'
-                webauthn:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    WellKnownURIObjectResponse:
-      type: object
-      properties:
-        representation:
-          type: object
-          description: The well-known URI content in JSON format
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                self:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    WellKnownURIArrayResponse:
-      type: object
-      properties:
-        representation:
-          type: array
-          description: The well-known URI content in a JSON array of objects format
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                self:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
-    WellKnownURIRequest:
-      type: object
-      properties:
-        representation:
-          type: object
-          description: The well-known URI content in JSON object format
-      required:
-        - representation
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -3182,6 +3145,30 @@ components:
       description: Searches the records for matching value
       schema:
         type: string
+    pathBrandId:
+      name: brandId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the brand
+    queryExpandPageRoot:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - default
+            - customized
+            - customizedUrl
+            - preview
+            - previewUrl
+      description: Specifies additional metadata to be included in the response
     queryExpandEmailTemplate:
       name: expand
       in: query
@@ -3196,6 +3183,20 @@ components:
             - settings
             - customizationCount
       description: Specifies additional metadata to be included in the response
+    pathTemplateName:
+      name: templateName
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The name of the email template
+    pathCustomizationId:
+      name: customizationId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the email customization
     queryLanguage:
       name: language
       schema:
@@ -3204,6 +3205,53 @@ components:
       description: >-
         The language to use for the email. Defaults to the current user's
         language if unspecified.
+    pathThemeId:
+      name: themeId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the theme
+    queryExpandWellKnownUris:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - all
+            - apple-app-site-association
+            - assetlinks.json
+            - webauthn
+      description: Specifies additional metadata to include in the response
+    pathWellKnownUriPath:
+      name: path
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - apple-app-site-association
+          - assetlinks.json
+          - webauthn
+      description: The path of the well-known URI
+    queryExpandWellKnownUri:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - customized
+      description: Specifies additional metadata to include in the response
   examples:
     ListBrandsResponse:
       value:
@@ -3240,22 +3288,6 @@ components:
                 allow:
                   - GET
                   - PUT
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateBrandRequest:
       value:
         name: My Awesome Brand
@@ -3292,14 +3324,6 @@ components:
         errorLink: E0000202
         errorId: oaeKABuesTdRvCXeCTpSpXAcQ
         errorCauses: []
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     GetBrandResponse:
       value:
         id: bnd114iNkrcN6aR680g4
@@ -3333,14 +3357,6 @@ components:
               allow:
                 - GET
                 - PUT
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     UpdateBrandRequest:
       value:
         customPrivacyPolicyUrl: https://www.someHost.com/privacy-policy
@@ -4030,11 +4046,38 @@ components:
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses:
           - errorSummary: Content must be less than 100KB.
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

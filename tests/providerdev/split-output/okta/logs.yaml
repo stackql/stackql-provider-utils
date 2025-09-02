@@ -809,7 +809,6 @@ components:
           examples:
             TooManyRequests:
               $ref: '#/components/examples/ErrorTooManyRequests'
-  parameters: {}
   examples:
     ListLogs:
       summary: List all System Log events
@@ -949,11 +948,6 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

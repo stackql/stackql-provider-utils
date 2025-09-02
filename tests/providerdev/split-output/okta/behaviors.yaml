@@ -114,8 +114,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBehaviorId'
     put:
       summary: Replace a behavior detection rule
       description: Replaces a Behavior Detection Rule by `behaviorId`
@@ -171,8 +169,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBehaviorId'
     delete:
       summary: Delete a behavior detection rule
       description: Deletes a Behavior Detection Rule by `behaviorId`
@@ -202,8 +198,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBehaviorId'
+    parameters:
+      - $ref: '#/components/parameters/pathBehaviorId'
   /api/v1/behaviors/{behaviorId}/lifecycle/activate:
     post:
       summary: Activate a behavior detection rule
@@ -234,8 +230,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBehaviorId'
+    parameters:
+      - $ref: '#/components/parameters/pathBehaviorId'
   /api/v1/behaviors/{behaviorId}/lifecycle/deactivate:
     post:
       summary: Deactivate a behavior detection rule
@@ -266,8 +262,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathBehaviorId'
+    parameters:
+      - $ref: '#/components/parameters/pathBehaviorId'
 components:
   schemas:
     BehaviorRule:
@@ -306,31 +302,6 @@ components:
           ANOMALOUS_IP: '#/components/schemas/BehaviorRuleAnomalousIP'
           ANOMALOUS_DEVICE: '#/components/schemas/BehaviorRuleAnomalousDevice'
           VELOCITY: '#/components/schemas/BehaviorRuleVelocity'
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    BehaviorRuleType:
-      type: string
-      enum:
-        - ANOMALOUS_DEVICE
-        - ANOMALOUS_IP
-        - ANOMALOUS_LOCATION
-        - VELOCITY
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
     Error:
       title: Error
       type: object
@@ -356,15 +327,40 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    BehaviorRuleType:
+      type: string
+      enum:
+        - ANOMALOUS_DEVICE
+        - ANOMALOUS_IP
+        - ANOMALOUS_LOCATION
+        - VELOCITY
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
     ErrorCause:
       type: object
       properties:
         errorSummary:
           type: string
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
     HrefObject:
       title: Link Object
       additionalProperties: true
@@ -437,24 +433,16 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathBehaviorId:
+      name: behaviorId
+      in: path
+      schema:
+        type: string
+        example: abcd1234
+      required: true
+      description: ID of the Behavior Detection Rule
   examples:
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     BehaviorRuleRequest:
       value:
         name: My Behavior Rule
@@ -494,11 +482,22 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

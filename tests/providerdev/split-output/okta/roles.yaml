@@ -33,8 +33,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleRef'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleRef'
   /api/v1/roles/{roleRef}/subscriptions/{notificationType}:
     get:
       summary: Retrieve a subscription for a role
@@ -62,9 +62,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleRef'
-        - $ref: '#/components/parameters/pathNotificationType'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleRef'
+      - $ref: '#/components/parameters/pathNotificationType'
   /api/v1/roles/{roleRef}/subscriptions/{notificationType}/subscribe:
     post:
       summary: Subscribe a role to a specific notification type
@@ -91,9 +91,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleRef'
-        - $ref: '#/components/parameters/pathNotificationType'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleRef'
+      - $ref: '#/components/parameters/pathNotificationType'
   /api/v1/roles/{roleRef}/subscriptions/{notificationType}/unsubscribe:
     post:
       summary: Unsubscribe a role from a specific notification type
@@ -120,9 +120,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleRef'
-        - $ref: '#/components/parameters/pathNotificationType'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleRef'
+      - $ref: '#/components/parameters/pathNotificationType'
 components:
   schemas:
     Subscription:
@@ -146,6 +146,41 @@ components:
             self:
               $ref: '#/components/schemas/HrefObject'
           readOnly: true
+    RoleType:
+      description: Standard role type
+      type: string
+      enum:
+        - ACCESS_CERTIFICATIONS_ADMIN
+        - ACCESS_REQUESTS_ADMIN
+        - API_ACCESS_MANAGEMENT_ADMIN
+        - API_ADMIN
+        - APP_ADMIN
+        - CUSTOM
+        - GROUP_MEMBERSHIP_ADMIN
+        - HELP_DESK_ADMIN
+        - MOBILE_ADMIN
+        - ORG_ADMIN
+        - READ_ONLY_ADMIN
+        - REPORT_ADMIN
+        - SUPER_ADMIN
+        - USER_ADMIN
+        - WORKFLOWS_ADMIN
+      x-enumDescriptions:
+        API_ACCESS_MANAGEMENT_ADMIN: Access Management Administrator
+        API_ADMIN: Access Management Administrator
+        APP_ADMIN: Application Administrator
+        CUSTOM: Custom label specified by the client
+        GROUP_MEMBERSHIP_ADMIN: Group Membership Administrator
+        HELP_DESK_ADMIN: Help Desk Administrator
+        MOBILE_ADMIN: Mobile Administrator
+        ORG_ADMIN: Organizational Administrator
+        READ_ONLY_ADMIN: Read-Only Administrator
+        REPORT_ADMIN: Report Administrator
+        SUPER_ADMIN: Super Administrator
+        USER_ADMIN: Group Administrator
+        WORKFLOWS_ADMIN: Workflows Administrator
+        ACCESS_CERTIFICATIONS_ADMIN: Access Certifications Administrator (predefined resource sets)
+        ACCESS_REQUESTS_ADMIN: Access Requests Administrator (predefined resource sets)
     NotificationType:
       description: The type of notification
       type: string
@@ -281,7 +316,28 @@ components:
           examples:
             TooManyRequests:
               $ref: '#/components/examples/ErrorTooManyRequests'
-  parameters: {}
+  parameters:
+    pathRoleRef:
+      name: roleRef
+      in: path
+      description: >-
+        A reference to an existing role. Standard roles require a `roleType`,
+        while Custom Roles require a `roleId`. See [Standard
+        Roles](/openapi/okta-management/guides/roles/#standard-roles).
+      required: true
+      schema:
+        oneOf:
+          - title: roleType
+            type: string
+            $ref: '#/components/schemas/RoleType'
+          - title: roleId
+            type: string
+    pathNotificationType:
+      name: notificationType
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/NotificationType'
   examples:
     ErrorAccessDenied:
       summary: Access Denied
@@ -299,11 +355,6 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

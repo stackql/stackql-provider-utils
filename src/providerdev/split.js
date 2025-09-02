@@ -154,6 +154,45 @@ function getAllRefs(obj) {
 }
 
 /**
+ * Extract all $ref values from path-level parameters and non-operation elements
+ * @param {Object} pathItem - Path item from OpenAPI doc
+ * @returns {Set<string>} - Set of refs
+ */
+function getPathLevelRefs(pathItem) {
+  const refs = new Set();
+  
+  // Check for path-level parameters
+  if (pathItem.parameters) {
+    for (const param of pathItem.parameters) {
+      if (param.$ref) {
+        refs.add(param.$ref);
+      } else if (typeof param === 'object') {
+        // Extract refs from schema if present
+        if (param.schema && param.schema.$ref) {
+          refs.add(param.schema.$ref);
+        }
+        
+        // Also get all nested refs in the parameter object
+        for (const ref of getAllRefs(param)) {
+          refs.add(ref);
+        }
+      }
+    }
+  }
+  
+  // Also check other non-operation properties for refs
+  for (const key in pathItem) {
+    if (!OPERATIONS.includes(key)) {
+      for (const ref of getAllRefs(pathItem[key])) {
+        refs.add(ref);
+      }
+    }
+  }
+  
+  return refs;
+}
+
+/**
  * Add referenced components to service
  * @param {Set<string>} refs - Set of refs
  * @param {Object} service - Service object
@@ -220,6 +259,73 @@ function addMissingObjectTypes(obj) {
 }
 
 /**
+ * Recursively resolve and add all references to service components
+ * @param {Set<string>} refs - Set of references to resolve
+ * @param {Object} service - Service object to add components to
+ * @param {Object} components - Source components from API doc
+ * @param {boolean} debug - Debug flag
+ * @param {Set<string>} processed - Set of already processed refs (to prevent infinite recursion)
+ */
+function resolveReferences(refs, service, components, debug, processed = new Set()) {
+  let newRefs = new Set();
+  
+  for (const ref of refs) {
+    // Skip if already processed
+    if (processed.has(ref)) {
+      continue;
+    }
+    
+    processed.add(ref);
+    
+    const parts = ref.split('/');
+    
+    // Only process refs that point to components
+    if (parts.length >= 4 && parts[1] === "components") {
+      const componentType = parts[2];
+      const componentName = parts[3];
+      
+      // Check if component type exists in service
+      if (!service.components[componentType]) {
+        service.components[componentType] = {};
+      }
+      
+      // Skip if component already added
+      if (service.components[componentType][componentName]) {
+        continue;
+      }
+      
+      // Add component if it exists in source document
+      if (components[componentType] && components[componentType][componentName]) {
+        service.components[componentType][componentName] = 
+          JSON.parse(JSON.stringify(components[componentType][componentName]));
+        
+        if (debug) {
+          logger.debug(`Added component ${componentType}/${componentName}`);
+        }
+        
+        // Find all refs in the newly added component
+        const componentRefs = getAllRefs(service.components[componentType][componentName]);
+        for (const cRef of componentRefs) {
+          if (!processed.has(cRef)) {
+            newRefs.add(cRef);
+          }
+        }
+      } else if (debug) {
+        logger.debug(`WARNING: Could not find component ${componentType}/${componentName}`);
+      }
+    }
+  }
+  
+  // If we found new refs, resolve them too (recursively)
+  if (newRefs.size > 0) {
+    if (debug) {
+      logger.debug(`Found ${newRefs.size} additional refs to resolve`);
+    }
+    resolveReferences(newRefs, service, components, debug, processed);
+  }
+}
+
+/**
  * Split OpenAPI document into service-specific files
  * @param {Object} options - Options for splitting
  * @returns {Promise<boolean>} - Success status
@@ -240,7 +346,7 @@ export async function split(options) {
     logger.level = 'debug';
   }
   
-  logger.info(`📄 Splitting OpenAPI doc for ${providerName}`);
+  logger.info(`🔄 Splitting OpenAPI doc for ${providerName}`);
   logger.info(`API Doc: ${apiDoc}`);
   logger.info(`Output: ${outputDir}`);
   logger.info(`Service Discriminator: ${svcDiscriminator}`);
@@ -270,7 +376,7 @@ export async function split(options) {
   const services = {};
   let opCounter = 0;
   
-  // Process each path
+  // First pass: identify all services and collect operations
   for (const [pathKey, pathItem] of Object.entries(apiPaths)) {
     if (verbose) {
       logger.debug(`Processing path ${pathKey}`);
@@ -279,6 +385,9 @@ export async function split(options) {
     if (!pathItem) {
       continue;
     }
+    
+    // Collect all services that use this path
+    const pathServices = new Set();
     
     // Process each operation (HTTP verb)
     for (const [verbKey, opItem] of Object.entries(pathItem)) {
@@ -296,7 +405,7 @@ export async function split(options) {
       }
       
       // Skip excluded operations
-      if (isOperationExcluded(excludeList, opItem, svcDiscriminator)) {
+      if (isOperationExcluded(excludeList, opItem)) {
         continue;
       }
       
@@ -311,6 +420,8 @@ export async function split(options) {
         logger.warn(`⭐️ Skipping service: ${service}`);
         continue;
       }
+      
+      pathServices.add(service);
       
       if (verbose) {
         logger.debug(`Service name: ${service}`);
@@ -343,84 +454,58 @@ export async function split(options) {
           opItem['x-github'].subcategory
         );
       }
-      
-      // Get all refs for operation
-      const opRefs = getAllRefs(opItem);
-      
-      if (verbose) {
-        logger.debug(`Found ${opRefs.size} refs for ${service}`);
-      }
-      
-      // Add refs to components
-      addRefsToComponents(opRefs, services[service], apiDocObj.components || {}, verbose);
-      
-      // Get internal refs
-      for (let i = 0; i < 3; i++) {  // Internal ref depth
-        const intRefs = getAllRefs(services[service].components);
-        if (verbose) {
-          logger.debug(`Found ${intRefs.size} INTERNAL refs for service ${service}`);
-        }
-        addRefsToComponents(intRefs, services[service], apiDocObj.components || {}, verbose);
-      }
-      
-      // Get deeply nested schema refs
-      for (let i = 0; i < 10; i++) {  // Schema max ref depth
-        const intRefs = getAllRefs(services[service].components);
-        // Filter refs that are already in service components
-        const filteredRefs = new Set();
-        for (const ref of intRefs) {
-          const parts = ref.split('/');
-          if (parts.length >= 4 && parts[1] === "components" && parts[2] === "schemas" &&
-              !services[service].components.schemas[parts[3]]) {
-            filteredRefs.add(ref);
+    }
+    
+    // For each service that uses this path, add path-level parameters
+    for (const service of pathServices) {
+      // Copy non-operation elements (like parameters) to service paths
+      for (const key in pathItem) {
+        if (!OPERATIONS.includes(key)) {
+          if (!services[service].paths[pathKey]) {
+            services[service].paths[pathKey] = {};
           }
-        }
-        
-        if (verbose) {
-          logger.debug(`Found ${filteredRefs.size} INTERNAL schema refs for service ${service}`);
-        }
-        
-        if (filteredRefs.size > 0) {
-          if (verbose) {
-            logger.debug(`Adding ${filteredRefs.size} INTERNAL schema refs for service ${service}`);
-          }
-          addRefsToComponents(filteredRefs, services[service], apiDocObj.components || {}, verbose);
-        } else {
-          if (verbose) {
-            logger.debug(`Exiting INTERNAL schema refs for ${service}`);
-          }
-          break;
+          services[service].paths[pathKey][key] = pathItem[key];
         }
       }
     }
   }
   
-  // Add non-operations to each service
+  // Second pass: collect all references for each service
   for (const service in services) {
-    for (const pathKey of Object.keys(services[service].paths)) {
-      if (verbose) {
-        logger.debug(`Adding non operations to ${service} for path ${pathKey}`);
+    if (verbose) {
+      logger.debug(`Collecting references for service ${service}`);
+    }
+    
+    // Get all refs from all operations in this service
+    const allRefs = new Set();
+    
+    // Collect refs from paths
+    for (const pathKey in services[service].paths) {
+      const pathItem = services[service].paths[pathKey];
+      
+      // Get refs from path-level parameters
+      const pathRefs = getPathLevelRefs(pathItem);
+      for (const ref of pathRefs) {
+        allRefs.add(ref);
       }
       
-      for (const nonOp of NON_OPERATIONS) {
-        if (verbose) {
-          logger.debug(`Looking for non operation ${nonOp} in ${service} under path ${pathKey}`);
-        }
-        
-        if (apiPaths[pathKey] && apiPaths[pathKey][nonOp]) {
-          if (verbose) {
-            logger.debug(`Adding ${nonOp} to ${service} for path ${pathKey}`);
-          }
-          
-          // Special case for parameters
-          if (nonOp === 'parameters') {
-            for (const verbKey in services[service].paths[pathKey]) {
-              services[service].paths[pathKey][verbKey].parameters = apiPaths[pathKey].parameters;
-            }
+      // Get refs from operations
+      for (const verbKey in pathItem) {
+        if (OPERATIONS.includes(verbKey)) {
+          const opRefs = getAllRefs(pathItem[verbKey]);
+          for (const ref of opRefs) {
+            allRefs.add(ref);
           }
         }
       }
     }
+    
+    if (verbose) {
+      logger.debug(`Found ${allRefs.size} total refs for service ${service}`);
+    }
+    
+    // Resolve all references recursively
+    resolveReferences(allRefs, services[service], apiDocObj.components || {}, verbose);
   }
   
   // Update path param names (replace hyphens with underscores)
@@ -472,14 +557,20 @@ export async function split(options) {
     services[service].components = addMissingObjectTypes(services[service].components);
   }
   
+  // Cleanup empty components
+  for (const service in services) {
+    for (const componentType in services[service].components) {
+      if (Object.keys(services[service].components[componentType]).length === 0) {
+        delete services[service].components[componentType];
+      }
+    }
+  }
+  
   // Write out service docs
   for (const service in services) {
     logger.info(`✅ Writing out OpenAPI doc for [${service}]`);
 
-    // const svcDir = path.join(outputDir, service);
-    // const outputFile = path.join(svcDir, `${service}.yaml`);
     const outputFile = path.join(outputDir, `${service}.yaml`);    
-    // fs.mkdirSync(svcDir, { recursive: true });
     
     fs.writeFileSync(outputFile, yaml.dump(services[service], { 
       noRefs: true,

@@ -141,8 +141,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
     put:
       summary: Replace an authorization server
       description: Replaces an authorization server
@@ -192,8 +190,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
     delete:
       summary: Delete an authorization server
       description: Deletes an authorization server
@@ -219,8 +215,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/associatedServers:
     get:
       summary: List all associated authorization servers
@@ -229,7 +225,35 @@ paths:
         `authServerId`
       operationId: listAssociatedServersByTrustedType
       parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+        - name: trusted
+          in: query
+          description: >-
+            Searches trusted authorization servers when `true` or searches
+            untrusted authorization servers when `false`
+          schema:
+            type: boolean
+        - name: q
+          in: query
+          description: >-
+            Searches for the name or audience of the associated authorization
+            servers
+          example: customasone
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Specifies the number of results for a page
+          schema:
+            type: integer
+            format: int32
+            default: 200
+        - name: after
+          in: query
+          description: >-
+            Specifies the pagination cursor for the next page of the associated
+            authorization servers
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -306,8 +330,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/associatedServers/{associatedServerId}:
     delete:
       summary: Delete an associated authorization server
@@ -334,9 +358,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathAssociatedServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathAssociatedServerId'
   /api/v1/authorizationServers/{authServerId}/claims:
     get:
       summary: List all custom token claims
@@ -373,8 +397,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
     post:
       summary: Create a custom token claim
       description: Creates a custom token Claim for a custom authorization server
@@ -418,8 +440,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/claims/{claimId}:
     get:
       summary: Retrieve a custom token claim
@@ -452,9 +474,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClaimId'
     put:
       summary: Replace a custom token claim
       description: Replaces a custom token Claim specified by the `claimId`
@@ -498,9 +517,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClaimId'
     delete:
       summary: Delete a custom token claim
       description: Deletes a custom token Claim specified by the `claimId`
@@ -526,9 +542,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClaimId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathClaimId'
   /api/v1/authorizationServers/{authServerId}/clients:
     get:
       summary: List all client resources for an authorization server
@@ -571,8 +587,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/clients/{clientId}/tokens:
     get:
       summary: List all refresh tokens for a client
@@ -581,8 +597,25 @@ paths:
         specific Client
       operationId: listRefreshTokensForAuthorizationServerAndClient
       parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClientId'
+        - name: expand
+          in: query
+          description: >-
+            Valid value: `scope`. If specified, scope details are included in
+            the `_embedded` attribute.
+          schema:
+            type: string
+        - name: after
+          in: query
+          description: Specifies the pagination cursor for the next page of tokens
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The maximum number of tokens to return (maximum 200)
+          schema:
+            type: integer
+            format: int32
+            default: -1
       responses:
         '200':
           description: Success
@@ -637,18 +670,22 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClientId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathClientId'
   /api/v1/authorizationServers/{authServerId}/clients/{clientId}/tokens/{tokenId}:
     get:
       summary: Retrieve a refresh token for a client
       description: Retrieves a refresh token for a Client
       operationId: getRefreshTokenForAuthorizationServerAndClient
       parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathTokenId'
+        - name: expand
+          in: query
+          description: >-
+            Valid value: `scope`. If specified, scope details are included in
+            the `_embedded` attribute.
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -701,10 +738,10 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathTokenId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathTokenId'
   /api/v1/authorizationServers/{authServerId}/credentials/keys:
     get:
       summary: List all credential keys
@@ -741,8 +778,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/credentials/keys/{keyId}:
     get:
       summary: Retrieve an authorization server key
@@ -779,9 +816,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathCredentialKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathCredentialKeyId'
   /api/v1/authorizationServers/{authServerId}/credentials/lifecycle/keyRotate:
     post:
       summary: Rotate all credential keys
@@ -851,8 +888,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/lifecycle/activate:
     post:
       summary: Activate an authorization server
@@ -879,8 +916,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/lifecycle/deactivate:
     post:
       summary: Deactivate an authorization server
@@ -907,8 +944,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/policies:
     get:
       summary: List all policies
@@ -943,8 +980,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
     post:
       summary: Create a policy
       description: Creates a policy
@@ -988,8 +1023,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}:
     get:
       summary: Retrieve a policy
@@ -1022,9 +1057,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
     put:
       summary: Replace a policy
       description: Replaces a policy
@@ -1068,9 +1100,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
     delete:
       summary: Delete a policy
       description: Deletes a policy
@@ -1096,9 +1125,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/lifecycle/activate:
     post:
       summary: Activate a policy
@@ -1125,9 +1154,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/lifecycle/deactivate:
     post:
       summary: Deactivate a policy
@@ -1154,9 +1183,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules:
     get:
       summary: List all policy rules
@@ -1193,9 +1222,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
     post:
       summary: Create a policy rule
       description: >-
@@ -1242,9 +1268,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}:
     get:
       summary: Retrieve a policy rule
@@ -1277,10 +1303,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
     put:
       summary: Replace a policy rule
       description: >-
@@ -1327,10 +1349,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
     delete:
       summary: Delete a policy rule
       description: >-
@@ -1358,10 +1376,10 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}/lifecycle/activate:
     post:
       summary: Activate a policy rule
@@ -1388,10 +1406,10 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
   /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}/lifecycle/deactivate:
     post:
       summary: Deactivate a policy rule
@@ -1418,10 +1436,10 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathPolicyId'
-        - $ref: '#/components/parameters/pathRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathPolicyId'
+      - $ref: '#/components/parameters/pathRuleId'
   /api/v1/authorizationServers/{authServerId}/resourceservercredentials/keys:
     get:
       summary: List all Custom Authorization Server Public JSON Web Keys
@@ -1456,8 +1474,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
     post:
       summary: Add a JSON Web Key
       description: >-
@@ -1525,8 +1541,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/resourceservercredentials/keys/{keyId}:
     get:
       summary: Retrieve a Custom Authorization Server Public JSON Web Key
@@ -1560,9 +1576,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
     delete:
       summary: Delete a Custom Authorization Server Public JSON Web Key
       description: >-
@@ -1598,9 +1611,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/authorizationServers/{authServerId}/resourceservercredentials/keys/{keyId}/lifecycle/activate:
     post:
       summary: Activate a Custom Authorization Server Public JSON Web Key
@@ -1638,9 +1651,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/authorizationServers/{authServerId}/resourceservercredentials/keys/{keyId}/lifecycle/deactivate:
     post:
       summary: Deactivate a Custom Authorization Server Public JSON Web Key
@@ -1688,16 +1701,47 @@ paths:
       x-okta-lifecycle:
         lifecycle: EA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathJsonWebKeyId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathJsonWebKeyId'
   /api/v1/authorizationServers/{authServerId}/scopes:
     get:
       summary: List all custom token scopes
       description: Lists all custom token scopes
       operationId: listOAuth2Scopes
       parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+        - name: q
+          in: query
+          description: Searches the `name` of Custom Token Scopes for matching values
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Filter expression for Custom Token Scopes
+          schema:
+            type: string
+        - name: after
+          in: query
+          description: >-
+            Specifies the pagination cursor for the next page of scopes.
+
+            Treat the after cursor as an opaque value and obtain it through the
+            next link relationship. See
+            [Pagination](https://developer.okta.com/docs/api/#pagination).
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: >-
+            Specifies the number of objects to return per page.
+
+            If there are multiple pages of results, the Link header contains a
+            `next` link that you need to use as an opaque value (follow it,
+            don't parse it). See
+            [Pagination](https://developer.okta.com/docs/api/#pagination).
+          schema:
+            type: integer
+            maximum: 200
       responses:
         '200':
           description: Success
@@ -1770,8 +1814,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
   /api/v1/authorizationServers/{authServerId}/scopes/{scopeId}:
     get:
       summary: Retrieve a custom token scope
@@ -1804,9 +1848,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathScopeId'
     put:
       summary: Replace a custom token scope
       description: Replaces a custom token scope
@@ -1850,9 +1891,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathScopeId'
     delete:
       summary: Delete a custom token scope
       description: Deletes a custom token scope
@@ -1878,9 +1916,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - API Access Management
-      parameters:
-        - $ref: '#/components/parameters/pathAuthServerId'
-        - $ref: '#/components/parameters/pathScopeId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthServerId'
+      - $ref: '#/components/parameters/pathScopeId'
 components:
   schemas:
     AuthorizationServer:
@@ -1974,248 +2012,6 @@ components:
           $ref: '#/components/schemas/LifecycleStatus'
         _links:
           $ref: '#/components/schemas/AuthServerLinks'
-    KeyEncryptionAlgorithm:
-      description: >-
-        <x-lifecycle-container><x-lifecycle
-        class="ea"></x-lifecycle></x-lifecycle-container>The algorithm for
-        encrypting access tokens issued by this authorization server. If this is
-        requested, the response is signed, and then encrypted. The result is a
-        nested JWT. The default, if omitted, is that no encryption is performed.
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: true
-      type: string
-      enum:
-        - RSA-OAEP-256
-        - RSA-OAEP-384
-        - RSA-OAEP-512
-    AuthorizationServerCredentials:
-      type: object
-      properties:
-        signing:
-          $ref: '#/components/schemas/AuthorizationServerCredentialsSigningConfig'
-    ResourceServerJsonWebKeys:
-      description: >-
-        <x-lifecycle-container><x-lifecycle
-        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
-        Set](https://tools.ietf.org/html/rfc7517#section-5) for encrypting JWTs
-        minted by the custom authorization server
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: true
-      type: object
-      properties:
-        keys:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResourceServerJsonWebKey'
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    AuthServerLinks:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            claims:
-              allOf:
-                - description: Link to the authorization server claims
-                - $ref: '#/components/schemas/HrefObject'
-            deactivate:
-              allOf:
-                - $ref: '#/components/schemas/HrefObjectDeactivateLink'
-            metadata:
-              description: Link to the authorization server metadata
-              type: array
-              items:
-                $ref: '#/components/schemas/HrefObject'
-            policies:
-              allOf:
-                - description: Link to the authorization server policies
-                - $ref: '#/components/schemas/HrefObject'
-            rotateKey:
-              allOf:
-                - description: Link to the authorization server key rotation
-                - $ref: '#/components/schemas/HrefObject'
-            scopes:
-              allOf:
-                - description: Link to the authorization server scopes
-                - $ref: '#/components/schemas/HrefObject'
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    AuthorizationServerCredentialsSigningConfig:
-      type: object
-      properties:
-        kid:
-          type: string
-          description: >-
-            The ID of the JSON Web Key used for signing tokens issued by the
-            authorization server
-          readOnly: true
-        lastRotated:
-          type: string
-          description: >-
-            The timestamp when the authorization server started using the `kid`
-            for signing tokens
-          format: date-time
-          readOnly: true
-        nextRotation:
-          type: string
-          description: >-
-            The timestamp when the authorization server changes the Key for
-            signing tokens. This is only returned when `rotationMode` is set to
-            `AUTO`.
-          format: date-time
-          readOnly: true
-        rotationMode:
-          $ref: '#/components/schemas/AuthorizationServerCredentialsRotationMode'
-        use:
-          $ref: '#/components/schemas/AuthorizationServerCredentialsUse'
-    ResourceServerJsonWebKey:
-      description: >-
-        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
-        representation of a cryptographic key. Okta can use the active key to
-        encrypt the access token minted by the authorization server. Okta
-        supports only RSA keys with 'use: enc'.
-      type: object
-      properties:
-        e:
-          type: string
-          description: The key exponent of a RSA key
-        kid:
-          type: string
-          description: The unique identifier of the key
-        kty:
-          $ref: '#/components/schemas/JsonWebKeyType'
-        'n':
-          type: string
-          description: The modulus of the RSA key
-        status:
-          $ref: '#/components/schemas/JsonWebKeyStatus'
-        use:
-          $ref: '#/components/schemas/JsonWebKeyUse'
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    HrefObjectDeactivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to deactivate the resource
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    AuthorizationServerCredentialsRotationMode:
-      description: The Key rotation mode for the authorization server
-      type: string
-      enum:
-        - AUTO
-        - MANUAL
-    AuthorizationServerCredentialsUse:
-      description: How the key is used
-      type: string
-      enum:
-        - sig
-    JsonWebKeyType:
-      description: The type of public key
-      type: string
-      enum:
-        - RSA
-    JsonWebKeyStatus:
-      description: The status of the public key
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    JsonWebKeyUse:
-      description: The intended use of the public key
-      type: string
-      enum:
-        - enc
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     AssociatedServerMediated:
       type: object
       properties:
@@ -2265,66 +2061,6 @@ components:
           $ref: '#/components/schemas/OAuth2ClaimValueType'
         _links:
           $ref: '#/components/schemas/LinksSelf'
-    OAuth2ClaimType:
-      description: >-
-        Specifies whether the Claim is for an access token (`RESOURCE`) or an ID
-        token (`IDENTITY`)
-      type: string
-      enum:
-        - IDENTITY
-        - RESOURCE
-    OAuth2ClaimConditions:
-      description: Specifies the scopes for the Claim
-      type: object
-      properties:
-        scopes:
-          type: array
-          items:
-            type: string
-    OAuth2ClaimGroupFilterType:
-      description: >-
-        Specifies the type of group filter if `valueType` is `GROUPS`
-
-
-        If `valueType` is `GROUPS`, then the groups returned are filtered
-        according to the value of `group_filter_type`.
-
-
-        If you have complex filters for Groups, you can [create a Groups
-        allowlist](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main/)
-        to put them all in a Claim.
-      type: string
-      enum:
-        - CONTAINS
-        - EQUALS
-        - REGEX
-        - STARTS_WITH
-      x-enumDescriptions:
-        STARTS_WITH: >-
-          Group names start with `value` (not case-sensitive). For example, if
-          `value` is `group1`, then `group123` and `Group123` are included.
-        EQUALS: >-
-          Group name is the same as `value` (not case-sensitive). For example,
-          if `value` is `group1`, then `group1` and `Group1` are included, but
-          `group123` isn't.
-        CONTAINS: >-
-          Group names contain `value` (not case-sensitive). For example, if
-          `value` is `group1`, then `MyGroup123` and `group1` are included.
-        REGEX: >-
-          Group names match the regular expression in `value` (case-sensitive).
-          For example if `value` is `/^[a-z0-9_-]{3,16}$/`, then any Group name
-          that has at least three letters, no more than 16, and contains
-          lowercase letters, a hyphen, or numbers is a match.
-    OAuth2ClaimValueType:
-      description: >-
-        Specifies whether the Claim is an Okta Expression Language (EL)
-        expression (`EXPRESSION`), a set of groups (`GROUPS`), or a system claim
-        (`SYSTEM`)
-      type: string
-      enum:
-        - EXPRESSION
-        - GROUPS
-        - SYSTEM
     OAuth2Client:
       type: object
       properties:
@@ -2362,22 +2098,6 @@ components:
                   description: Link to the token resources
                   allOf:
                     - $ref: '#/components/schemas/TokenResourcesHrefObject'
-    GrantResourcesHrefObject:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/users/00u5t60iloOHN9pBi0h7/clients/0oabskvc6442nkvQO0h7/grants
-    TokenResourcesHrefObject:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/users/00u5t60iloOHN9pBi0h7/clients/0oabskvc6442nkvQO0h7/tokens
     OAuth2RefreshToken:
       type: object
       properties:
@@ -2462,6 +2182,487 @@ components:
                   allOf:
                     - $ref: >-
                         #/components/schemas/AuthorizationServerResourceHrefObject
+    AuthorizationServerJsonWebKey:
+      type: object
+      properties:
+        alg:
+          description: 'The algorithm used with the Key. Valid value: `RS256`'
+          type: string
+        e:
+          description: RSA key value (public exponent) for Key binding
+          type: string
+          readOnly: true
+        kid:
+          description: Unique identifier for the key
+          type: string
+          readOnly: true
+        kty:
+          description: >-
+            Cryptographic algorithm family for the certificate's keypair. Valid
+            value: `RSA`
+          type: string
+          readOnly: true
+        'n':
+          description: >-
+            RSA modulus value that is used by both the public and private keys
+            and provides a link between them
+          type: string
+        status:
+          description: >-
+            An `ACTIVE` Key is used to sign tokens issued by the authorization
+            server. Supported values: `ACTIVE`, `NEXT`, or `EXPIRED`<br>
+
+            A `NEXT` Key is the next Key that the authorization server uses to
+            sign tokens when Keys are rotated. The `NEXT` Key might not be
+            listed if it hasn't been generated.
+
+            An `EXPIRED` Key is the previous Key that the authorization server
+            used to sign tokens. The `EXPIRED` Key might not be listed if no Key
+            has expired or the expired Key was deleted.
+          type: string
+        use:
+          description: 'Acceptable use of the key. Valid value: `sig`'
+          type: string
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+    JwkUse:
+      type: object
+      properties:
+        use:
+          $ref: '#/components/schemas/JwkUseType'
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    AuthorizationServerPolicy:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              description: ID of the Policy
+            type:
+              type: string
+              description: Indicates that the Policy is an authorization server Policy
+              enum:
+                - OAUTH_AUTHORIZATION_POLICY
+            name:
+              type: string
+              description: Name of the Policy
+              maxLength: 100
+              minLength: 1
+            conditions:
+              $ref: '#/components/schemas/AuthorizationServerPolicyConditions'
+            description:
+              type: string
+              description: Description of the Policy
+              maxLength: 255
+              minLength: 1
+            priority:
+              type: integer
+              description: >-
+                Specifies the order in which this Policy is evaluated in
+                relation to the other Policies in a custom authorization server
+            status:
+              type: string
+              description: Specifies whether requests have access to this Policy
+              enum:
+                - ACTIVE
+                - INACTIVE
+            system:
+              type: boolean
+              description: Specifies whether Okta created this Policy
+            created:
+              type: string
+              format: date-time
+              readOnly: true
+              description: Timestamp when the Policy was created
+            lastUpdated:
+              type: string
+              format: date-time
+              readOnly: true
+              description: Timestamp when the Policy was last updated
+            _links:
+              allOf:
+                - $ref: '#/components/schemas/LinksSelfAndLifecycle'
+                - type: object
+                  properties:
+                    rules:
+                      allOf:
+                        - description: Link to the authorization server policy's rules
+                        - $ref: '#/components/schemas/HrefObject'
+    AuthorizationServerPolicyRule:
+      type: object
+      properties:
+        actions:
+          $ref: '#/components/schemas/AuthorizationServerPolicyRuleActions'
+        conditions:
+          $ref: '#/components/schemas/AuthorizationServerPolicyRuleConditions'
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the rule was created
+        id:
+          type: string
+          description: Identifier of the rule
+          readOnly: true
+        lastUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the rule was last modified
+        name:
+          type: string
+          description: Name of the rule
+        priority:
+          type: integer
+          description: Priority of the rule
+        status:
+          type: string
+          description: Status of the rule
+          enum:
+            - ACTIVE
+            - INACTIVE
+        system:
+          type: boolean
+          description: Set to `true` for system rules. You can't delete system rules.
+        type:
+          type: string
+          description: Rule type
+          enum:
+            - RESOURCE_ACCESS
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelfAndLifecycle'
+    AuthorizationServerPolicyRuleRequest:
+      allOf:
+        - $ref: '#/components/schemas/AuthorizationServerPolicyRule'
+        - type: object
+          required:
+            - name
+            - conditions
+            - type
+    OAuth2ResourceServerJsonWebKey:
+      type: object
+      properties:
+        created:
+          type: string
+          description: Timestamp when the JSON Web Key was created
+          example: '2023-02-21T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        e:
+          type: string
+          description: RSA key value (exponent) for key binding
+          example: AQAB
+          nullable: false
+        id:
+          type: string
+          description: The unique ID of the JSON Web Key
+          example: apk2f4zrZbs8nUa7p0g4
+          readOnly: true
+          nullable: false
+        kid:
+          type: string
+          description: >-
+            Unique identifier of the JSON Web Key in the Custom Authorization
+            Server's Public JWKS
+          example: SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4
+          nullable: true
+        kty:
+          type: string
+          description: Cryptographic algorithm family for the certificate's key pair
+          example: RSA
+          nullable: false
+        lastUpdated:
+          type: string
+          description: Timestamp when the JSON Web Key was updated
+          example: '2023-02-21T20:08:24.000Z'
+          readOnly: true
+          nullable: false
+        'n':
+          type: string
+          description: RSA key value (modulus) for key binding
+          example: >-
+            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
+          nullable: false
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: >-
+            The status of the encryption key. You can use only an `ACTIVE` key
+            to encrypt tokens issued by the authorization server.
+          example: ACTIVE
+          nullable: false
+          default: ACTIVE
+        use:
+          type: string
+          description: Acceptable use of the JSON Web Key
+          example: enc
+          nullable: false
+        _links:
+          $ref: '#/components/schemas/OAuthResourceServerKeyLinks'
+          readOnly: true
+          nullable: false
+    OAuth2ResourceServerJsonWebKeyRequestBody:
+      type: object
+      properties:
+        e:
+          type: string
+          description: RSA key value (exponent) for key binding
+          example: AQAB
+          nullable: false
+        kid:
+          type: string
+          description: >-
+            Unique identifier of the JSON web key in the custom authorization
+            server's public JWKS
+          example: SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4
+          nullable: true
+        kty:
+          type: string
+          description: Cryptographic algorithm family for the certificate's key pair
+          example: RSA
+          nullable: false
+        'n':
+          type: string
+          description: RSA key value (modulus) for key binding
+          example: >-
+            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
+          nullable: false
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: Status of the JSON Web Key
+          example: ACTIVE
+        use:
+          type: string
+          description: Acceptable use of the JSON Web Key
+          example: enc
+          nullable: false
+    OAuth2Scope:
+      type: object
+      properties:
+        consent:
+          $ref: '#/components/schemas/OAuth2ScopeConsentType'
+        default:
+          type: boolean
+          description: Indicates if this Scope is a default scope
+          default: false
+        description:
+          type: string
+          description: Description of the Scope
+        displayName:
+          type: string
+          description: Name of the end user displayed in a consent dialog
+        id:
+          type: string
+          description: Scope object ID
+          readOnly: true
+        metadataPublish:
+          $ref: '#/components/schemas/OAuth2ScopeMetadataPublish'
+        name:
+          type: string
+          description: Scope name
+        optional:
+          type: boolean
+          description: >-
+            Indicates whether the Scope is optional. When set to `true`, the
+            user can skip consent for the scope.
+          default: false
+        system:
+          type: boolean
+          description: Indicates if Okta created the Scope
+          default: false
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+      required:
+        - name
+    KeyEncryptionAlgorithm:
+      description: >-
+        <x-lifecycle-container><x-lifecycle
+        class="ea"></x-lifecycle></x-lifecycle-container>The algorithm for
+        encrypting access tokens issued by this authorization server. If this is
+        requested, the response is signed, and then encrypted. The result is a
+        nested JWT. The default, if omitted, is that no encryption is performed.
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: true
+      type: string
+      enum:
+        - RSA-OAEP-256
+        - RSA-OAEP-384
+        - RSA-OAEP-512
+    AuthorizationServerCredentials:
+      type: object
+      properties:
+        signing:
+          $ref: '#/components/schemas/AuthorizationServerCredentialsSigningConfig'
+    ResourceServerJsonWebKeys:
+      description: >-
+        <x-lifecycle-container><x-lifecycle
+        class="ea"></x-lifecycle></x-lifecycle-container>A [JSON Web Key
+        Set](https://tools.ietf.org/html/rfc7517#section-5) for encrypting JWTs
+        minted by the custom authorization server
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: true
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceServerJsonWebKey'
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    AuthServerLinks:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            claims:
+              allOf:
+                - description: Link to the authorization server claims
+                - $ref: '#/components/schemas/HrefObject'
+            deactivate:
+              allOf:
+                - $ref: '#/components/schemas/HrefObjectDeactivateLink'
+            metadata:
+              description: Link to the authorization server metadata
+              type: array
+              items:
+                $ref: '#/components/schemas/HrefObject'
+            policies:
+              allOf:
+                - description: Link to the authorization server policies
+                - $ref: '#/components/schemas/HrefObject'
+            rotateKey:
+              allOf:
+                - description: Link to the authorization server key rotation
+                - $ref: '#/components/schemas/HrefObject'
+            scopes:
+              allOf:
+                - description: Link to the authorization server scopes
+                - $ref: '#/components/schemas/HrefObject'
+    OAuth2ClaimType:
+      description: >-
+        Specifies whether the Claim is for an access token (`RESOURCE`) or an ID
+        token (`IDENTITY`)
+      type: string
+      enum:
+        - IDENTITY
+        - RESOURCE
+    OAuth2ClaimConditions:
+      description: Specifies the scopes for the Claim
+      type: object
+      properties:
+        scopes:
+          type: array
+          items:
+            type: string
+    OAuth2ClaimGroupFilterType:
+      description: >-
+        Specifies the type of group filter if `valueType` is `GROUPS`
+
+
+        If `valueType` is `GROUPS`, then the groups returned are filtered
+        according to the value of `group_filter_type`.
+
+
+        If you have complex filters for Groups, you can [create a Groups
+        allowlist](https://developer.okta.com/docs/guides/customize-tokens-groups-claim/main/)
+        to put them all in a Claim.
+      type: string
+      enum:
+        - CONTAINS
+        - EQUALS
+        - REGEX
+        - STARTS_WITH
+      x-enumDescriptions:
+        STARTS_WITH: >-
+          Group names start with `value` (not case-sensitive). For example, if
+          `value` is `group1`, then `group123` and `Group123` are included.
+        EQUALS: >-
+          Group name is the same as `value` (not case-sensitive). For example,
+          if `value` is `group1`, then `group1` and `Group1` are included, but
+          `group123` isn't.
+        CONTAINS: >-
+          Group names contain `value` (not case-sensitive). For example, if
+          `value` is `group1`, then `MyGroup123` and `group1` are included.
+        REGEX: >-
+          Group names match the regular expression in `value` (case-sensitive).
+          For example if `value` is `/^[a-z0-9_-]{3,16}$/`, then any Group name
+          that has at least three letters, no more than 16, and contains
+          lowercase letters, a hyphen, or numbers is a match.
+    OAuth2ClaimValueType:
+      description: >-
+        Specifies whether the Claim is an Okta Expression Language (EL)
+        expression (`EXPRESSION`), a set of groups (`GROUPS`), or a system claim
+        (`SYSTEM`)
+      type: string
+      enum:
+        - EXPRESSION
+        - GROUPS
+        - SYSTEM
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    GrantResourcesHrefObject:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/users/00u5t60iloOHN9pBi0h7/clients/0oabskvc6442nkvQO0h7/grants
+    TokenResourcesHrefObject:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/users/00u5t60iloOHN9pBi0h7/clients/0oabskvc6442nkvQO0h7/tokens
     createdProperty:
       description: Timestamp when the object was created
       format: date-time
@@ -2559,129 +2760,16 @@ components:
           type: string
           description: Link name
           example: Example Authorization Server
-    OfflineAccessScopeResourceHrefObject:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Link URI
-          example: >-
-            https://{yourOktaDomain}/api/v1/authorizationServers/ausain6z9zIedDCxB0h7/scopes/scppb56cIl4GvGxy70g3
-        title:
-          type: string
-          description: Link name
-          example: offline_access
-    AuthorizationServerJsonWebKey:
-      type: object
-      properties:
-        alg:
-          description: 'The algorithm used with the Key. Valid value: `RS256`'
-          type: string
-        e:
-          description: RSA key value (public exponent) for Key binding
-          type: string
-          readOnly: true
-        kid:
-          description: Unique identifier for the key
-          type: string
-          readOnly: true
-        kty:
-          description: >-
-            Cryptographic algorithm family for the certificate's keypair. Valid
-            value: `RSA`
-          type: string
-          readOnly: true
-        'n':
-          description: >-
-            RSA modulus value that is used by both the public and private keys
-            and provides a link between them
-          type: string
-        status:
-          description: >-
-            An `ACTIVE` Key is used to sign tokens issued by the authorization
-            server. Supported values: `ACTIVE`, `NEXT`, or `EXPIRED`<br>
-
-            A `NEXT` Key is the next Key that the authorization server uses to
-            sign tokens when Keys are rotated. The `NEXT` Key might not be
-            listed if it hasn't been generated.
-
-            An `EXPIRED` Key is the previous Key that the authorization server
-            used to sign tokens. The `EXPIRED` Key might not be listed if no Key
-            has expired or the expired Key was deleted.
-          type: string
-        use:
-          description: 'Acceptable use of the key. Valid value: `sig`'
-          type: string
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-    JwkUse:
-      type: object
-      properties:
-        use:
-          $ref: '#/components/schemas/JwkUseType'
     JwkUseType:
       description: Purpose of the certificate. The only supported value is `sig`.
       type: string
       enum:
         - sig
-    AuthorizationServerPolicy:
-      allOf:
-        - type: object
-          properties:
-            id:
-              type: string
-              description: ID of the Policy
-            type:
-              type: string
-              description: Indicates that the Policy is an authorization server Policy
-              enum:
-                - OAUTH_AUTHORIZATION_POLICY
-            name:
-              type: string
-              description: Name of the Policy
-              maxLength: 100
-              minLength: 1
-            conditions:
-              $ref: '#/components/schemas/AuthorizationServerPolicyConditions'
-            description:
-              type: string
-              description: Description of the Policy
-              maxLength: 255
-              minLength: 1
-            priority:
-              type: integer
-              description: >-
-                Specifies the order in which this Policy is evaluated in
-                relation to the other Policies in a custom authorization server
-            status:
-              type: string
-              description: Specifies whether requests have access to this Policy
-              enum:
-                - ACTIVE
-                - INACTIVE
-            system:
-              type: boolean
-              description: Specifies whether Okta created this Policy
-            created:
-              type: string
-              format: date-time
-              readOnly: true
-              description: Timestamp when the Policy was created
-            lastUpdated:
-              type: string
-              format: date-time
-              readOnly: true
-              description: Timestamp when the Policy was last updated
-            _links:
-              allOf:
-                - $ref: '#/components/schemas/LinksSelfAndLifecycle'
-                - type: object
-                  properties:
-                    rules:
-                      allOf:
-                        - description: Link to the authorization server policy's rules
-                        - $ref: '#/components/schemas/HrefObject'
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     AuthorizationServerPolicyConditions:
       type: object
       properties:
@@ -2696,63 +2784,35 @@ components:
               $ref: '#/components/schemas/HrefObjectActivateLink'
             deactivate:
               $ref: '#/components/schemas/HrefObjectDeactivateLink'
-    ClientPolicyCondition:
-      description: Specifies which clients are included in the Policy
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
       type: object
       properties:
-        include:
-          type: array
-          description: Which clients are included in the Policy
-          items:
-            type: string
-    HrefObjectActivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to activate the resource
-    AuthorizationServerPolicyRule:
-      type: object
-      properties:
-        actions:
-          $ref: '#/components/schemas/AuthorizationServerPolicyRuleActions'
-        conditions:
-          $ref: '#/components/schemas/AuthorizationServerPolicyRuleConditions'
-        created:
-          type: string
-          format: date-time
+        hints:
+          $ref: '#/components/schemas/HrefHints'
           readOnly: true
-          description: Timestamp when the rule was created
-        id:
+        href:
           type: string
-          description: Identifier of the rule
-          readOnly: true
-        lastUpdated:
-          type: string
-          format: date-time
-          readOnly: true
-          description: Timestamp when the rule was last modified
+          description: Link URI
         name:
           type: string
-          description: Name of the rule
-        priority:
-          type: integer
-          description: Priority of the rule
-        status:
-          type: string
-          description: Status of the rule
-          enum:
-            - ACTIVE
-            - INACTIVE
-        system:
+          description: Link name
+          readOnly: true
+        templated:
           type: boolean
-          description: Set to `true` for system rules. You can't delete system rules.
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
         type:
           type: string
-          description: Rule type
-          enum:
-            - RESOURCE_ACCESS
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelfAndLifecycle'
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
     AuthorizationServerPolicyRuleActions:
       allOf:
         - $ref: '#/components/schemas/PolicyRuleActions'
@@ -2769,6 +2829,128 @@ components:
           $ref: '#/components/schemas/AuthorizationServerPolicyPeopleCondition'
         scopes:
           $ref: '#/components/schemas/OAuth2ScopesMediationPolicyRuleCondition'
+    OAuthResourceServerKeyLinks:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of a JSON Web Key using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      properties:
+        activate:
+          $ref: '#/components/schemas/HrefObjectActivateLink'
+        delete:
+          $ref: '#/components/schemas/HrefObjectDeleteLink'
+      readOnly: true
+      type: object
+    OAuth2ScopeConsentType:
+      description: Indicates whether a consent dialog is needed for the Scope
+      default: IMPLICIT
+      type: string
+      enum:
+        - FLEXIBLE
+        - IMPLICIT
+        - REQUIRED
+    OAuth2ScopeMetadataPublish:
+      description: Indicates whether the Scope is included in the metadata
+      default: NO_CLIENTS
+      type: string
+      enum:
+        - ALL_CLIENTS
+        - NO_CLIENTS
+    AuthorizationServerCredentialsSigningConfig:
+      type: object
+      properties:
+        kid:
+          type: string
+          description: >-
+            The ID of the JSON Web Key used for signing tokens issued by the
+            authorization server
+          readOnly: true
+        lastRotated:
+          type: string
+          description: >-
+            The timestamp when the authorization server started using the `kid`
+            for signing tokens
+          format: date-time
+          readOnly: true
+        nextRotation:
+          type: string
+          description: >-
+            The timestamp when the authorization server changes the Key for
+            signing tokens. This is only returned when `rotationMode` is set to
+            `AUTO`.
+          format: date-time
+          readOnly: true
+        rotationMode:
+          $ref: '#/components/schemas/AuthorizationServerCredentialsRotationMode'
+        use:
+          $ref: '#/components/schemas/AuthorizationServerCredentialsUse'
+    ResourceServerJsonWebKey:
+      description: >-
+        A [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) is a JSON
+        representation of a cryptographic key. Okta can use the active key to
+        encrypt the access token minted by the authorization server. Okta
+        supports only RSA keys with 'use: enc'.
+      type: object
+      properties:
+        e:
+          type: string
+          description: The key exponent of a RSA key
+        kid:
+          type: string
+          description: The unique identifier of the key
+        kty:
+          $ref: '#/components/schemas/JsonWebKeyType'
+        'n':
+          type: string
+          description: The modulus of the RSA key
+        status:
+          $ref: '#/components/schemas/JsonWebKeyStatus'
+        use:
+          $ref: '#/components/schemas/JsonWebKeyUse'
+    HrefObjectDeactivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to deactivate the resource
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    OfflineAccessScopeResourceHrefObject:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Link URI
+          example: >-
+            https://{yourOktaDomain}/api/v1/authorizationServers/ausain6z9zIedDCxB0h7/scopes/scppb56cIl4GvGxy70g3
+        title:
+          type: string
+          description: Link name
+          example: offline_access
+    ClientPolicyCondition:
+      description: Specifies which clients are included in the Policy
+      type: object
+      properties:
+        include:
+          type: array
+          description: Which clients are included in the Policy
+          items:
+            type: string
+    HrefObjectActivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to activate the resource
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
     PolicyRuleActions:
       type: object
     TokenAuthorizationServerPolicyRuleAction:
@@ -2817,6 +2999,44 @@ components:
           type: array
           items:
             type: string
+    HrefObjectDeleteLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to delete the resource
+    AuthorizationServerCredentialsRotationMode:
+      description: The Key rotation mode for the authorization server
+      type: string
+      enum:
+        - AUTO
+        - MANUAL
+    AuthorizationServerCredentialsUse:
+      description: How the key is used
+      type: string
+      enum:
+        - sig
+    JsonWebKeyType:
+      description: The type of public key
+      type: string
+      enum:
+        - RSA
+    JsonWebKeyStatus:
+      description: The status of the public key
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    JsonWebKeyUse:
+      description: The intended use of the public key
+      type: string
+      enum:
+        - enc
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
     TokenAuthorizationServerPolicyRuleActionInlineHook:
       type: object
       properties:
@@ -2841,188 +3061,6 @@ components:
           type: array
           items:
             type: string
-    AuthorizationServerPolicyRuleRequest:
-      allOf:
-        - $ref: '#/components/schemas/AuthorizationServerPolicyRule'
-        - type: object
-          required:
-            - name
-            - conditions
-            - type
-    OAuth2ResourceServerJsonWebKey:
-      type: object
-      properties:
-        created:
-          type: string
-          description: Timestamp when the JSON Web Key was created
-          example: '2023-02-21T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        e:
-          type: string
-          description: RSA key value (exponent) for key binding
-          example: AQAB
-          nullable: false
-        id:
-          type: string
-          description: The unique ID of the JSON Web Key
-          example: apk2f4zrZbs8nUa7p0g4
-          readOnly: true
-          nullable: false
-        kid:
-          type: string
-          description: >-
-            Unique identifier of the JSON Web Key in the Custom Authorization
-            Server's Public JWKS
-          example: SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4
-          nullable: true
-        kty:
-          type: string
-          description: Cryptographic algorithm family for the certificate's key pair
-          example: RSA
-          nullable: false
-        lastUpdated:
-          type: string
-          description: Timestamp when the JSON Web Key was updated
-          example: '2023-02-21T20:08:24.000Z'
-          readOnly: true
-          nullable: false
-        'n':
-          type: string
-          description: RSA key value (modulus) for key binding
-          example: >-
-            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
-          nullable: false
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: >-
-            The status of the encryption key. You can use only an `ACTIVE` key
-            to encrypt tokens issued by the authorization server.
-          example: ACTIVE
-          nullable: false
-          default: ACTIVE
-        use:
-          type: string
-          description: Acceptable use of the JSON Web Key
-          example: enc
-          nullable: false
-        _links:
-          $ref: '#/components/schemas/OAuthResourceServerKeyLinks'
-          readOnly: true
-          nullable: false
-    OAuthResourceServerKeyLinks:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of a JSON Web Key using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      properties:
-        activate:
-          $ref: '#/components/schemas/HrefObjectActivateLink'
-        delete:
-          $ref: '#/components/schemas/HrefObjectDeleteLink'
-      readOnly: true
-      type: object
-    HrefObjectDeleteLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to delete the resource
-    OAuth2ResourceServerJsonWebKeyRequestBody:
-      type: object
-      properties:
-        e:
-          type: string
-          description: RSA key value (exponent) for key binding
-          example: AQAB
-          nullable: false
-        kid:
-          type: string
-          description: >-
-            Unique identifier of the JSON web key in the custom authorization
-            server's public JWKS
-          example: SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4
-          nullable: true
-        kty:
-          type: string
-          description: Cryptographic algorithm family for the certificate's key pair
-          example: RSA
-          nullable: false
-        'n':
-          type: string
-          description: RSA key value (modulus) for key binding
-          example: >-
-            mkC6yAJVvFwUlmM9gKjb2d-YK5qHFt-mXSsbjWKKs4EfNm-BoQeeovBZtSACyaqLc8IYFTPEURFcbDQ9DkAL04uUIRD2gaHYY7uK0jsluEaXGq2RAIsmzAwNTzkiDw4q9pDL_q7n0f_SDt1TsMaMQayB6bU5jWsmqcWJ8MCRJ1aJMjZ16un5UVx51IIeCbe4QRDxEXGAvYNczsBoZxspDt28esSpq5W0dBFxcyGVudyl54Er3FzAguhgfMVjH-bUec9j2Tl40qDTktrYgYfxz9pfjm01Hl4WYP1YQxeETpSL7cQ5Ihz4jGDtHUEOcZ4GfJrPzrGpUrak8Qp5xcwCqQ
-          nullable: false
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          description: Status of the JSON Web Key
-          example: ACTIVE
-        use:
-          type: string
-          description: Acceptable use of the JSON Web Key
-          example: enc
-          nullable: false
-    OAuth2Scope:
-      type: object
-      properties:
-        consent:
-          $ref: '#/components/schemas/OAuth2ScopeConsentType'
-        default:
-          type: boolean
-          description: Indicates if this Scope is a default scope
-          default: false
-        description:
-          type: string
-          description: Description of the Scope
-        displayName:
-          type: string
-          description: Name of the end user displayed in a consent dialog
-        id:
-          type: string
-          description: Scope object ID
-          readOnly: true
-        metadataPublish:
-          $ref: '#/components/schemas/OAuth2ScopeMetadataPublish'
-        name:
-          type: string
-          description: Scope name
-        optional:
-          type: boolean
-          description: >-
-            Indicates whether the Scope is optional. When set to `true`, the
-            user can skip consent for the scope.
-          default: false
-        system:
-          type: boolean
-          description: Indicates if Okta created the Scope
-          default: false
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-      required:
-        - name
-    OAuth2ScopeConsentType:
-      description: Indicates whether a consent dialog is needed for the Scope
-      default: IMPLICIT
-      type: string
-      enum:
-        - FLEXIBLE
-        - IMPLICIT
-        - REQUIRED
-    OAuth2ScopeMetadataPublish:
-      description: Indicates whether the Scope is included in the metadata
-      default: NO_CLIENTS
-      type: string
-      enum:
-        - ALL_CLIENTS
-        - NO_CLIENTS
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -3069,7 +3107,87 @@ components:
           examples:
             InvalidTokenProvided:
               $ref: '#/components/examples/ErrorInvalidTokenProvided'
-  parameters: {}
+  parameters:
+    pathAuthServerId:
+      name: authServerId
+      description: '`id` of the Authorization Server'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: GeGRTEr7f3yu2n7grw22
+    pathAssociatedServerId:
+      name: associatedServerId
+      description: '`id` of the associated Authorization Server'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: aus6xt9jKPmCyn6kg0g4
+    pathClaimId:
+      name: claimId
+      description: '`id` of Claim'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: hNJ3Uk76xLagWkGx5W3N
+    pathClientId:
+      name: clientId
+      description: Client app ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD
+    pathTokenId:
+      name: tokenId
+      description: '`id` of Token'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: sHHSth53yJAyNSTQKDJZ
+    pathCredentialKeyId:
+      name: keyId
+      description: '`id` of the certificate key'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: P7jXpG-LG2ObNgY9C0Mn2uf4InCQTmRZMDCZoVNxdrk
+    pathPolicyId:
+      name: policyId
+      description: '`id` of the Policy'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00plrilJ7jZ66Gn0X0g3
+    pathRuleId:
+      name: ruleId
+      description: '`id` of the policy rule'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ruld3hJ7jZh4fn0st0g3
+    pathJsonWebKeyId:
+      name: keyId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: Unique `id` of the Custom Authorization Server JSON Web Key
+      example: apk2f4zrZbs8nUa7p0g4
+    pathScopeId:
+      name: scopeId
+      description: '`id` of Scope'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0TMRpCWXRKFjP7HiPFNM
   examples:
     ListAuthServersResponse:
       summary: List all custom authorization servers in your org
@@ -3142,22 +3260,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateAuthServerBody:
       summary: Create a custom authorization server
       value:
@@ -3340,14 +3442,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     RetrieveAuthServerResponse:
       summary: Retrieve a custom authorization server
       value:
@@ -3419,14 +3513,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     ReplaceAuthServerBody:
       summary: Replace a custom authorization server
       value:
@@ -4397,14 +4483,6 @@ components:
               hints:
                 allow:
                   - GET
-    ErrorInvalidTokenProvided:
-      summary: Invalid Token Provided
-      value:
-        errorCode: E0000011
-        errorSummary: Invalid token provided
-        errorLink: E0000011
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     AddOAuth2ResourceServerJsonWebKeyRequest:
       summary: JSON Web Key request example
       value:
@@ -4569,11 +4647,46 @@ components:
                 - GET
                 - PUT
                 - DELETE
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
+    ErrorInvalidTokenProvided:
+      summary: Invalid Token Provided
+      value:
+        errorCode: E0000011
+        errorSummary: Invalid token provided
+        errorLink: E0000011
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

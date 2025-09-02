@@ -179,11 +179,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     UserLockoutSettings:
       type: object
       properties:
@@ -193,6 +188,11 @@ components:
             Prevents brute-force lockout from unknown devices for the password
             authenticator.
           default: false
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -221,7 +221,6 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
   examples:
     ErrorAccessDenied:
       summary: Access Denied
@@ -247,11 +246,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -34,8 +34,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/queryExpandEmailDomain'
     post:
       summary: Create an email domain
       description: Creates an Email Domain in your org
@@ -86,8 +84,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/queryExpandEmailDomain'
+    parameters:
+      - $ref: '#/components/parameters/queryExpandEmailDomain'
   /api/v1/email-domains/{emailDomainId}:
     get:
       summary: Retrieve an email domain
@@ -118,9 +116,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEmailDomainId'
-        - $ref: '#/components/parameters/queryExpandEmailDomain'
     put:
       summary: Replace an email domain
       description: Replaces associated username and sender display name by `emailDomainId`
@@ -162,9 +157,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEmailDomainId'
-        - $ref: '#/components/parameters/queryExpandEmailDomain'
     delete:
       summary: Delete an email domain
       description: Deletes an Email Domain by `emailDomainId`
@@ -199,9 +191,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEmailDomainId'
-        - $ref: '#/components/parameters/queryExpandEmailDomain'
+    parameters:
+      - $ref: '#/components/parameters/pathEmailDomainId'
+      - $ref: '#/components/parameters/queryExpandEmailDomain'
   /api/v1/email-domains/{emailDomainId}/verify:
     post:
       summary: Verify an email domain
@@ -243,8 +235,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEmailDomainId'
+    parameters:
+      - $ref: '#/components/parameters/pathEmailDomainId'
 components:
   schemas:
     EmailDomainResponseWithEmbedded:
@@ -260,6 +252,24 @@ components:
               items:
                 $ref: '#/components/schemas/Brand'
           readOnly: true
+    EmailDomain:
+      allOf:
+        - $ref: '#/components/schemas/BaseEmailDomain'
+      type: object
+      properties:
+        brandId:
+          type: string
+        domain:
+          type: string
+        validationSubdomain:
+          type: string
+          description: >-
+            Subdomain for the email sender's custom mail domain. Specify your
+            subdomain when you configure a custom mail domain.
+          default: mail
+      required:
+        - domain
+        - brandId
     EmailDomainResponse:
       allOf:
         - $ref: '#/components/schemas/BaseEmailDomain'
@@ -279,6 +289,34 @@ components:
           type: string
           description: The subdomain for the email sender's custom mail domain
           default: mail
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    UpdateEmailDomain:
+      allOf:
+        - $ref: '#/components/schemas/BaseEmailDomain'
     Brand:
       type: object
       properties:
@@ -316,31 +354,6 @@ components:
             Removes "Powered by Okta" from the sign-in page in redirect
             authentication deployments, and "© [current year] Okta, Inc." from
             the Okta End-User Dashboard
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
     BaseEmailDomain:
       type: object
       properties:
@@ -368,6 +381,11 @@ components:
         - NOT_STARTED
         - POLLING
         - VERIFIED
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     DefaultApp:
       type: object
       properties:
@@ -385,37 +403,11 @@ components:
         The language specified as an [IETF BCP 47 language
         tag](https://datatracker.ietf.org/doc/html/rfc5646)
       type: string
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     EmailDomainDNSRecordType:
       type: string
       enum:
         - CNAME
         - TXT
-    EmailDomain:
-      allOf:
-        - $ref: '#/components/schemas/BaseEmailDomain'
-      type: object
-      properties:
-        brandId:
-          type: string
-        domain:
-          type: string
-        validationSubdomain:
-          type: string
-          description: >-
-            Subdomain for the email sender's custom mail domain. Specify your
-            subdomain when you configure a custom mail domain.
-          default: mail
-      required:
-        - domain
-        - brandId
-    UpdateEmailDomain:
-      allOf:
-        - $ref: '#/components/schemas/BaseEmailDomain'
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -453,7 +445,27 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    queryExpandEmailDomain:
+      name: expand
+      in: query
+      style: form
+      explode: false
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - brands
+      description: Specifies additional metadata to be included in the response
+    pathEmailDomainId:
+      name: emailDomainId
+      in: path
+      required: true
+      schema:
+        type: string
+        description: The ID of the email domain.
   examples:
     EmailDomainResponse:
       value:
@@ -476,22 +488,6 @@ components:
           - recordType: CNAME
             fqdn: t022._domainkey.example.com
             verificationValue: t02.domainkey.u22224444.wl024.sendgrid.net
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateEmailDomainRequest:
       value:
         displayName: Admin
@@ -505,22 +501,6 @@ components:
         errorSummary: Email domain already exists.
         errorLink: E0000197
         errorId: oaeEdRqprFuTyKokyYPbURJkA
-        errorCauses: []
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
     UpdateEmailDomainRequest:
       value:
@@ -589,11 +569,38 @@ components:
         errorLink: E0000217
         errorId: oaeEdRqprFuTyKokyYPbURJkD
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

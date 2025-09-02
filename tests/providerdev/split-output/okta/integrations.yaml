@@ -119,8 +119,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
     delete:
       summary: Delete an API service integration instance
       description: >-
@@ -148,8 +146,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiServiceId'
   /integrations/api/v1/api-services/{apiServiceId}/credentials/secrets:
     get:
       summary: List all API service integration instance secrets
@@ -187,8 +185,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
     post:
       summary: Create an API service integration instance secret
       description: >-
@@ -224,8 +220,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiServiceId'
   /integrations/api/v1/api-services/{apiServiceId}/credentials/secrets/{secretId}:
     delete:
       summary: Delete an API service integration instance secret
@@ -253,9 +249,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
-        - $ref: '#/components/parameters/pathSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiServiceId'
+      - $ref: '#/components/parameters/pathSecretId'
   /integrations/api/v1/api-services/{apiServiceId}/credentials/secrets/{secretId}/lifecycle/activate:
     post:
       summary: Activate an API service integration instance secret
@@ -289,9 +285,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
-        - $ref: '#/components/parameters/pathSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiServiceId'
+      - $ref: '#/components/parameters/pathSecretId'
   /integrations/api/v1/api-services/{apiServiceId}/credentials/secrets/{secretId}/lifecycle/deactivate:
     post:
       summary: Deactivate an API service integration instance secret
@@ -325,9 +321,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathApiServiceId'
-        - $ref: '#/components/parameters/pathSecretId'
+    parameters:
+      - $ref: '#/components/parameters/pathApiServiceId'
+      - $ref: '#/components/parameters/pathSecretId'
 components:
   schemas:
     APIServiceIntegrationInstance:
@@ -383,126 +379,6 @@ components:
         _links:
           $ref: '#/components/schemas/APIServiceIntegrationLinks'
           readOnly: true
-    AppProperties:
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: true
-      description: App instance properties
-      additionalProperties:
-        type: object
-        properties:
-          name:
-            type: string
-            description: Name of the property
-            example: baseUrl
-          value:
-            type: string
-            description: Value of the property
-            example: https://example.com
-      type: object
-    APIServiceIntegrationLinks:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of an application using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      properties:
-        client:
-          $ref: '#/components/schemas/HrefObjectClientLink'
-        logo:
-          $ref: '#/components/schemas/HrefObjectLogoLink'
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-      type: object
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    HrefObjectClientLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the client resource
-    HrefObjectLogoLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the logo resource
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     postAPIServiceIntegrationInstanceRequest:
       type: object
       properties:
@@ -593,6 +469,65 @@ components:
         - lastUpdated
         - secret_hash
         - _links
+    AppProperties:
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: true
+      description: App instance properties
+      additionalProperties:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Name of the property
+            example: baseUrl
+          value:
+            type: string
+            description: Value of the property
+            example: https://example.com
+      type: object
+    APIServiceIntegrationLinks:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of an application using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      properties:
+        client:
+          $ref: '#/components/schemas/HrefObjectClientLink'
+        logo:
+          $ref: '#/components/schemas/HrefObjectLogoLink'
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+      type: object
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
     APIServiceIntegrationSecretLinks:
       description: >-
         Specifies link relations (see [Web
@@ -610,6 +545,23 @@ components:
           $ref: '#/components/schemas/HrefObjectDeleteLink'
       readOnly: true
       type: object
+    HrefObjectClientLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the client resource
+    HrefObjectLogoLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the logo resource
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     HrefObjectActivateLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
@@ -622,6 +574,50 @@ components:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to delete the resource
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
   responses:
     ErrorInvalidToken401:
       description: Unauthorized
@@ -679,6 +675,22 @@ components:
         your current location in the list and is obtained from the `Link`
         response header. See
         [Pagination](https://developer.okta.com/docs/api/#pagination).
+    pathApiServiceId:
+      name: apiServiceId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: '`id` of the API Service Integration instance'
+      example: 000lr2rLjZ6NsGn1P0g3
+    pathSecretId:
+      name: secretId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: '`id` of the API Service Integration instance Secret'
+      example: ocs2f4zrZbs8nUa7p0g4
   examples:
     APIServiceIntegrationListResponse:
       summary: List response example
@@ -709,30 +721,6 @@ components:
             logo:
               name: small
               href: https://{logoDomain}/{logoPath}/my_app_cie_small_logo
-    ErrorInvalidTokenProvided:
-      summary: Invalid Token Provided
-      value:
-        errorCode: E0000011
-        errorSummary: Invalid token provided
-        errorLink: E0000011
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     postAPIServiceIntegrationRequest:
       summary: POST request example
       value:
@@ -821,14 +809,6 @@ components:
           logo:
             name: small
             href: https://{logoDomain}/{logoPath}/my_app_cie_small_logo
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     APIServiceIntegrationResponse:
       summary: Response example
       value:
@@ -893,14 +873,6 @@ components:
           logo:
             name: small
             href: https://{logoDomain}/{logoPath}/my_app_cie_small_logo
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     APIServiceIntegrationInstanceSecretListResponse:
       summary: Secrets list response example
       value:
@@ -990,11 +962,46 @@ components:
             hints:
               allow:
                 - DELETE
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorInvalidTokenProvided:
+      summary: Invalid Token Provided
+      value:
+        errorCode: E0000011
+        errorSummary: Invalid token provided
+        errorLink: E0000011
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

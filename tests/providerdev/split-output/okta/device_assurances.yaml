@@ -321,8 +321,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceAssuranceId'
     put:
       summary: Replace a device assurance policy
       description: Replaces a device assurance policy by `deviceAssuranceId`
@@ -509,8 +507,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceAssuranceId'
     delete:
       summary: Delete a device assurance policy
       description: >-
@@ -548,8 +544,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceAssuranceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceAssuranceId'
 components:
   schemas:
     DeviceAssurance:
@@ -608,6 +604,31 @@ components:
           CHROMEOS: '#/components/schemas/DeviceAssuranceChromeOSPlatform'
           IOS: '#/components/schemas/DeviceAssuranceIOSPlatform'
           ANDROID: '#/components/schemas/DeviceAssuranceAndroidPlatform'
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
     DevicePostureChecks:
       x-okta-lifecycle:
         lifecycle: EA
@@ -681,31 +702,11 @@ components:
         self:
           $ref: '#/components/schemas/HrefObjectSelfLink'
       readOnly: true
-    Error:
-      title: Error
+    ErrorCause:
       type: object
       properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
         errorSummary:
           type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
     ByDateTimeExpiry:
       allOf:
         - $ref: '#/components/schemas/DateTime'
@@ -721,11 +722,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to the resource (self)
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     DateTime:
       description: >-
         An [ISO
@@ -821,24 +817,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathDeviceAssuranceId:
+      in: path
+      name: deviceAssuranceId
+      required: true
+      description: Id of the device assurance policy
+      schema:
+        type: string
   examples:
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     DeviceAssuranceAndroidRequest:
       summary: Android request
       value:
@@ -2415,6 +2402,28 @@ components:
                 - DELETE
                 - GET
                 - PUT
+    ErrorDeviceAssuranceInUse:
+      summary: Can't delete device assurance policy in use by authentication policies
+      value:
+        errorSummary: Device assurance is in use and cannot be deleted.
+        errorId: oaenwA1ra80S9W-pvbh4m6haA
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
     ErrorApiValidationFailed:
       summary: API Validation Failed
       value:
@@ -2431,17 +2440,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-    ErrorDeviceAssuranceInUse:
-      summary: Can't delete device assurance policy in use by authentication policies
-      value:
-        errorSummary: Device assurance is in use and cannot be deleted.
-        errorId: oaenwA1ra80S9W-pvbh4m6haA
-        errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

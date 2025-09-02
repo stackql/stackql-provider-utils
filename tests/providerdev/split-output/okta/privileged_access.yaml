@@ -109,8 +109,6 @@ paths:
         lifecycle: EA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/serviceAccountId'
     patch:
       summary: Update an existing app service account
       description: Updates an existing app service account specified by ID
@@ -146,8 +144,6 @@ paths:
         lifecycle: EA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/serviceAccountId'
     delete:
       summary: Delete an app service account
       description: Deletes an app service account specified by ID
@@ -173,8 +169,8 @@ paths:
         lifecycle: EA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/serviceAccountId'
+    parameters:
+      - $ref: '#/components/parameters/serviceAccountId'
 components:
   schemas:
     AppServiceAccount:
@@ -278,6 +274,42 @@ components:
         - name
         - containerOrn
         - username
+    AppServiceAccountForUpdate:
+      type: object
+      properties:
+        description:
+          description: The description of the app service account
+          format: regex
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: This is for accessing salesforce Prod-5
+        name:
+          description: The user-defined name for the app service account
+          format: regex
+          maxLength: 50
+          minLength: 1
+          pattern: ^[\w\-_. ]+$
+          type: string
+          example: salesforce Prod-5 account
+        ownerGroupIds:
+          description: A list of IDs of the Okta groups who own the app service account
+          type: array
+          items:
+            type: string
+          minItems: 0
+          maxItems: 10
+          example:
+            - 00g57qp78yZT2XBA40g7
+        ownerUserIds:
+          description: A list of IDs of the Okta users who own the app service account
+          type: array
+          items:
+            type: string
+          minItems: 0
+          maxItems: 10
+          example:
+            - 00u11s48P9zGW8yqm0g5
     ServiceAccountStatus:
       description: Describes the current status of an app service account
       example: UNSECURED
@@ -364,42 +396,6 @@ components:
       properties:
         errorSummary:
           type: string
-    AppServiceAccountForUpdate:
-      type: object
-      properties:
-        description:
-          description: The description of the app service account
-          format: regex
-          maxLength: 255
-          minLength: 0
-          type: string
-          example: This is for accessing salesforce Prod-5
-        name:
-          description: The user-defined name for the app service account
-          format: regex
-          maxLength: 50
-          minLength: 1
-          pattern: ^[\w\-_. ]+$
-          type: string
-          example: salesforce Prod-5 account
-        ownerGroupIds:
-          description: A list of IDs of the Okta groups who own the app service account
-          type: array
-          items:
-            type: string
-          minItems: 0
-          maxItems: 10
-          example:
-            - 00g57qp78yZT2XBA40g7
-        ownerUserIds:
-          description: A list of IDs of the Okta users who own the app service account
-          type: array
-          items:
-            type: string
-          minItems: 0
-          maxItems: 10
-          example:
-            - 00u11s48P9zGW8yqm0g5
   responses:
     ErrorApiValidationFailed400:
       description: Bad Request
@@ -470,6 +466,13 @@ components:
         minLength: 3
         maxLength: 255
         example: salesforce
+    serviceAccountId:
+      name: id
+      in: path
+      description: ID of an existing service account
+      required: true
+      schema:
+        type: string
   examples:
     ListAppServiceAccounts:
       value:
@@ -538,11 +541,6 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

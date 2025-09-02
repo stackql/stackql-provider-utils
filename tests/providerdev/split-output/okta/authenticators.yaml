@@ -99,8 +99,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
     put:
       summary: Replace an authenticator
       description: >-
@@ -132,8 +130,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
   /api/v1/authenticators/{authenticatorId}/aaguids:
     get:
       x-okta-lifecycle:
@@ -170,8 +168,6 @@ paths:
             - okta.authenticators.read
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
     post:
       x-okta-lifecycle:
         lifecycle: EA
@@ -210,8 +206,8 @@ paths:
             - okta.authenticators.manage
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
   /api/v1/authenticators/{authenticatorId}/aaguids/{aaguid}:
     get:
       x-okta-lifecycle:
@@ -243,9 +239,6 @@ paths:
             - okta.authenticators.read
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathAAGUID'
     put:
       x-okta-lifecycle:
         lifecycle: EA
@@ -284,9 +277,6 @@ paths:
             - okta.authenticators.manage
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathAAGUID'
     patch:
       x-okta-lifecycle:
         lifecycle: EA
@@ -327,9 +317,6 @@ paths:
             - okta.authenticators.manage
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathAAGUID'
     delete:
       x-okta-lifecycle:
         lifecycle: EA
@@ -356,9 +343,9 @@ paths:
             - okta.authenticators.manage
       tags:
         - Authenticator
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathAAGUID'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
+      - $ref: '#/components/parameters/pathAAGUID'
   /api/v1/authenticators/{authenticatorId}/lifecycle/activate:
     post:
       summary: Activate an authenticator
@@ -384,8 +371,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
   /api/v1/authenticators/{authenticatorId}/lifecycle/deactivate:
     post:
       summary: Deactivate an authenticator
@@ -411,8 +398,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
   /api/v1/authenticators/{authenticatorId}/methods:
     get:
       summary: List all methods of an authenticator
@@ -451,8 +438,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
   /api/v1/authenticators/{authenticatorId}/methods/{methodType}:
     get:
       summary: Retrieve an authenticator method
@@ -493,9 +480,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathMethodType'
     put:
       summary: Replace an authenticator method
       description: >-
@@ -542,9 +526,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathMethodType'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
+      - $ref: '#/components/parameters/pathMethodType'
   /api/v1/authenticators/{authenticatorId}/methods/{methodType}/lifecycle/activate:
     post:
       summary: Activate an authenticator method
@@ -583,9 +567,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathMethodType'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
+      - $ref: '#/components/parameters/pathMethodType'
   /api/v1/authenticators/{authenticatorId}/methods/{methodType}/lifecycle/deactivate:
     post:
       summary: Deactivate an authenticator method
@@ -620,9 +604,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathAuthenticatorId'
-        - $ref: '#/components/parameters/pathMethodType'
+    parameters:
+      - $ref: '#/components/parameters/pathAuthenticatorId'
+      - $ref: '#/components/parameters/pathMethodType'
 components:
   schemas:
     AuthenticatorBase:
@@ -674,6 +658,76 @@ components:
           webauthn: '#/components/schemas/AuthenticatorKeyWebauthn'
           yubikey_token: '#/components/schemas/AuthenticatorKeyYubikey'
           tac: '#/components/schemas/AuthenticatorKeyTac'
+    AllCustomAAGUIDResponseObject:
+      items:
+        $ref: '#/components/schemas/CustomAAGUIDResponseObject'
+      type: array
+    CustomAAGUIDCreateRequestObject:
+      type: object
+      properties:
+        aaguid:
+          description: >-
+            An Authenticator Attestation Global Unique Identifier (AAGUID) is a
+            128-bit identifier indicating the model.
+          type: string
+        attestationRootCertificates:
+          $ref: '#/components/schemas/AttestationRootCertificatesRequest'
+        authenticatorCharacteristics:
+          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
+    CustomAAGUIDResponseObject:
+      type: object
+      properties:
+        aaguid:
+          description: >-
+            A unique 128-bit identifier that's assigned to a specific model of
+            security key or authenticator
+          type: string
+        attestationRootCertificates:
+          $ref: '#/components/schemas/AttestationRootCertificatesResponse'
+        authenticatorCharacteristics:
+          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
+        name:
+          description: The product name associated with the AAGUID
+          type: string
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+    CustomAAGUIDUpdateRequestObject:
+      type: object
+      properties:
+        attestationRootCertificates:
+          $ref: '#/components/schemas/AttestationRootCertificatesRequest'
+        authenticatorCharacteristics:
+          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
+        name:
+          description: The product name associated with this AAGUID.
+          type: string
+    AuthenticatorMethodBase:
+      type: object
+      properties:
+        status:
+          description: The status of the authenticator method
+          $ref: '#/components/schemas/LifecycleStatus'
+        type:
+          $ref: '#/components/schemas/AuthenticatorMethodType'
+        _links:
+          $ref: '#/components/schemas/LinksSelfAndLifecycle'
+      discriminator:
+        propertyName: type
+        mapping:
+          sms: '#/components/schemas/AuthenticatorMethodSimple'
+          voice: '#/components/schemas/AuthenticatorMethodSimple'
+          email: '#/components/schemas/AuthenticatorMethodSimple'
+          push: '#/components/schemas/AuthenticatorMethodPush'
+          signed_nonce: '#/components/schemas/AuthenticatorMethodSignedNonce'
+          totp: '#/components/schemas/AuthenticatorMethodTotp'
+          otp: '#/components/schemas/AuthenticatorMethodOtp'
+          password: '#/components/schemas/AuthenticatorMethodSimple'
+          webauthn: '#/components/schemas/AuthenticatorMethodWebAuthn'
+          security_question: '#/components/schemas/AuthenticatorMethodSimple'
+          idp: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
+          duo: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
+          cert: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
+          tac: '#/components/schemas/AuthenticatorMethodTac'
     AuthenticatorKeyEnum:
       description: A human-readable string that identifies the authenticator
       type: string
@@ -745,6 +799,82 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    AttestationRootCertificatesRequest:
+      description: Contains the certificate and information about it
+      items:
+        type: object
+        properties:
+          x5c:
+            description: X.509 certificate chain
+            type: string
+      type: array
+    AAGUIDAuthenticatorCharacteristics:
+      description: Contains additional properties about custom AAGUID.
+      type: object
+      properties:
+        fipsCompliant:
+          description: >-
+            Indicates whether the authenticator meets Federal Information
+            Processing Standards (FIPS) compliance requirements
+          type: boolean
+        hardwareProtected:
+          description: >-
+            Indicates whether the authenticator stores the private key on a
+            hardware component
+          type: boolean
+        platformAttached:
+          description: >-
+            Indicates whether the custom AAGUID is built into the authenticator
+            (`true`) or if it's a separate, external authenticator
+          type: boolean
+    AttestationRootCertificatesResponse:
+      items:
+        type: object
+        properties:
+          x5c:
+            description: X.509 certificate chain
+            type: string
+          x5t#S256:
+            description: SHA-256 hash (thumbprint) of the X.509 certificate
+            type: string
+          iss:
+            description: Issuer of certificate
+            type: string
+          exp:
+            description: Expiry date of certificate
+            type: string
+      type: array
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    AuthenticatorMethodType:
+      description: The type of authenticator method
+      type: string
+      enum:
+        - cert
+        - duo
+        - email
+        - idp
+        - otp
+        - password
+        - push
+        - security_question
+        - signed_nonce
+        - sms
+        - totp
+        - voice
+        - webauthn
+        - tac
     LinksSelfAndLifecycle:
       allOf:
         - $ref: '#/components/schemas/LinksSelf'
@@ -788,19 +918,10 @@ components:
       properties:
         errorSummary:
           type: string
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
     HrefObjectActivateLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
@@ -817,10 +938,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HttpMethod'
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
     HttpMethod:
       type: string
       enum:
@@ -828,139 +945,6 @@ components:
         - GET
         - POST
         - PUT
-    AllCustomAAGUIDResponseObject:
-      items:
-        $ref: '#/components/schemas/CustomAAGUIDResponseObject'
-      type: array
-    CustomAAGUIDResponseObject:
-      type: object
-      properties:
-        aaguid:
-          description: >-
-            A unique 128-bit identifier that's assigned to a specific model of
-            security key or authenticator
-          type: string
-        attestationRootCertificates:
-          $ref: '#/components/schemas/AttestationRootCertificatesResponse'
-        authenticatorCharacteristics:
-          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
-        name:
-          description: The product name associated with the AAGUID
-          type: string
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-    AttestationRootCertificatesResponse:
-      items:
-        type: object
-        properties:
-          x5c:
-            description: X.509 certificate chain
-            type: string
-          x5t#S256:
-            description: SHA-256 hash (thumbprint) of the X.509 certificate
-            type: string
-          iss:
-            description: Issuer of certificate
-            type: string
-          exp:
-            description: Expiry date of certificate
-            type: string
-      type: array
-    AAGUIDAuthenticatorCharacteristics:
-      description: Contains additional properties about custom AAGUID.
-      type: object
-      properties:
-        fipsCompliant:
-          description: >-
-            Indicates whether the authenticator meets Federal Information
-            Processing Standards (FIPS) compliance requirements
-          type: boolean
-        hardwareProtected:
-          description: >-
-            Indicates whether the authenticator stores the private key on a
-            hardware component
-          type: boolean
-        platformAttached:
-          description: >-
-            Indicates whether the custom AAGUID is built into the authenticator
-            (`true`) or if it's a separate, external authenticator
-          type: boolean
-    CustomAAGUIDCreateRequestObject:
-      type: object
-      properties:
-        aaguid:
-          description: >-
-            An Authenticator Attestation Global Unique Identifier (AAGUID) is a
-            128-bit identifier indicating the model.
-          type: string
-        attestationRootCertificates:
-          $ref: '#/components/schemas/AttestationRootCertificatesRequest'
-        authenticatorCharacteristics:
-          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
-    AttestationRootCertificatesRequest:
-      description: Contains the certificate and information about it
-      items:
-        type: object
-        properties:
-          x5c:
-            description: X.509 certificate chain
-            type: string
-      type: array
-    CustomAAGUIDUpdateRequestObject:
-      type: object
-      properties:
-        attestationRootCertificates:
-          $ref: '#/components/schemas/AttestationRootCertificatesRequest'
-        authenticatorCharacteristics:
-          $ref: '#/components/schemas/AAGUIDAuthenticatorCharacteristics'
-        name:
-          description: The product name associated with this AAGUID.
-          type: string
-    AuthenticatorMethodBase:
-      type: object
-      properties:
-        status:
-          description: The status of the authenticator method
-          $ref: '#/components/schemas/LifecycleStatus'
-        type:
-          $ref: '#/components/schemas/AuthenticatorMethodType'
-        _links:
-          $ref: '#/components/schemas/LinksSelfAndLifecycle'
-      discriminator:
-        propertyName: type
-        mapping:
-          sms: '#/components/schemas/AuthenticatorMethodSimple'
-          voice: '#/components/schemas/AuthenticatorMethodSimple'
-          email: '#/components/schemas/AuthenticatorMethodSimple'
-          push: '#/components/schemas/AuthenticatorMethodPush'
-          signed_nonce: '#/components/schemas/AuthenticatorMethodSignedNonce'
-          totp: '#/components/schemas/AuthenticatorMethodTotp'
-          otp: '#/components/schemas/AuthenticatorMethodOtp'
-          password: '#/components/schemas/AuthenticatorMethodSimple'
-          webauthn: '#/components/schemas/AuthenticatorMethodWebAuthn'
-          security_question: '#/components/schemas/AuthenticatorMethodSimple'
-          idp: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
-          duo: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
-          cert: '#/components/schemas/AuthenticatorMethodWithVerifiableProperties'
-          tac: '#/components/schemas/AuthenticatorMethodTac'
-    AuthenticatorMethodType:
-      description: The type of authenticator method
-      type: string
-      enum:
-        - cert
-        - duo
-        - email
-        - idp
-        - otp
-        - password
-        - push
-        - security_question
-        - signed_nonce
-        - sms
-        - totp
-        - voice
-        - webauthn
-        - tac
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -1028,7 +1012,30 @@ components:
           examples:
             WebAuthn:
               $ref: '#/components/examples/AuthenticatorResponseInactiveWebAuthn'
-  parameters: {}
+  parameters:
+    pathAuthenticatorId:
+      name: authenticatorId
+      description: '`id` of the authenticator'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: aut1nd8PQhGcQtSxB0g4
+    pathAAGUID:
+      name: aaguid
+      description: Unique ID of a custom AAGUID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: cb69481e-8ff7-4039-93ec-0a272911111
+    pathMethodType:
+      name: methodType
+      description: Type of authenticator method
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/AuthenticatorMethodType'
   examples:
     AuthenticatorsResponse:
       summary: Org authenticators
@@ -1147,6 +1154,178 @@ components:
                 allow:
                   - GET
                   - POST
+    AllCustomAAGUIDResponse:
+      value:
+        - aaguid: cb69481e-8ff7-4039-93ec-0a272911111
+          name: My Security Key
+          authenticatorCharacteristics:
+            platformAttached: false
+            fipsCompliant: false
+            hardwareProtected: false
+          attestationRootCertificates:
+            - x5c: X5C...
+              x5t#S256: SHA-256 x5t of the X.509 root certificate
+              iss: Yubico U2F Root CA Serial 457200631
+              exp: '2035-05-26T16:04:58.000Z'
+          _links:
+            self:
+              href: >-
+                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/aaguids/cb69481e-8ff7-4039-93ec-0a272911111
+              hints:
+                allow:
+                  - GET
+                  - PUT
+                  - PATCH
+                  - DELETE
+    CustomAAGUIDRequest:
+      value:
+        aaguid: cb69481e-8ff7-4039-93ec-0a272911111
+        name: My Security Key
+        authenticatorCharacteristics:
+          platformAttached: false
+          fipsCompliant: false
+          hardwareProtected: false
+        attestationRootCertificates:
+          - x5c: X5C...
+    CustomAAGUIDResponse:
+      value:
+        aaguid: cb69481e-8ff7-4039-93ec-0a272911111
+        name: My Security Key
+        authenticatorCharacteristics:
+          platformAttached: false
+          fipsCompliant: false
+          hardwareProtected: false
+        attestationRootCertificates:
+          - x5c: X5C...
+            x5t#S256: SHA-256 x5t of the X.509 root certificate
+            iss: Yubico U2F Root CA Serial 457200631
+            exp: '2035-05-26T16:04:58.000Z'
+        _links:
+          self:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/aaguids/cb69481e-8ff7-4039-93ec-0a272911111
+            hints:
+              allow:
+                - GET
+                - PUT
+                - PATCH
+                - DELETE
+    CustomAAGUIDUpdateRequest:
+      value:
+        name: My Security Key
+        authenticatorCharacteristics:
+          platformAttached: false
+          fipsCompliant: false
+          hardwareProtected: false
+        attestationRootCertificates:
+          - x5c: X5C...
+    AuthenticatorMethodPhone:
+      value:
+        - type: sms
+          status: ACTIVE
+          _links:
+            self:
+              href: >-
+                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms
+              hints:
+                allow:
+                  - GET
+                  - PUT
+            deactivate:
+              href: >-
+                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms/lifecycle/deactivate
+              hints:
+                allow:
+                  - POST
+        - type: voice
+          status: INACTIVE
+          _links:
+            self:
+              href: >-
+                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice
+              hints:
+                allow:
+                  - GET
+                  - PUT
+            activate:
+              href: >-
+                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice/lifecycle/activate
+              hints:
+                allow:
+                  - POST
+    AuthenticatorMethodTac:
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: false
+        SKUs: []
+      value:
+        type: tac
+        status: ACTIVE
+        _links:
+          self:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut3l0cm6voCtVWK20g7/methods/tac
+            hints:
+              allow:
+                - GET
+                - PUT
+          deactivate:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut3l0cm6voCtVWK20g7/methods/tac/lifecycle/deactivate
+            hints:
+              allow:
+                - POST
+    AuthenticatorMethodWebAuthn:
+      value:
+        type: webauthn
+        status: ACTIVE
+        settings:
+          userVerification: DISCOURAGED
+          attachment: ANY
+        _links:
+          self:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/webauthn
+            hints:
+              allow:
+                - GET
+                - PUT
+    AuthenticatorMethodSms:
+      value:
+        type: sms
+        status: ACTIVE
+        _links:
+          self:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms
+            hints:
+              allow:
+                - GET
+                - PUT
+          deactivate:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms/lifecycle/deactivate
+            hints:
+              allow":
+                - POST
+    AuthenticatorMethodInactiveVoice:
+      value:
+        type: voice
+        status: INACTIVE
+        _links:
+          self:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice
+            hints:
+              allow:
+                - GET
+                - PUT
+          activate:
+            href: >-
+              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice/lifecycle/activate
+            hints:
+              allow:
+                - POST
     ErrorAccessDenied:
       summary: Access Denied
       value:
@@ -1163,6 +1342,38 @@ components:
         errorLink: E0000047
         errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
+    AuthenticatorRequestDuo:
+      value:
+        key: duo
+        name: Duo Security
+        provider:
+          type: DUO
+          configuration:
+            userNameTemplate:
+              template: oktaId
+            integrationKey: testIntegrationKey
+            secretKey: testSecretKey
+            host: https://api-xxxxxxxx.duosecurity.com
+    AuthenticatorRequestTac:
+      x-okta-lifecycle:
+        lifecycle: EA
+        isGenerallyAvailable: false
+        SKUs: []
+      value:
+        key: tac
+        name: Temporary Access Code
+        provider:
+          type: tac
+          configuration:
+            minTtl: 10
+            maxTtl: 14400
+            defaultTtl: 120
+            length: 16
+            complexity:
+              numbers: true
+              letters: true
+              specialCharacters: true
+            multiUseAllowed: true
     AuthenticatorResponseDuo:
       value:
         type: app
@@ -1403,38 +1614,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-    AuthenticatorRequestDuo:
-      value:
-        key: duo
-        name: Duo Security
-        provider:
-          type: DUO
-          configuration:
-            userNameTemplate:
-              template: oktaId
-            integrationKey: testIntegrationKey
-            secretKey: testSecretKey
-            host: https://api-xxxxxxxx.duosecurity.com
-    AuthenticatorRequestTac:
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: false
-        SKUs: []
-      value:
-        key: tac
-        name: Temporary Access Code
-        provider:
-          type: tac
-          configuration:
-            minTtl: 10
-            maxTtl: 14400
-            defaultTtl: 120
-            length: 16
-            complexity:
-              numbers: true
-              letters: true
-              specialCharacters: true
-            multiUseAllowed: true
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -1443,71 +1622,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-    AllCustomAAGUIDResponse:
-      value:
-        - aaguid: cb69481e-8ff7-4039-93ec-0a272911111
-          name: My Security Key
-          authenticatorCharacteristics:
-            platformAttached: false
-            fipsCompliant: false
-            hardwareProtected: false
-          attestationRootCertificates:
-            - x5c: X5C...
-              x5t#S256: SHA-256 x5t of the X.509 root certificate
-              iss: Yubico U2F Root CA Serial 457200631
-              exp: '2035-05-26T16:04:58.000Z'
-          _links:
-            self:
-              href: >-
-                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/aaguids/cb69481e-8ff7-4039-93ec-0a272911111
-              hints:
-                allow:
-                  - GET
-                  - PUT
-                  - PATCH
-                  - DELETE
-    CustomAAGUIDRequest:
-      value:
-        aaguid: cb69481e-8ff7-4039-93ec-0a272911111
-        name: My Security Key
-        authenticatorCharacteristics:
-          platformAttached: false
-          fipsCompliant: false
-          hardwareProtected: false
-        attestationRootCertificates:
-          - x5c: X5C...
-    CustomAAGUIDResponse:
-      value:
-        aaguid: cb69481e-8ff7-4039-93ec-0a272911111
-        name: My Security Key
-        authenticatorCharacteristics:
-          platformAttached: false
-          fipsCompliant: false
-          hardwareProtected: false
-        attestationRootCertificates:
-          - x5c: X5C...
-            x5t#S256: SHA-256 x5t of the X.509 root certificate
-            iss: Yubico U2F Root CA Serial 457200631
-            exp: '2035-05-26T16:04:58.000Z'
-        _links:
-          self:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/aaguids/cb69481e-8ff7-4039-93ec-0a272911111
-            hints:
-              allow:
-                - GET
-                - PUT
-                - PATCH
-                - DELETE
-    CustomAAGUIDUpdateRequest:
-      value:
-        name: My Security Key
-        authenticatorCharacteristics:
-          platformAttached: false
-          fipsCompliant: false
-          hardwareProtected: false
-        attestationRootCertificates:
-          - x5c: X5C...
     AuthenticatorResponseInactiveWebAuthn:
       value:
         type: security_key
@@ -1537,113 +1651,6 @@ components:
             hints:
               allow:
                 - POST
-    AuthenticatorMethodPhone:
-      value:
-        - type: sms
-          status: ACTIVE
-          _links:
-            self:
-              href: >-
-                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms
-              hints:
-                allow:
-                  - GET
-                  - PUT
-            deactivate:
-              href: >-
-                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms/lifecycle/deactivate
-              hints:
-                allow:
-                  - POST
-        - type: voice
-          status: INACTIVE
-          _links:
-            self:
-              href: >-
-                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice
-              hints:
-                allow:
-                  - GET
-                  - PUT
-            activate:
-              href: >-
-                https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice/lifecycle/activate
-              hints:
-                allow:
-                  - POST
-    AuthenticatorMethodTac:
-      x-okta-lifecycle:
-        lifecycle: EA
-        isGenerallyAvailable: false
-        SKUs: []
-      value:
-        type: tac
-        status: ACTIVE
-        _links:
-          self:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut3l0cm6voCtVWK20g7/methods/tac
-            hints:
-              allow:
-                - GET
-                - PUT
-          deactivate:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut3l0cm6voCtVWK20g7/methods/tac/lifecycle/deactivate
-            hints:
-              allow:
-                - POST
-    AuthenticatorMethodWebAuthn:
-      value:
-        type: webauthn
-        status: ACTIVE
-        settings:
-          userVerification: DISCOURAGED
-          attachment: ANY
-        _links:
-          self:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/webauthn
-            hints:
-              allow:
-                - GET
-                - PUT
-    AuthenticatorMethodSms:
-      value:
-        type: sms
-        status: ACTIVE
-        _links:
-          self:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms
-            hints:
-              allow:
-                - GET
-                - PUT
-          deactivate:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/sms/lifecycle/deactivate
-            hints:
-              allow":
-                - POST
-    AuthenticatorMethodInactiveVoice:
-      value:
-        type: voice
-        status: INACTIVE
-        _links:
-          self:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice
-            hints:
-              allow:
-                - GET
-                - PUT
-          activate:
-            href: >-
-              https://{yourOktaDomain}/api/v1/authenticators/aut1nd8PQhGcQtSxB0g4/methods/voice/lifecycle/activate
-            hints:
-              allow:
-                - POST
   requestBodies:
     AuthenticatorRequestBody:
       content:
@@ -1656,10 +1663,6 @@ components:
             TAC:
               $ref: '#/components/examples/AuthenticatorRequestTac'
       required: true
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

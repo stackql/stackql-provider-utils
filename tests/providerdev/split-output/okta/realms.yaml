@@ -147,8 +147,6 @@ paths:
             - okta.realms.read
       tags:
         - Realm
-      parameters:
-        - $ref: '#/components/parameters/pathRealmId'
     put:
       x-okta-lifecycle:
         lifecycle: GA
@@ -186,8 +184,6 @@ paths:
             - okta.realms.manage
       tags:
         - Realm
-      parameters:
-        - $ref: '#/components/parameters/pathRealmId'
     delete:
       x-okta-lifecycle:
         lifecycle: GA
@@ -227,8 +223,8 @@ paths:
             - okta.realms.manage
       tags:
         - Realm
-      parameters:
-        - $ref: '#/components/parameters/pathRealmId'
+    parameters:
+      - $ref: '#/components/parameters/pathRealmId'
 components:
   schemas:
     Realm:
@@ -285,6 +281,16 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    CreateRealmRequest:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/RealmProfile'
+    UpdateRealmRequest:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/RealmProfile'
     RealmProfile:
       type: object
       properties:
@@ -380,16 +386,6 @@ components:
         - GET
         - POST
         - PUT
-    CreateRealmRequest:
-      type: object
-      properties:
-        profile:
-          $ref: '#/components/schemas/RealmProfile'
-    UpdateRealmRequest:
-      type: object
-      properties:
-        profile:
-          $ref: '#/components/schemas/RealmProfile'
   responses:
     ErrorTooManyRequests429:
       description: Too Many Requests
@@ -438,6 +434,14 @@ components:
         your current location in the list and is obtained from the `Link`
         response header. See
         [Pagination](https://developer.okta.com/docs/api/#pagination).
+    pathRealmId:
+      name: realmId
+      description: ID of the realm
+      in: path
+      required: true
+      schema:
+        type: string
+        example: vvrcFogtKCrK9aYq3fgV
   examples:
     ListRealmsResponse:
       value:
@@ -457,14 +461,6 @@ components:
               href: >-
                 http://your-subdomain.okta.com/api/v1/realms/guox9jQ16k9V8IFEL0g3
               method: GET
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateRealmRequest:
       value:
         profile:
@@ -473,22 +469,6 @@ components:
           domains:
             - atko.com
             - user.com
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
     DefaultRealmResponse:
       value:
         id: guox9jQ16k9V8IQWL0g3
@@ -518,6 +498,30 @@ components:
             rel: self
             href: http://your-subdomain.okta.com/api/v1/realms/guox9jQ16k9V8IFEL0g3
             method: GET
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -526,11 +530,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

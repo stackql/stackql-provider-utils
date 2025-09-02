@@ -52,8 +52,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
     post:
       x-okta-iam-permissions:
         - okta.apps.manage
@@ -117,8 +115,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/meta/schemas/group/default:
     get:
       x-okta-iam-permissions:
@@ -293,8 +291,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamType'
+    parameters:
+      - $ref: '#/components/parameters/pathLogStreamType'
   /api/v1/meta/schemas/user/linkedObjects:
     get:
       x-okta-iam-permissions:
@@ -415,8 +413,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathLinkedObjectName'
     delete:
       x-okta-iam-permissions:
         - okta.apps.manage
@@ -449,8 +445,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathLinkedObjectName'
+    parameters:
+      - $ref: '#/components/parameters/pathLinkedObjectName'
   /api/v1/meta/schemas/user/{schemaId}:
     get:
       x-okta-iam-permissions:
@@ -489,8 +485,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathSchemaId'
     post:
       x-okta-iam-admin-roles:
         - API_ACCESS_MANAGEMENT_ADMIN
@@ -556,8 +550,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathSchemaId'
+    parameters:
+      - $ref: '#/components/parameters/pathSchemaId'
   /api/v1/meta/types/user:
     get:
       summary: List all user types
@@ -665,8 +659,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTypeId'
     post:
       summary: Update a user type
       description: >-
@@ -712,8 +704,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTypeId'
     put:
       summary: Replace a user type
       description: >-
@@ -759,8 +749,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTypeId'
     delete:
       summary: Delete a user type
       description: >-
@@ -788,8 +776,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTypeId'
+    parameters:
+      - $ref: '#/components/parameters/pathTypeId'
   /api/v1/meta/uischemas:
     get:
       summary: List all UI schemas
@@ -897,8 +885,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/UISchemaId'
     put:
       summary: Replace a UI schema
       description: Replaces a UI Schema by `id`
@@ -942,8 +928,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/UISchemaId'
     delete:
       summary: Delete a UI schema
       description: Deletes a UI Schema by `id`
@@ -971,8 +955,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/UISchemaId'
+    parameters:
+      - $ref: '#/components/parameters/UISchemaId'
 components:
   schemas:
     UserSchema:
@@ -1026,31 +1010,119 @@ components:
             schema](https://tools.ietf.org/html/draft-zyp-json-schema-04#section-3.4)
         _links:
           $ref: '#/components/schemas/LinksSelf'
-    UserSchemaDefinitions:
+    GroupSchema:
       type: object
       properties:
-        base:
-          $ref: '#/components/schemas/UserSchemaBase'
-        custom:
-          $ref: '#/components/schemas/UserSchemaPublic'
-    UserSchemaProperties:
+        $schema:
+          readOnly: true
+          type: string
+          description: JSON schema version identifier
+        created:
+          readOnly: true
+          type: string
+          description: Timestamp when the schema was created
+        definitions:
+          $ref: '#/components/schemas/GroupSchemaDefinitions'
+        description:
+          type: string
+          description: Description for the schema
+        id:
+          readOnly: true
+          type: string
+          description: URI of group schema
+        lastUpdated:
+          readOnly: true
+          type: string
+          description: Timestamp when the schema was last updated
+        name:
+          readOnly: true
+          type: string
+          description: Name of the schema
+        properties:
+          $ref: '#/components/schemas/UserSchemaProperties'
+          description: Group object properties
+        title:
+          type: string
+          description: User-defined display name for the schema
+        type:
+          readOnly: true
+          type: string
+          description: >-
+            Type of [root
+            schema](https://tools.ietf.org/html/draft-zyp-json-schema-04#section-3.4)
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+      x-okta-allow-null-property-value-for-updates: true
+    LogStreamSchema:
       type: object
       properties:
-        profile:
-          $ref: '#/components/schemas/UserSchemaPropertiesProfile'
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
+        $schema:
+          type: string
+          readOnly: true
+          description: JSON schema version identifier
+        errorMessage:
+          type: object
+          description: >-
+            A collection of error messages for individual properties in the
+            schema. Okta implements a subset of
+            [ajv-errors](https://github.com/ajv-validator/ajv-errors).
+        id:
+          type: string
+          readOnly: true
+          description: URI of log stream schema
+        oneOf:
+          items:
+            $ref: '#/components/schemas/UserSchemaAttributeEnum'
+          type: array
+          nullable: true
+          description: >-
+            Non-empty array of valid JSON schemas.
+
+
+            Okta only supports `oneOf` for specifying display names for an
+            `enum`. Each schema has the following format:
+
+
+            ```
+
+            {
+              "const": "enumValue",
+              "title": "display name"
+            }
+
+            ```
+        pattern:
+          type: string
+          description: >-
+            For `string` log stream schema property type, specifies the regular
+            expression used to validate the property
+        properties:
+          type: object
+          description: log stream schema properties object
+        required:
+          type: array
+          items:
+            type: string
+          description: Required properties for this log stream schema object
+        title:
+          type: string
+          description: Name of the log streaming integration
+        type:
+          type: string
+          readOnly: true
+          description: Type of log stream schema property
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+    LinkedObject:
+      title: LinkedObject
       type: object
       properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
+        associated:
+          $ref: '#/components/schemas/LinkedObjectDetails'
+        primary:
+          $ref: '#/components/schemas/LinkedObjectDetails'
+        _links:
+          $ref: '#/components/schemas/LinkedObjectLinksSelf'
     Error:
       title: Error
       type: object
@@ -1076,6 +1148,239 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    UserType:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          description: A timestamp from when the user type was created
+          readOnly: true
+        createdBy:
+          type: string
+          description: The user ID of the account that created the user type
+          readOnly: true
+        default:
+          type: boolean
+          description: A boolean value to indicate if this is the default user type
+          readOnly: true
+        description:
+          type: string
+          description: The human-readable description of the user type
+        displayName:
+          type: string
+          description: The human-readable name of the user type
+        id:
+          type: string
+          description: The unique key for the user type
+          readOnly: true
+        lastUpdated:
+          type: string
+          format: date-time
+          description: A timestamp from when the user type was most recently updated
+          readOnly: true
+        lastUpdatedBy:
+          type: string
+          description: The user ID of the most recent account to edit the user type
+          readOnly: true
+        name:
+          type: string
+          description: >-
+            The name of the user type. The name must start with A-Z or a-z and
+            contain only A-Z, a-z, 0-9, or underscore (_) characters. This value
+            becomes read-only after creation and can't be updated.
+        _links:
+          $ref: '#/components/schemas/UserTypeLinks'
+      required:
+        - name
+        - displayName
+    UserTypePostRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The updated human-readable description of the user type
+        displayName:
+          type: string
+          description: The updated human-readable display name for the user type
+    UserTypePutRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The human-readable description of the user type
+        displayName:
+          type: string
+          description: The human-readable name of the user type
+        name:
+          type: string
+          description: The name of the existing type
+      required:
+        - name
+        - displayName
+        - description
+    UISchemasResponseObject:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          description: Timestamp when the UI Schema was created (ISO 86001)
+          readOnly: true
+        id:
+          type: string
+          description: Unique identifier for the UI Schema
+          readOnly: true
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Timestamp when the UI Schema was last modified (ISO 86001)
+          readOnly: true
+        uiSchema:
+          $ref: '#/components/schemas/UISchemaObject'
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+      required:
+        - id
+        - uiSchema
+        - created
+        - lastUpdated
+        - _links
+    CreateUISchema:
+      description: The request body properties for the new UI Schema
+      type: object
+      properties:
+        uiSchema:
+          $ref: '#/components/schemas/UISchemaObject'
+    UpdateUISchema:
+      description: The updated request body properties
+      type: object
+      properties:
+        uiSchema:
+          $ref: '#/components/schemas/UISchemaObject'
+    UserSchemaDefinitions:
+      type: object
+      properties:
+        base:
+          $ref: '#/components/schemas/UserSchemaBase'
+        custom:
+          $ref: '#/components/schemas/UserSchemaPublic'
+    UserSchemaProperties:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserSchemaPropertiesProfile'
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    GroupSchemaDefinitions:
+      type: object
+      properties:
+        base:
+          $ref: '#/components/schemas/GroupSchemaBase'
+        custom:
+          $ref: '#/components/schemas/GroupSchemaCustom'
+    UserSchemaAttributeEnum:
+      type: object
+      properties:
+        const:
+          type: string
+          description: The enumerated value
+        title:
+          type: string
+          description: The display label for the enumerated value
+    LogStreamType:
+      description: >-
+        Specifies the streaming provider used
+
+
+        Supported providers:
+          * `aws_eventbridge` ([AWS EventBridge](https://aws.amazon.com/eventbridge))
+          * `splunk_cloud_logstreaming` ([Splunk Cloud](https://www.splunk.com/en_us/software/splunk-cloud-platform.html))
+
+        Select the provider type to see provider-specific configurations in the
+        `settings` property:
+      type: string
+      enum:
+        - aws_eventbridge
+        - splunk_cloud_logstreaming
+    LinkedObjectDetails:
+      title: LinkedObjectDetails
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the `primary` or the `associated` relationship
+        name:
+          type: string
+          description: >-
+            API name of the `primary` or the `associated` link. The `name`
+            parameter can't start with a number and can only contain the
+            following characters: `a-z`, `A-Z`,` 0-9`, and `_`.
+        title:
+          type: string
+          description: Display name of the `primary` or the `associated` link
+        type:
+          $ref: '#/components/schemas/LinkedObjectDetailsType'
+      required:
+        - name
+        - title
+        - type
+    LinkedObjectLinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of an application using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/LinkedHrefObject'
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    UserTypeLinks:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+                - description: The associated schema
+    UISchemaObject:
+      description: Properties of the UI schema
+      type: object
+      properties:
+        buttonLabel:
+          type: string
+          description: >-
+            Specifies the button label for the `Submit` button at the bottom of
+            the enrollment form
+          default: Submit
+        elements:
+          $ref: '#/components/schemas/UIElement'
+        label:
+          type: string
+          description: Specifies the label at the top of the enrollment form under the logo
+          default: Sign in
+        type:
+          type: string
+          description: Specifies the type of layout
     UserSchemaBase:
       description: >-
         All Okta-defined profile properties are defined in a profile subschema
@@ -1157,11 +1462,152 @@ components:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to the resource (self)
-    ErrorCause:
+    GroupSchemaBase:
       type: object
       properties:
-        errorSummary:
+        id:
+          readOnly: true
           type: string
+          description: The subschema name
+        properties:
+          description: The `#base` object properties
+          allOf:
+            - $ref: '#/components/schemas/GroupSchemaBaseProperties'
+        required:
+          items:
+            type: string
+          type: array
+          description: A collection indicating required property names
+          readOnly: true
+        type:
+          description: The object type
+          type: string
+          readOnly: true
+    GroupSchemaCustom:
+      description: >-
+        All custom profile properties are defined in a profile subschema with
+        the resolution scope `#custom`
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: string
+          description: The subschema name
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/GroupSchemaAttribute'
+          type: object
+          description: The `#custom` object properties
+        required:
+          items:
+            type: string
+          type: array
+          description: A collection indicating required property names
+          readOnly: true
+        type:
+          type: string
+          description: The object type
+          readOnly: true
+    LinkedObjectDetailsType:
+      description: The object type for this relationship
+      type: string
+      enum:
+        - USER
+      x-enumDescriptions:
+        USER: Specifies the type of object
+    LinkedHrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        href:
+          type: string
+          description: Link URI
+      required:
+        - href
+      readOnly: true
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    UIElement:
+      description: Specifies the configuration of an input field on an enrollment form
+      type: object
+      properties:
+        label:
+          type: string
+          description: Label name for the UI element
+        options:
+          type: object
+          description: UI Schema element options object
+          properties:
+            format:
+              type: string
+              description: Specifies how the input appears
+              enum:
+                - text
+                - radio
+                - select
+                - checkbox
+                - radio_yes_no
+                - radio_true_false
+              x-enumDescriptions:
+                text: The default format for the majority of property types
+                radio: >-
+                  Radio button options. This option is only available for
+                  `string` data types with an `enum` or `one of` constraint.
+                select: >-
+                  Displays input as a dropdown list. This option is only
+                  available for the `country-code` data type or a string data
+                  type with an enum or one of constraint.
+                checkbox: >-
+                  Displays input as a checkbox. This option is only available
+                  for Boolean data types.
+                radio_yes_no: >-
+                  Displays input as two radio buttons, one with the option `yes`
+                  and the other `no`. This option is only available for Boolean
+                  data types.
+                radio_true_false: >-
+                  Displays input as two radio buttons, one with the option
+                  `true` and the other `false`. This option is only available
+                  for Boolean data types.
+        scope:
+          type: string
+          description: >-
+            Specifies the property bound to the input field. It must follow the
+            format `#/properties/PROPERTY_NAME` where `PROPERTY_NAME` is a
+            variable name for an attribute in `profile editor`.
+        type:
+          type: string
+          description: >-
+            Specifies the relationship between this input element and `scope`.
+            The `Control` value specifies that this input controls the value
+            represented by `scope`.
     UserSchemaBaseProperties:
       type: object
       properties:
@@ -1485,220 +1931,6 @@ components:
       properties:
         $ref:
           type: string
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    UserSchemaAttributeFormat:
-      type: string
-      enum:
-        - country-code
-        - date-time
-        - email
-        - encrypted
-        - hashed
-        - language-code
-        - locale
-        - ref-id
-        - timezone
-        - uri
-    UserSchemaAttributeMaster:
-      nullable: true
-      type: object
-      properties:
-        priority:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserSchemaAttributeMasterPriority'
-        type:
-          $ref: '#/components/schemas/UserSchemaAttributeMasterType'
-    UserSchemaAttributeMutabilityString:
-      type: string
-      enum:
-        - IMMUTABLE
-        - READ_ONLY
-        - READ_WRITE
-        - WRITE_ONLY
-    UserSchemaAttributeEnum:
-      type: object
-      properties:
-        const:
-          type: string
-          description: The enumerated value
-        title:
-          type: string
-          description: The display label for the enumerated value
-    UserSchemaAttributePermission:
-      type: object
-      properties:
-        action:
-          type: string
-          description: Determines whether the principal can view or modify the property
-        principal:
-          type: string
-          description: Security principal
-    UserSchemaAttributeScope:
-      type: string
-      enum:
-        - NONE
-        - SELF
-    UserSchemaAttributeType:
-      type: string
-      enum:
-        - array
-        - boolean
-        - integer
-        - number
-        - string
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    UserSchemaAttributeMasterPriority:
-      type: object
-      properties:
-        type:
-          type: string
-        value:
-          type: string
-    UserSchemaAttributeMasterType:
-      type: string
-      enum:
-        - OKTA
-        - OVERRIDE
-        - PROFILE_MASTER
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
-    GroupSchema:
-      type: object
-      properties:
-        $schema:
-          readOnly: true
-          type: string
-          description: JSON schema version identifier
-        created:
-          readOnly: true
-          type: string
-          description: Timestamp when the schema was created
-        definitions:
-          $ref: '#/components/schemas/GroupSchemaDefinitions'
-        description:
-          type: string
-          description: Description for the schema
-        id:
-          readOnly: true
-          type: string
-          description: URI of group schema
-        lastUpdated:
-          readOnly: true
-          type: string
-          description: Timestamp when the schema was last updated
-        name:
-          readOnly: true
-          type: string
-          description: Name of the schema
-        properties:
-          $ref: '#/components/schemas/UserSchemaProperties'
-          description: Group object properties
-        title:
-          type: string
-          description: User-defined display name for the schema
-        type:
-          readOnly: true
-          type: string
-          description: >-
-            Type of [root
-            schema](https://tools.ietf.org/html/draft-zyp-json-schema-04#section-3.4)
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-      x-okta-allow-null-property-value-for-updates: true
-    GroupSchemaDefinitions:
-      type: object
-      properties:
-        base:
-          $ref: '#/components/schemas/GroupSchemaBase'
-        custom:
-          $ref: '#/components/schemas/GroupSchemaCustom'
-    GroupSchemaBase:
-      type: object
-      properties:
-        id:
-          readOnly: true
-          type: string
-          description: The subschema name
-        properties:
-          description: The `#base` object properties
-          allOf:
-            - $ref: '#/components/schemas/GroupSchemaBaseProperties'
-        required:
-          items:
-            type: string
-          type: array
-          description: A collection indicating required property names
-          readOnly: true
-        type:
-          description: The object type
-          type: string
-          readOnly: true
-    GroupSchemaCustom:
-      description: >-
-        All custom profile properties are defined in a profile subschema with
-        the resolution scope `#custom`
-      type: object
-      properties:
-        id:
-          readOnly: true
-          type: string
-          description: The subschema name
-        properties:
-          additionalProperties:
-            $ref: '#/components/schemas/GroupSchemaAttribute'
-          type: object
-          description: The `#custom` object properties
-        required:
-          items:
-            type: string
-          type: array
-          description: A collection indicating required property names
-          readOnly: true
-        type:
-          type: string
-          description: The object type
-          readOnly: true
     GroupSchemaBaseProperties:
       description: >-
         All Okta-defined profile properties are defined in a profile subschema
@@ -1834,6 +2066,66 @@ components:
           description: Determines whether property values must be unique
           type: boolean
           nullable: true
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    UserSchemaAttributeFormat:
+      type: string
+      enum:
+        - country-code
+        - date-time
+        - email
+        - encrypted
+        - hashed
+        - language-code
+        - locale
+        - ref-id
+        - timezone
+        - uri
+    UserSchemaAttributeMaster:
+      nullable: true
+      type: object
+      properties:
+        priority:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSchemaAttributeMasterPriority'
+        type:
+          $ref: '#/components/schemas/UserSchemaAttributeMasterType'
+    UserSchemaAttributeMutabilityString:
+      type: string
+      enum:
+        - IMMUTABLE
+        - READ_ONLY
+        - READ_WRITE
+        - WRITE_ONLY
+    UserSchemaAttributePermission:
+      type: object
+      properties:
+        action:
+          type: string
+          description: Determines whether the principal can view or modify the property
+        principal:
+          type: string
+          description: Security principal
+    UserSchemaAttributeScope:
+      type: string
+      enum:
+        - NONE
+        - SELF
+    UserSchemaAttributeType:
+      type: string
+      enum:
+        - array
+        - boolean
+        - integer
+        - number
+        - string
     UserSchemaAttributeItems:
       type: object
       properties:
@@ -1847,319 +2139,26 @@ components:
             $ref: '#/components/schemas/UserSchemaAttributeEnum'
         type:
           type: string
-    LogStreamSchema:
-      type: object
-      properties:
-        $schema:
-          type: string
-          readOnly: true
-          description: JSON schema version identifier
-        errorMessage:
-          type: object
-          description: >-
-            A collection of error messages for individual properties in the
-            schema. Okta implements a subset of
-            [ajv-errors](https://github.com/ajv-validator/ajv-errors).
-        id:
-          type: string
-          readOnly: true
-          description: URI of log stream schema
-        oneOf:
-          items:
-            $ref: '#/components/schemas/UserSchemaAttributeEnum'
-          type: array
-          nullable: true
-          description: >-
-            Non-empty array of valid JSON schemas.
-
-
-            Okta only supports `oneOf` for specifying display names for an
-            `enum`. Each schema has the following format:
-
-
-            ```
-
-            {
-              "const": "enumValue",
-              "title": "display name"
-            }
-
-            ```
-        pattern:
-          type: string
-          description: >-
-            For `string` log stream schema property type, specifies the regular
-            expression used to validate the property
-        properties:
-          type: object
-          description: log stream schema properties object
-        required:
-          type: array
-          items:
-            type: string
-          description: Required properties for this log stream schema object
-        title:
-          type: string
-          description: Name of the log streaming integration
-        type:
-          type: string
-          readOnly: true
-          description: Type of log stream schema property
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-    LinkedObject:
-      title: LinkedObject
-      type: object
-      properties:
-        associated:
-          $ref: '#/components/schemas/LinkedObjectDetails'
-        primary:
-          $ref: '#/components/schemas/LinkedObjectDetails'
-        _links:
-          $ref: '#/components/schemas/LinkedObjectLinksSelf'
-    LinkedObjectDetails:
-      title: LinkedObjectDetails
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the `primary` or the `associated` relationship
-        name:
-          type: string
-          description: >-
-            API name of the `primary` or the `associated` link. The `name`
-            parameter can't start with a number and can only contain the
-            following characters: `a-z`, `A-Z`,` 0-9`, and `_`.
-        title:
-          type: string
-          description: Display name of the `primary` or the `associated` link
-        type:
-          $ref: '#/components/schemas/LinkedObjectDetailsType'
-      required:
-        - name
-        - title
-        - type
-    LinkedObjectLinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of an application using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/LinkedHrefObject'
-    LinkedObjectDetailsType:
-      description: The object type for this relationship
+    HttpMethod:
       type: string
       enum:
-        - USER
-      x-enumDescriptions:
-        USER: Specifies the type of object
-    LinkedHrefObject:
-      title: Link Object
-      additionalProperties: true
+        - DELETE
+        - GET
+        - POST
+        - PUT
+    UserSchemaAttributeMasterPriority:
       type: object
       properties:
-        href:
-          type: string
-          description: Link URI
-      required:
-        - href
-      readOnly: true
-    UserType:
-      type: object
-      properties:
-        created:
-          type: string
-          format: date-time
-          description: A timestamp from when the user type was created
-          readOnly: true
-        createdBy:
-          type: string
-          description: The user ID of the account that created the user type
-          readOnly: true
-        default:
-          type: boolean
-          description: A boolean value to indicate if this is the default user type
-          readOnly: true
-        description:
-          type: string
-          description: The human-readable description of the user type
-        displayName:
-          type: string
-          description: The human-readable name of the user type
-        id:
-          type: string
-          description: The unique key for the user type
-          readOnly: true
-        lastUpdated:
-          type: string
-          format: date-time
-          description: A timestamp from when the user type was most recently updated
-          readOnly: true
-        lastUpdatedBy:
-          type: string
-          description: The user ID of the most recent account to edit the user type
-          readOnly: true
-        name:
-          type: string
-          description: >-
-            The name of the user type. The name must start with A-Z or a-z and
-            contain only A-Z, a-z, 0-9, or underscore (_) characters. This value
-            becomes read-only after creation and can't be updated.
-        _links:
-          $ref: '#/components/schemas/UserTypeLinks'
-      required:
-        - name
-        - displayName
-    UserTypeLinks:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-                - description: The associated schema
-    UserTypePostRequest:
-      type: object
-      properties:
-        description:
-          type: string
-          description: The updated human-readable description of the user type
-        displayName:
-          type: string
-          description: The updated human-readable display name for the user type
-    UserTypePutRequest:
-      type: object
-      properties:
-        description:
-          type: string
-          description: The human-readable description of the user type
-        displayName:
-          type: string
-          description: The human-readable name of the user type
-        name:
-          type: string
-          description: The name of the existing type
-      required:
-        - name
-        - displayName
-        - description
-    UISchemasResponseObject:
-      type: object
-      properties:
-        created:
-          type: string
-          format: date-time
-          description: Timestamp when the UI Schema was created (ISO 86001)
-          readOnly: true
-        id:
-          type: string
-          description: Unique identifier for the UI Schema
-          readOnly: true
-        lastUpdated:
-          type: string
-          format: date-time
-          description: Timestamp when the UI Schema was last modified (ISO 86001)
-          readOnly: true
-        uiSchema:
-          $ref: '#/components/schemas/UISchemaObject'
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-      required:
-        - id
-        - uiSchema
-        - created
-        - lastUpdated
-        - _links
-    UISchemaObject:
-      description: Properties of the UI schema
-      type: object
-      properties:
-        buttonLabel:
-          type: string
-          description: >-
-            Specifies the button label for the `Submit` button at the bottom of
-            the enrollment form
-          default: Submit
-        elements:
-          $ref: '#/components/schemas/UIElement'
-        label:
-          type: string
-          description: Specifies the label at the top of the enrollment form under the logo
-          default: Sign in
         type:
           type: string
-          description: Specifies the type of layout
-    UIElement:
-      description: Specifies the configuration of an input field on an enrollment form
-      type: object
-      properties:
-        label:
+        value:
           type: string
-          description: Label name for the UI element
-        options:
-          type: object
-          description: UI Schema element options object
-          properties:
-            format:
-              type: string
-              description: Specifies how the input appears
-              enum:
-                - text
-                - radio
-                - select
-                - checkbox
-                - radio_yes_no
-                - radio_true_false
-              x-enumDescriptions:
-                text: The default format for the majority of property types
-                radio: >-
-                  Radio button options. This option is only available for
-                  `string` data types with an `enum` or `one of` constraint.
-                select: >-
-                  Displays input as a dropdown list. This option is only
-                  available for the `country-code` data type or a string data
-                  type with an enum or one of constraint.
-                checkbox: >-
-                  Displays input as a checkbox. This option is only available
-                  for Boolean data types.
-                radio_yes_no: >-
-                  Displays input as two radio buttons, one with the option `yes`
-                  and the other `no`. This option is only available for Boolean
-                  data types.
-                radio_true_false: >-
-                  Displays input as two radio buttons, one with the option
-                  `true` and the other `false`. This option is only available
-                  for Boolean data types.
-        scope:
-          type: string
-          description: >-
-            Specifies the property bound to the input field. It must follow the
-            format `#/properties/PROPERTY_NAME` where `PROPERTY_NAME` is a
-            variable name for an attribute in `profile editor`.
-        type:
-          type: string
-          description: >-
-            Specifies the relationship between this input element and `scope`.
-            The `Control` value specifies that this input controls the value
-            represented by `scope`.
-    CreateUISchema:
-      description: The request body properties for the new UI Schema
-      type: object
-      properties:
-        uiSchema:
-          $ref: '#/components/schemas/UISchemaObject'
-    UpdateUISchema:
-      description: The updated request body properties
-      type: object
-      properties:
-        uiSchema:
-          $ref: '#/components/schemas/UISchemaObject'
+    UserSchemaAttributeMasterType:
+      type: string
+      enum:
+        - OKTA
+        - OVERRIDE
+        - PROFILE_MASTER
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -2197,7 +2196,52 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
+  parameters:
+    pathAppId:
+      name: appId
+      description: Application ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oafxqCAJWWGELFTYASJ
+    pathLogStreamType:
+      name: logStreamType
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/LogStreamType'
+    pathLinkedObjectName:
+      name: linkedObjectName
+      description: Primary or Associated name
+      in: path
+      required: true
+      schema:
+        type: string
+    pathSchemaId:
+      name: schemaId
+      description: >-
+        Schema ID. You can also use `default` to refer to the default user type
+        schema.
+      in: path
+      required: true
+      schema:
+        type: string
+    pathTypeId:
+      name: typeId
+      in: path
+      required: true
+      schema:
+        type: string
+        description: The unique key for the user type
+    UISchemaId:
+      name: id
+      description: The unique ID of the UI Schema
+      in: path
+      required: true
+      schema:
+        type: string
+        example: uis4a7liocgcRgcxZ0g7
   examples:
     DefaultAppUserSchemaResponse:
       value:
@@ -2245,30 +2289,6 @@ components:
               allOf:
                 - $ref: '#/definitions/base'
                 - $ref: '#/definitions/custom'
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     AppUserSchemaAddRequest:
       value:
         definitions:
@@ -2326,14 +2346,6 @@ components:
             allOf:
               - $ref: '#/definitions/base'
               - $ref: '#/definitions/custom'
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     GroupSchemaResponse:
       value:
         $schema: http://json-schema.org/draft-04/schema#
@@ -3208,11 +3220,38 @@ components:
                 - GET
                 - PUT
                 - DELETE
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

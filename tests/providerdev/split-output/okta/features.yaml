@@ -66,8 +66,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathFeatureId'
+    parameters:
+      - $ref: '#/components/parameters/pathFeatureId'
   /api/v1/features/{featureId}/dependencies:
     get:
       summary: List all dependencies
@@ -106,8 +106,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathFeatureId'
+    parameters:
+      - $ref: '#/components/parameters/pathFeatureId'
   /api/v1/features/{featureId}/dependents:
     get:
       summary: List all dependents
@@ -146,8 +146,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathFeatureId'
+    parameters:
+      - $ref: '#/components/parameters/pathFeatureId'
   /api/v1/features/{featureId}/{lifecycle}:
     post:
       summary: Update a feature lifecycle
@@ -183,8 +183,13 @@ paths:
         '#width=500px;')
       operationId: updateFeatureLifecycle
       parameters:
-        - $ref: '#/components/parameters/pathFeatureId'
-        - $ref: '#/components/parameters/pathLifecycle'
+        - name: mode
+          in: query
+          description: >-
+            Indicates if you want to force enable or disable a feature.
+            Supported value is `force`.
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -211,6 +216,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathFeatureId'
+      - $ref: '#/components/parameters/pathLifecycle'
 components:
   schemas:
     Feature:
@@ -324,6 +332,12 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    FeatureLifecycle:
+      example: ENABLE
+      type: string
+      enum:
+        - DISABLE
+        - ENABLE
     FeatureStageState:
       description: Indicates the release state of the feature
       type: string
@@ -417,7 +431,22 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathFeatureId:
+      name: featureId
+      description: '`id` of the feature'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: R5HjqNn1pEqWGy48E9jg
+    pathLifecycle:
+      name: lifecycle
+      description: Whether to `ENABLE` or `DISABLE` the feature
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/FeatureLifecycle'
   examples:
     ListFeaturesResponse:
       summary: List all self-service features for your org
@@ -442,22 +471,6 @@ components:
             dependencies:
               href: >-
                 https://{yourOktaDomain}/api/v1/features/ftrlBDFcGwYP2epXCGYn/dependencies
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     RetrieveFeaturesResponse:
       summary: Retrieve a feature by ID
       value:
@@ -481,14 +494,6 @@ components:
           dependencies:
             href: >-
               https://{yourOktaDomain}/api/v1/features/ftrlBDFcGwYP2epXCGYn/dependencies
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     ListFeatureDependenciesResponse:
       summary: List all dependencies for a feature
       value:
@@ -558,11 +563,30 @@ components:
           dependencies:
             href: >-
               https://{yourOktaDomain}/api/v1/features/ftrlBDFcGwYP2epXCGYn/dependencies
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -238,8 +238,6 @@ paths:
             - okta.realmAssignments.read
       tags:
         - RealmAssignment
-      parameters:
-        - $ref: '#/components/parameters/assignmentId'
     put:
       x-okta-lifecycle:
         lifecycle: GA
@@ -277,8 +275,6 @@ paths:
             - okta.realmAssignments.manage
       tags:
         - RealmAssignment
-      parameters:
-        - $ref: '#/components/parameters/assignmentId'
     delete:
       x-okta-lifecycle:
         lifecycle: GA
@@ -315,8 +311,8 @@ paths:
             - okta.realmAssignments.manage
       tags:
         - RealmAssignment
-      parameters:
-        - $ref: '#/components/parameters/assignmentId'
+    parameters:
+      - $ref: '#/components/parameters/assignmentId'
   /api/v1/realm-assignments/{assignmentId}/lifecycle/activate:
     post:
       x-okta-lifecycle:
@@ -342,8 +338,8 @@ paths:
             - okta.realmAssignments.manage
       tags:
         - RealmAssignment
-      parameters:
-        - $ref: '#/components/parameters/assignmentId'
+    parameters:
+      - $ref: '#/components/parameters/assignmentId'
   /api/v1/realm-assignments/{assignmentId}/lifecycle/deactivate:
     post:
       x-okta-lifecycle:
@@ -369,8 +365,8 @@ paths:
             - okta.realmAssignments.manage
       tags:
         - RealmAssignment
-      parameters:
-        - $ref: '#/components/parameters/assignmentId'
+    parameters:
+      - $ref: '#/components/parameters/assignmentId'
 components:
   schemas:
     RealmAssignment:
@@ -451,106 +447,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    Actions:
-      description: Action to apply to a user
-      type: object
-      properties:
-        assignUserToRealm:
-          $ref: '#/components/schemas/AssignUserToRealm'
-    Conditions:
-      description: Conditions of applying realm assignment
-      type: object
-      properties:
-        expression:
-          $ref: '#/components/schemas/Expression'
-        profileSourceId:
-          description: ID of the profile source
-          type: string
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    AssignUserToRealm:
-      description: Action that assigns a user to a realm
-      type: object
-      properties:
-        realmId:
-          description: ID of the realm
-          type: string
-    Expression:
-      description: Conditional expression
-      type: object
-      properties:
-        value:
-          description: Value of the condition expression
-          type: string
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     CreateRealmAssignmentRequest:
       type: object
       properties:
@@ -670,6 +566,106 @@ components:
 
             > **Note:** When you create realm assignments in bulk, realm
             assignment priorities must be unique.
+    Actions:
+      description: Action to apply to a user
+      type: object
+      properties:
+        assignUserToRealm:
+          $ref: '#/components/schemas/AssignUserToRealm'
+    Conditions:
+      description: Conditions of applying realm assignment
+      type: object
+      properties:
+        expression:
+          $ref: '#/components/schemas/Expression'
+        profileSourceId:
+          description: ID of the profile source
+          type: string
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    AssignUserToRealm:
+      description: Action that assigns a user to a realm
+      type: object
+      properties:
+        realmId:
+          description: ID of the realm
+          type: string
+    Expression:
+      description: Conditional expression
+      type: object
+      properties:
+        value:
+          description: Value of the condition expression
+          type: string
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
   responses:
     ErrorTooManyRequests429:
       description: Too Many Requests
@@ -727,6 +723,14 @@ components:
         your current location in the list and is obtained from the `Link`
         response header. See
         [Pagination](https://developer.okta.com/docs/api/#pagination).
+    assignmentId:
+      name: assignmentId
+      description: ID of the realm assignment
+      in: path
+      required: true
+      schema:
+        type: string
+        example: rul2jy7jLUlnO3ng00g4
   examples:
     ListRealmAssignmentsResponse:
       value:
@@ -776,14 +780,6 @@ components:
               href: >-
                 http://your-subdomain.okta.com/api/v1/realm-assignments/rul2jy7jLUlnO5ng00g4
               method: GET
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateRealmAssignmentRequest:
       value:
         actions:
@@ -795,22 +791,6 @@ components:
             value: user.profile.role ==\"Manager\"
         name: Realm Assignment 1
         priority: 0
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
     OperationResponse:
       value:
         id: rre4mje4ez6B2a7B60g7
@@ -886,6 +866,30 @@ components:
             href: >-
               http://your-subdomain.okta.com/api/v1/realm-assignments/rul2jy7jLUlnO5ng00g4
             method: GET
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -894,11 +898,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

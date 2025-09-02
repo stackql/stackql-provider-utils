@@ -93,8 +93,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathEmailServerId'
     patch:
       summary: Update an SMTP server configuration
       description: Updates the specified custom SMTP server configuration
@@ -130,8 +128,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathEmailServerId'
     delete:
       summary: Delete an SMTP server configuration
       description: Deletes the specified custom SMTP server configuration
@@ -156,8 +152,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathEmailServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathEmailServerId'
   /api/v1/email-servers/{emailServerId}/test:
     post:
       summary: Test an SMTP server configuration
@@ -190,8 +186,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathEmailServerId'
+    parameters:
+      - $ref: '#/components/parameters/pathEmailServerId'
 components:
   schemas:
     EmailServerListResponse:
@@ -201,6 +197,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EmailServerResponse'
+    EmailServerPost:
+      allOf:
+        - $ref: '#/components/schemas/EmailServerRequest'
+        - required:
+            - host
+            - port
+            - username
+            - password
+            - alias
     EmailServerResponse:
       allOf:
         - $ref: '#/components/schemas/BaseEmailServer'
@@ -209,6 +214,28 @@ components:
               type: string
               description: ID of your SMTP server
           type: object
+    EmailServerRequest:
+      allOf:
+        - $ref: '#/components/schemas/BaseEmailServer'
+        - properties:
+            password:
+              type: string
+              description: Password used to access your SMTP server
+          type: object
+    EmailTestAddresses:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Email address that sends test emails
+          example: sender@host.com
+        to:
+          type: string
+          description: Email address that receives test emails
+          example: receiver@host.com
+      required:
+        - from
+        - to
     Error:
       title: Error
       type: object
@@ -261,37 +288,6 @@ components:
       properties:
         errorSummary:
           type: string
-    EmailServerPost:
-      allOf:
-        - $ref: '#/components/schemas/EmailServerRequest'
-        - required:
-            - host
-            - port
-            - username
-            - password
-            - alias
-    EmailServerRequest:
-      allOf:
-        - $ref: '#/components/schemas/BaseEmailServer'
-        - properties:
-            password:
-              type: string
-              description: Password used to access your SMTP server
-          type: object
-    EmailTestAddresses:
-      type: object
-      properties:
-        from:
-          type: string
-          description: Email address that sends test emails
-          example: sender@host.com
-        to:
-          type: string
-          description: Email address that receives test emails
-          example: receiver@host.com
-      required:
-        - from
-        - to
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -329,7 +325,14 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathEmailServerId:
+      name: emailServerId
+      in: path
+      required: true
+      schema:
+        type: string
+        description: ID of your SMTP Server configuration
   examples:
     ErrorAccessDenied:
       summary: Access Denied
@@ -363,11 +366,6 @@ components:
         errorLink: E0000007
         errorId: sampleMlLvGUj_YD5v16vkYWY
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

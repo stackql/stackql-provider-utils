@@ -185,8 +185,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
     post:
       summary: Update an inline hook
       description: Updates an inline hook by `inlineHookId`
@@ -228,8 +226,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
     put:
       summary: Replace an inline hook
       description: >-
@@ -276,8 +272,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
     delete:
       summary: Delete an inline hook
       description: >-
@@ -304,8 +298,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathInlineHookId'
   /api/v1/inlineHooks/{inlineHookId}/execute:
     post:
       summary: Execute an inline hook
@@ -401,8 +395,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathInlineHookId'
   /api/v1/inlineHooks/{inlineHookId}/lifecycle/activate:
     post:
       summary: Activate an inline hook
@@ -433,8 +427,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathInlineHookId'
   /api/v1/inlineHooks/{inlineHookId}/lifecycle/deactivate:
     post:
       summary: Deactivate an inline hook
@@ -465,8 +459,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathInlineHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathInlineHookId'
 components:
   schemas:
     InlineHook:
@@ -506,153 +500,6 @@ components:
           readOnly: true
         _links:
           $ref: '#/components/schemas/InlineHookLinks'
-    InlineHookChannel:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/InlineHookChannelType'
-        version:
-          type: string
-          description: >-
-            Version of the inline hook type. The currently supported version is
-            `1.0.0`.
-      discriminator:
-        propertyName: type
-        mapping:
-          HTTP: '#/components/schemas/InlineHookChannelHttp'
-          OAUTH: '#/components/schemas/InlineHookChannelOAuth'
-    InlineHookStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    InlineHookType:
-      description: One of the inline hook types
-      type: string
-      enum:
-        - com.okta.import.transform
-        - com.okta.oauth2.tokens.transform
-        - com.okta.saml.tokens.transform
-        - com.okta.telephony.provider
-        - com.okta.user.credential.password.import
-        - com.okta.user.pre-registration
-    InlineHookLinks:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            activate:
-              description: URL to activate the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-            deactivate:
-              description: URL to deactivate the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-            delete:
-              description: URL to delete the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-            execute:
-              description: URL to test the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    InlineHookChannelType:
-      type: string
-      enum:
-        - HTTP
-        - OAUTH
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     InlineHookCreate:
       description: An inline hook object that specifies the details of the inline hook
       type: object
@@ -708,34 +555,6 @@ components:
           readOnly: true
         _links:
           $ref: '#/components/schemas/InlineHookLinksCreate'
-    InlineHookChannelCreate:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/InlineHookChannelType'
-        version:
-          type: string
-          description: >-
-            Version of the inline hook type. The currently supported version is
-            `1.0.0`.
-      discriminator:
-        propertyName: type
-        mapping:
-          HTTP: '#/components/schemas/InlineHookChannelHttpCreate'
-          OAUTH: '#/components/schemas/InlineHookChannelOAuthCreate'
-    InlineHookLinksCreate:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            deactivate:
-              description: URL to deactivate the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
-            execute:
-              description: URL to test the inline hook
-              allOf:
-                - $ref: '#/components/schemas/HrefObject'
     InlineHookReplace:
       description: An inline hook object that specifies the details of the inline hook
       type: object
@@ -1639,6 +1458,110 @@ components:
             errorSummary:
               description: A human-readable summary of the error
               type: string
+    InlineHookChannel:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/InlineHookChannelType'
+        version:
+          type: string
+          description: >-
+            Version of the inline hook type. The currently supported version is
+            `1.0.0`.
+      discriminator:
+        propertyName: type
+        mapping:
+          HTTP: '#/components/schemas/InlineHookChannelHttp'
+          OAUTH: '#/components/schemas/InlineHookChannelOAuth'
+    InlineHookStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    InlineHookType:
+      description: One of the inline hook types
+      type: string
+      enum:
+        - com.okta.import.transform
+        - com.okta.oauth2.tokens.transform
+        - com.okta.saml.tokens.transform
+        - com.okta.telephony.provider
+        - com.okta.user.credential.password.import
+        - com.okta.user.pre-registration
+    InlineHookLinks:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            activate:
+              description: URL to activate the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+            deactivate:
+              description: URL to deactivate the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+            delete:
+              description: URL to delete the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+            execute:
+              description: URL to test the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    InlineHookChannelCreate:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/InlineHookChannelType'
+        version:
+          type: string
+          description: >-
+            Version of the inline hook type. The currently supported version is
+            `1.0.0`.
+      discriminator:
+        propertyName: type
+        mapping:
+          HTTP: '#/components/schemas/InlineHookChannelHttpCreate'
+          OAUTH: '#/components/schemas/InlineHookChannelOAuthCreate'
+    InlineHookLinksCreate:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            deactivate:
+              description: URL to deactivate the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
+            execute:
+              description: URL to test the inline hook
+              allOf:
+                - $ref: '#/components/schemas/HrefObject'
     InlineHookBasePayload:
       type: object
       properties:
@@ -1983,6 +1906,58 @@ components:
             `com.okta.import.transform`.
         source:
           description: The ID of the user import inline hook
+          type: string
+    InlineHookChannelType:
+      type: string
+      enum:
+        - HTTP
+        - OAUTH
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
           type: string
     PasswordImportRequestData:
       type: object
@@ -2373,6 +2348,18 @@ components:
               type: object
               additionalProperties:
                 type: string
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
     InlineHookRequestObject:
       description: The API request that triggered the inline hook
       type: object
@@ -2425,6 +2412,13 @@ components:
         - urn:okta:params:oauth:grant-type:oob
         - http://auth0.com/oauth/grant-type/mfa-otp
         - http://auth0.com/oauth/grant-type/mfa-oob
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
     SessionIdentityProviderType:
       type: string
       enum:
@@ -2484,6 +2478,14 @@ components:
           - com.okta.user.credential.password.import
           - com.okta.user.pre-registration
           - com.okta.telephony.provider
+    pathInlineHookId:
+      name: inlineHookId
+      description: '`id` of the inline hook'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: Y7Rzrd4g4xj6WdKzrBHH
   examples:
     InlineHooktMgmtListAllexample:
       summary: List all inline hooks response
@@ -2592,22 +2594,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     InlineHookMgmtCreateHTTPRequest:
       summary: Create an inline hook with HTTP authentication
       value:
@@ -2773,14 +2759,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     InlineHookMgmtHTTPexample:
       summary: An inline hook with HTTP authentication
       value:
@@ -2891,14 +2869,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     InlineHookMgmtPutHTTPRequest:
       summary: Update an inline hook name
       value:
@@ -3425,11 +3395,38 @@ components:
             hints:
               allow:
                 - DELETE
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

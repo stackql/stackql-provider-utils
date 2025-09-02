@@ -170,8 +170,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRiskProviderId'
     put:
       deprecated: true
       summary: Replace a risk provider
@@ -214,8 +212,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRiskProviderId'
     delete:
       deprecated: true
       summary: Delete a risk provider
@@ -247,8 +243,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRiskProviderId'
+    parameters:
+      - $ref: '#/components/parameters/pathRiskProviderId'
 components:
   schemas:
     RiskEvent:
@@ -300,34 +296,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    RiskEventSubject:
-      type: object
-      properties:
-        ip:
-          type: string
-          description: The risk event subject IP address (either an IPv4 or IPv6 address)
-        message:
-          type: string
-          description: Additional reasons for the risk level of the IP
-          maxLength: 512
-          pattern: ^[a-zA-Z0-9 .\-_]*$
-        riskLevel:
-          $ref: '#/components/schemas/RiskEventSubjectRiskLevel'
-      required:
-        - ip
-        - riskLevel
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    RiskEventSubjectRiskLevel:
-      description: The risk level associated with the IP
-      type: string
-      enum:
-        - HIGH
-        - LOW
-        - MEDIUM
     RiskProvider:
       type: object
       properties:
@@ -370,6 +338,27 @@ components:
         - action
         - id
         - _links
+    RiskEventSubject:
+      type: object
+      properties:
+        ip:
+          type: string
+          description: The risk event subject IP address (either an IPv4 or IPv6 address)
+        message:
+          type: string
+          description: Additional reasons for the risk level of the IP
+          maxLength: 512
+          pattern: ^[a-zA-Z0-9 .\-_]*$
+        riskLevel:
+          $ref: '#/components/schemas/RiskEventSubjectRiskLevel'
+      required:
+        - ip
+        - riskLevel
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     RiskProviderAction:
       description: >-
         Action taken by Okta during authentication attempts based on the risk
@@ -399,6 +388,13 @@ components:
         self:
           $ref: '#/components/schemas/HrefObjectSelfLink'
       readOnly: true
+    RiskEventSubjectRiskLevel:
+      description: The risk level associated with the IP
+      type: string
+      enum:
+        - HIGH
+        - LOW
+        - MEDIUM
     HrefObjectSelfLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
@@ -484,7 +480,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathRiskProviderId:
+      name: riskProviderId
+      in: path
+      schema:
+        type: string
+        example: 00rp12r4skkjkjgsn
+      required: true
+      description: '`id` of the risk provider object'
   examples:
     RiskEventsRequestExample:
       summary: Risk events payload example
@@ -509,22 +513,6 @@ components:
         errorSummary: You do not have permission to perform the requested action
         errorLink: E0000006
         errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
         errorCauses: []
     ListRiskProviderResponse:
       summary: List risk provider response example
@@ -564,14 +552,6 @@ components:
               allow:
                 - GET
                 - PUT
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     RiskProviderPutRequest:
       summary: Replace risk provider request example
       value:
@@ -594,11 +574,30 @@ components:
               allow:
                 - GET
                 - PUT
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -128,8 +128,6 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamId'
     put:
       summary: Replace a log stream
       description: >-
@@ -197,8 +195,6 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamId'
     delete:
       summary: Delete a log stream
       description: Deletes a log stream object from your org by ID
@@ -230,8 +226,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamId'
+    parameters:
+      - $ref: '#/components/parameters/pathLogStreamId'
   /api/v1/logStreams/{logStreamId}/lifecycle/activate:
     post:
       summary: Activate a log stream
@@ -263,8 +259,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamId'
+    parameters:
+      - $ref: '#/components/parameters/pathLogStreamId'
   /api/v1/logStreams/{logStreamId}/lifecycle/deactivate:
     post:
       summary: Deactivate a log stream
@@ -296,8 +292,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathLogStreamId'
+    parameters:
+      - $ref: '#/components/parameters/pathLogStreamId'
 components:
   schemas:
     LogStream:
@@ -346,6 +342,46 @@ components:
         mapping:
           aws_eventbridge: '#/components/schemas/LogStreamAws'
           splunk_cloud_logstreaming: '#/components/schemas/LogStreamSplunk'
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    LogStreamPutSchema:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LogStreamName'
+        type:
+          $ref: '#/components/schemas/LogStreamType'
+      required:
+        - name
+        - type
+      discriminator:
+        propertyName: type
+        mapping:
+          aws_eventbridge: '#/components/schemas/LogStreamAwsPutSchema'
+          splunk_cloud_logstreaming: '#/components/schemas/LogStreamSplunkPutSchema'
     LogStreamName:
       description: Unique name for the log stream object
       example: My AWS EventBridge log stream
@@ -384,31 +420,11 @@ components:
       required:
         - self
       readOnly: true
-    Error:
-      title: Error
+    ErrorCause:
       type: object
       properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
         errorSummary:
           type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
     LogStreamActivateLink:
       allOf:
         - $ref: '#/components/schemas/LogStreamLinkObject'
@@ -421,11 +437,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/LogStreamLinkObject'
         - description: Link to the resource (self)
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     LogStreamLinkObject:
       title: Log stream link object
       type: object
@@ -442,21 +453,6 @@ components:
       required:
         - href
       readOnly: true
-    LogStreamPutSchema:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/LogStreamName'
-        type:
-          $ref: '#/components/schemas/LogStreamType'
-      required:
-        - name
-        - type
-      discriminator:
-        propertyName: type
-        mapping:
-          aws_eventbridge: '#/components/schemas/LogStreamAwsPutSchema'
-          splunk_cloud_logstreaming: '#/components/schemas/LogStreamSplunkPutSchema'
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -514,6 +510,14 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathLogStreamId:
+      name: logStreamId
+      in: path
+      schema:
+        type: string
+        example: 0oa1orzg0CHSgPcjZ0g4
+      required: true
+      description: Unique identifier for the log stream
   examples:
     LogStreamGetAllResponse:
       summary: Lists all log streams
@@ -536,22 +540,6 @@ components:
               href: >-
                 http://{yourOktaDomain}/api/v1/logStreams/0oa1orqUGCIoCGNxf0g4/lifecycle/deactivate
               method: POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     LogStreamPostRequest:
       summary: Create an AWS EventBridge log stream
       value:
@@ -582,21 +570,13 @@ components:
             href: >-
               http://{yourOktaDomain}/api/v1/logStreams/0oa1orqUGCIoCGNxf0g4/lifecycle/deactivate
             method: POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
+    ErrorAccessDenied:
+      summary: Access Denied
       value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
         errorCauses: []
     LogStreamPutRequest:
       summary: Replace AWS EventBridge name
@@ -669,11 +649,30 @@ components:
             href: >-
               http://{yourOktaDomain}/api/v1/logStreams/0oa7agphh5FT7H521d7/lifecycle/activate
             method: POST
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

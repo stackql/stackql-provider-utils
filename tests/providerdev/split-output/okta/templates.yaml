@@ -110,8 +110,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTemplateId'
     post:
       summary: Update an SMS template
       description: |
@@ -158,8 +156,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTemplateId'
     put:
       summary: Replace an SMS template
       description: |
@@ -203,8 +199,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTemplateId'
     delete:
       summary: Delete an SMS template
       description: Deletes an SMS template
@@ -228,8 +222,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTemplateId'
+    parameters:
+      - $ref: '#/components/parameters/pathTemplateId'
 components:
   schemas:
     SmsTemplateType:
@@ -349,7 +343,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathTemplateId:
+      name: templateId
+      description: '`id` of the Template'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 6NQUJ5yR3bpgEiYmq8IC
   examples:
     SMSTemplateListResponse:
       value:
@@ -363,22 +365,6 @@ components:
             it: '${org.name}: il codice di verifica è ${code}'
           created: '2024-04-25T17:35:02.000Z'
           lastUpdated: '2024-04-25T17:35:02.000Z'
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateOrReplaceSMSTemplateRequest:
       value:
         name: Custom
@@ -400,22 +386,6 @@ components:
           it: '${org.name}: il codice di verifica è ${code}'
         created: '2024-04-25T17:35:02.000Z'
         lastUpdated: '2024-04-25T17:35:02.000Z'
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     UpdateSMSTemplateRequest:
       value:
         translations:
@@ -433,11 +403,38 @@ components:
           de: '${org.name}: ihre bestätigungscode ist ${code}.'
         created: '2024-04-25T17:35:02.000Z'
         lastUpdated: '2024-04-25T17:35:02.000Z'
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

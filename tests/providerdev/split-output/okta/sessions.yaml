@@ -187,8 +187,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathSessionId'
     delete:
       summary: Revoke a session
       description: Revokes the specified Session
@@ -212,8 +210,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathSessionId'
   /api/v1/sessions/{sessionId}/lifecycle/refresh:
     post:
       summary: Refresh a session
@@ -248,8 +246,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathSessionId'
+    parameters:
+      - $ref: '#/components/parameters/pathSessionId'
 components:
   schemas:
     CreateSessionRequest:
@@ -514,7 +512,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathSessionId:
+      name: sessionId
+      description: '`id` of the Session'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: l7FbDVqS8zHSy65uJD85
   examples:
     CreateSessionBody:
       summary: Create a new session with a valid session token
@@ -542,22 +548,6 @@ components:
               allow:
                 - DELETE
           href: https://{yourOktaDomain}/api/v1/sessions/l7FbDVqS8zHSy65uJD85
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     RetrieveCurrentSessionResponse:
       summary: Retrieve current session
       value:
@@ -592,14 +582,6 @@ components:
                 - GET
             href: https://{yourOktaDomain}/api/v1/users/me
             name: User Name
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     RefreshCurrentSessionResponse:
       summary: Refresh current session
       value:
@@ -678,11 +660,30 @@ components:
               allow:
                 - DELETE
           href: https://{yourOktaDomain}/api/v1/sessions/l7FbDVqS8zHSy65uJD85
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

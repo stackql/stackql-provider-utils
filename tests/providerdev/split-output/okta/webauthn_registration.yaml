@@ -246,8 +246,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathUserId'
+    parameters:
+      - $ref: '#/components/parameters/pathUserId'
   /webauthn-registration/api/v1/users/{userId}/enrollments/{authenticatorEnrollmentId}:
     delete:
       summary: Delete a WebAuthn preregistration factor
@@ -273,9 +273,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathUserId'
-        - $ref: '#/components/parameters/authenticatorEnrollmentId'
+    parameters:
+      - $ref: '#/components/parameters/pathUserId'
+      - $ref: '#/components/parameters/authenticatorEnrollmentId'
   /webauthn-registration/api/v1/users/{userId}/enrollments/{authenticatorEnrollmentId}/mark-error:
     post:
       summary: Assign the fulfillment error status to a WebAuthn preregistration factor
@@ -304,9 +304,9 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathUserId'
-        - $ref: '#/components/parameters/authenticatorEnrollmentId'
+    parameters:
+      - $ref: '#/components/parameters/pathUserId'
+      - $ref: '#/components/parameters/authenticatorEnrollmentId'
 components:
   schemas:
     EnrollmentActivationRequest:
@@ -389,6 +389,122 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    EnrollmentInitializationRequest:
+      description: Enrollment initialization request
+      type: object
+      properties:
+        enrollmentRpIds:
+          description: List of relying party hostnames to register on the YubiKey
+          type: array
+          items:
+            type: string
+        fulfillmentProvider:
+          description: >-
+            Name of the fulfillment provider for the WebAuthn preregistration
+            factor
+          type: string
+          enum:
+            - yubico
+        userId:
+          description: ID of an existing Okta user
+          type: string
+        yubicoTransportKeyJWK:
+          description: >-
+            Transport public key in JWK (JSON Web Key) format used to encrypt
+            fulfillment requests to Yubico
+          $ref: '#/components/schemas/ECKeyJWK'
+    EnrollmentInitializationResponse:
+      description: >-
+        Yubico transport key in the form of a JSON Web Token (JWK), used to
+        encrypt our fulfillment request to Yubico. The currently agreed protocol
+        uses P-384.
+      type: object
+      properties:
+        credRequests:
+          description: List of credential requests for the fulfillment provider
+          type: array
+          items:
+            $ref: '#/components/schemas/WebAuthnCredRequest'
+        fulfillmentProvider:
+          description: >-
+            Name of the fulfillment provider for the WebAuthn preregistration
+            factor
+          type: string
+          enum:
+            - yubico
+        pinRequestJwe:
+          description: Encrypted JWE of PIN request for the fulfillment provider
+          type: string
+        userId:
+          description: ID of an existing Okta user
+          type: string
+    FulfillmentRequest:
+      description: Fulfillment request
+      type: object
+      properties:
+        fulfillmentData:
+          $ref: '#/components/schemas/FulfillmentData'
+        fulfillmentProvider:
+          description: >-
+            Name of the fulfillment provider for the WebAuthn preregistration
+            factor
+          type: string
+          enum:
+            - yubico
+        userId:
+          description: ID of an existing Okta user
+          type: string
+    PinRequest:
+      description: Pin request
+      type: object
+      properties:
+        authenticatorEnrollmentId:
+          description: ID for a WebAuthn preregistration factor in Okta
+          type: string
+        fulfillmentProvider:
+          description: >-
+            Name of the fulfillment provider for the WebAuthn preregistration
+            factor
+          type: string
+          enum:
+            - yubico
+        userId:
+          description: ID of an existing Okta user
+          type: string
+    WebAuthnPreregistrationFactor:
+      description: User factor variant used for WebAuthn preregistration factors
+      type: object
+      properties:
+        created:
+          description: Timestamp indicating when the factor was enrolled
+          type: string
+          format: date-time
+          readOnly: true
+        factorType:
+          $ref: '#/components/schemas/UserFactorType'
+        id:
+          description: ID of the factor
+          type: string
+          readOnly: true
+        lastUpdated:
+          description: Timestamp indicating when the factor was last updated
+          type: string
+          format: date-time
+          readOnly: true
+        profile:
+          type: object
+          description: Specific attributes related to the factor
+        provider:
+          $ref: '#/components/schemas/UserFactorProvider'
+        status:
+          $ref: '#/components/schemas/UserFactorStatus'
+        vendorName:
+          description: Name of the factor vendor. This is usually the same as the provider.
+          type: string
+          example: OKTA
+          readOnly: true
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
     WebAuthnCredResponse:
       description: >-
         Credential response object for enrolled credential details, along with
@@ -453,55 +569,6 @@ components:
       properties:
         errorSummary:
           type: string
-    EnrollmentInitializationRequest:
-      description: Enrollment initialization request
-      type: object
-      properties:
-        enrollmentRpIds:
-          description: List of relying party hostnames to register on the YubiKey
-          type: array
-          items:
-            type: string
-        fulfillmentProvider:
-          description: >-
-            Name of the fulfillment provider for the WebAuthn preregistration
-            factor
-          type: string
-          enum:
-            - yubico
-        userId:
-          description: ID of an existing Okta user
-          type: string
-        yubicoTransportKeyJWK:
-          description: >-
-            Transport public key in JWK (JSON Web Key) format used to encrypt
-            fulfillment requests to Yubico
-          $ref: '#/components/schemas/ECKeyJWK'
-    EnrollmentInitializationResponse:
-      description: >-
-        Yubico transport key in the form of a JSON Web Token (JWK), used to
-        encrypt our fulfillment request to Yubico. The currently agreed protocol
-        uses P-384.
-      type: object
-      properties:
-        credRequests:
-          description: List of credential requests for the fulfillment provider
-          type: array
-          items:
-            $ref: '#/components/schemas/WebAuthnCredRequest'
-        fulfillmentProvider:
-          description: >-
-            Name of the fulfillment provider for the WebAuthn preregistration
-            factor
-          type: string
-          enum:
-            - yubico
-        pinRequestJwe:
-          description: Encrypted JWE of PIN request for the fulfillment provider
-          type: string
-        userId:
-          description: ID of an existing Okta user
-          type: string
     WebAuthnCredRequest:
       description: >-
         Credential request object for the initialized credential, along with the
@@ -519,94 +586,11 @@ components:
             ID for the Okta response key-pair used to encrypt and decrypt
             credential requests and responses
           type: string
-    FulfillmentRequest:
-      description: Fulfillment request
-      type: object
-      properties:
-        fulfillmentData:
-          $ref: '#/components/schemas/FulfillmentData'
-        fulfillmentProvider:
-          description: >-
-            Name of the fulfillment provider for the WebAuthn preregistration
-            factor
-          type: string
-          enum:
-            - yubico
-        userId:
-          description: ID of an existing Okta user
-          type: string
     FulfillmentData:
       description: List of fulfillment order details
       items:
         $ref: '#/components/schemas/FulfillmentDataOrderDetails'
       type: array
-    FulfillmentDataOrderDetails:
-      description: >-
-        Information about the fulfillment order that includes the factor’s make
-        and model, the custom configuration of the factor, and inventory
-        details.
-      type: object
-      properties:
-        customizationId:
-          description: ID for the set of custom configurations of the requested factor
-          type: string
-        inventoryProductId:
-          description: ID for the specific inventory bucket of the requested factor
-          type: string
-        productId:
-          description: ID for the make and model of the requested factor
-          type: string
-    PinRequest:
-      description: Pin request
-      type: object
-      properties:
-        authenticatorEnrollmentId:
-          description: ID for a WebAuthn preregistration factor in Okta
-          type: string
-        fulfillmentProvider:
-          description: >-
-            Name of the fulfillment provider for the WebAuthn preregistration
-            factor
-          type: string
-          enum:
-            - yubico
-        userId:
-          description: ID of an existing Okta user
-          type: string
-    WebAuthnPreregistrationFactor:
-      description: User factor variant used for WebAuthn preregistration factors
-      type: object
-      properties:
-        created:
-          description: Timestamp indicating when the factor was enrolled
-          type: string
-          format: date-time
-          readOnly: true
-        factorType:
-          $ref: '#/components/schemas/UserFactorType'
-        id:
-          description: ID of the factor
-          type: string
-          readOnly: true
-        lastUpdated:
-          description: Timestamp indicating when the factor was last updated
-          type: string
-          format: date-time
-          readOnly: true
-        profile:
-          type: object
-          description: Specific attributes related to the factor
-        provider:
-          $ref: '#/components/schemas/UserFactorProvider'
-        status:
-          $ref: '#/components/schemas/UserFactorStatus'
-        vendorName:
-          description: Name of the factor vendor. This is usually the same as the provider.
-          type: string
-          example: OKTA
-          readOnly: true
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
     UserFactorType:
       description: Type of factor
       type: string
@@ -661,6 +645,22 @@ components:
         self:
           $ref: '#/components/schemas/HrefObjectSelfLink'
       readOnly: true
+    FulfillmentDataOrderDetails:
+      description: >-
+        Information about the fulfillment order that includes the factor’s make
+        and model, the custom configuration of the factor, and inventory
+        details.
+      type: object
+      properties:
+        customizationId:
+          description: ID for the set of custom configurations of the requested factor
+          type: string
+        inventoryProductId:
+          description: ID for the specific inventory bucket of the requested factor
+          type: string
+        productId:
+          description: ID for the make and model of the requested factor
+          type: string
     HrefObjectSelfLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
@@ -737,7 +737,22 @@ components:
           examples:
             TooManyRequests:
               $ref: '#/components/examples/ErrorTooManyRequests'
-  parameters: {}
+  parameters:
+    pathUserId:
+      name: userId
+      description: ID of an existing Okta user
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00ub0oNGTSWTBKOLGLNR
+    authenticatorEnrollmentId:
+      name: authenticatorEnrollmentId
+      in: path
+      required: true
+      description: ID for a WebAuthn preregistration factor in Okta
+      schema:
+        type: string
   examples:
     EnrollmentActivationRequestExample:
       summary: Enrollment activation request
@@ -773,30 +788,6 @@ components:
         errorId: oaehk3rssXQmOWDRsaFfxe8B
         errorCauses:
           errorSummary: There was an unexpected internal error. Please try again.
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     EnrollmentInitializationRequestExample:
       summary: Initialize preregistration enrollment request
       value:
@@ -847,11 +838,30 @@ components:
         authenticatorEnrollmentId: fwf5ajzJEWqknX6lk0g4
         fulfillmentProvider: yubico
         userId: 00us2hPODQncCkxef0g3
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

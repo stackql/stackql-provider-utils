@@ -443,68 +443,6 @@ components:
       required:
         - events_requested
         - delivery
-    StreamConfigurationDelivery:
-      title: Stream Configuration Delivery
-      description: >-
-        Contains information about the intended SET delivery method by the
-        receiver
-      type: object
-      properties:
-        authorization_header:
-          type: string
-          description: >-
-            The HTTP Authorization header that is included for each HTTP POST
-            request
-          example: '{authorizationHeaderValue}'
-          nullable: true
-          maxLength: 8192
-        endpoint_url:
-          type: string
-          format: uri
-          description: >-
-            The target endpoint URL where the transmitter delivers the SET using
-            HTTP POST requests
-          example: https://example.com/
-          maxLength: 2048
-        method:
-          type: string
-          description: The delivery method that the transmitter uses for delivering a SET
-          enum:
-            - https://schemas.openid.net/secevent/risc/delivery-method/push
-            - urn:ietf:rfc:8935
-      required:
-        - method
-        - endpoint_url
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     StreamConfigurationCreateRequest:
       title: Stream Configuration Create Request
       type: object
@@ -574,6 +512,68 @@ components:
           example: esc1k235GIIztAuGK0g5
       required:
         - stream_id
+    StreamConfigurationDelivery:
+      title: Stream Configuration Delivery
+      description: >-
+        Contains information about the intended SET delivery method by the
+        receiver
+      type: object
+      properties:
+        authorization_header:
+          type: string
+          description: >-
+            The HTTP Authorization header that is included for each HTTP POST
+            request
+          example: '{authorizationHeaderValue}'
+          nullable: true
+          maxLength: 8192
+        endpoint_url:
+          type: string
+          format: uri
+          description: >-
+            The target endpoint URL where the transmitter delivers the SET using
+            HTTP POST requests
+          example: https://example.com/
+          maxLength: 2048
+        method:
+          type: string
+          description: The delivery method that the transmitter uses for delivering a SET
+          enum:
+            - https://schemas.openid.net/secevent/risc/delivery-method/push
+            - urn:ietf:rfc:8935
+      required:
+        - method
+        - endpoint_url
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
   responses:
     ErrorInvalidToken401:
       description: Unauthorized
@@ -629,7 +629,6 @@ components:
           examples:
             AccessDenied:
               $ref: '#/components/examples/ErrorApiValidationConflict'
-  parameters: {}
   examples:
     listStreamConfigurationExample:
       summary: List of SSF stream configurations example
@@ -680,6 +679,16 @@ components:
         iss: https://{yourOktaDomain}
         min_verification_interval: 0
         stream_id: esc1k235GIIztAuGK0g5
+    streamStatusEnabledExample:
+      summary: SSF Stream enabled status example
+      value:
+        stream_id: esc1k235GIIztAuGK0g5
+        status: enabled
+    streamStatusDisabledExample:
+      summary: SSF Stream disabled status example
+      value:
+        stream_id: esc1k235GIIztAuGK0g5
+        status: disabled
     ErrorInvalidTokenProvided:
       summary: Invalid Token Provided
       value:
@@ -728,21 +737,6 @@ components:
         errorLink: E0000195
         errorId: sampleMlLvGUj_YD5v15vkYWX
         errorCauses: []
-    streamStatusEnabledExample:
-      summary: SSF Stream enabled status example
-      value:
-        stream_id: esc1k235GIIztAuGK0g5
-        status: enabled
-    streamStatusDisabledExample:
-      summary: SSF Stream disabled status example
-      value:
-        stream_id: esc1k235GIIztAuGK0g5
-        status: disabled
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

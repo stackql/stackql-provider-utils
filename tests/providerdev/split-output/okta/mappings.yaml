@@ -120,8 +120,6 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathMappingId'
     post:
       summary: Update a profile mapping
       description: >-
@@ -183,8 +181,8 @@ paths:
         lifecycle: GA
         isGenerallyAvailable: false
         SKUs: []
-      parameters:
-        - $ref: '#/components/parameters/pathMappingId'
+    parameters:
+      - $ref: '#/components/parameters/pathMappingId'
 components:
   schemas:
     ListProfileMappings:
@@ -210,6 +208,44 @@ components:
           $ref: '#/components/schemas/ProfileMappingTarget'
         _links:
           $ref: '#/components/schemas/LinksSelf'
+    ProfileMapping:
+      description: >-
+        The profile mapping object describes a mapping between an Okta user's
+        and an app user's properties using [JSON Schema Draft
+        4](https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04).
+
+
+        > **Note:** Same type source/target mappings aren't supported by this
+        API. Profile mappings must be between Okta and an app.
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for a profile mapping
+          readOnly: true
+        properties:
+          type: object
+          $ref: '#/components/schemas/ProfileMappingProperty'
+          readOnly: false
+        source:
+          $ref: '#/components/schemas/ProfileMappingSource'
+        target:
+          $ref: '#/components/schemas/ProfileMappingTarget'
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+        type: object
+    ProfileMappingRequest:
+      description: The updated request body properties
+      type: object
+      properties:
+        properties:
+          type: object
+          $ref: '#/components/schemas/ProfileMappingProperty'
+        type: object
+      required:
+        - properties
+        - expression
+        - pushStatus
     ProfileMappingSource:
       description: >-
         The parameter is the source of a profile mapping and is a valid [JSON
@@ -304,6 +340,20 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    ProfileMappingProperty:
+      description: >-
+        A target property, in string form, that maps to a valid [JSON Schema
+        Draft](https://tools.ietf.org/html/draft-zyp-json-schema-04) document.
+      type: object
+      properties:
+        expression:
+          description: >-
+            Combination or single source properties that are mapped to the
+            target property. See [Okta Expression
+            Language](https://developer.okta.com/docs/reference/okta-expression-language/).
+          type: string
+        pushStatus:
+          $ref: '#/components/schemas/ProfileMappingPropertyPushStatus'
     SourceLinks:
       allOf:
         - $ref: '#/components/schemas/LinksSelf'
@@ -322,6 +372,21 @@ components:
       properties:
         errorSummary:
           type: string
+    ProfileMappingPropertyPushStatus:
+      description: >-
+        Indicates whether to update target properties for user create and update
+        or just for user create.
+
+
+        - Having a pushStatus of `PUSH` causes properties in the target to be
+        updated on create and update. 
+
+        - Having a pushStatus of `DONT_PUSH` causes properties in the target to
+        be updated only on create.
+      type: string
+      enum:
+        - DONT_PUSH
+        - PUSH
     HrefObject:
       title: Link Object
       additionalProperties: true
@@ -366,73 +431,6 @@ components:
         - GET
         - POST
         - PUT
-    ProfileMapping:
-      description: >-
-        The profile mapping object describes a mapping between an Okta user's
-        and an app user's properties using [JSON Schema Draft
-        4](https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04).
-
-
-        > **Note:** Same type source/target mappings aren't supported by this
-        API. Profile mappings must be between Okta and an app.
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for a profile mapping
-          readOnly: true
-        properties:
-          type: object
-          $ref: '#/components/schemas/ProfileMappingProperty'
-          readOnly: false
-        source:
-          $ref: '#/components/schemas/ProfileMappingSource'
-        target:
-          $ref: '#/components/schemas/ProfileMappingTarget'
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-        type: object
-    ProfileMappingProperty:
-      description: >-
-        A target property, in string form, that maps to a valid [JSON Schema
-        Draft](https://tools.ietf.org/html/draft-zyp-json-schema-04) document.
-      type: object
-      properties:
-        expression:
-          description: >-
-            Combination or single source properties that are mapped to the
-            target property. See [Okta Expression
-            Language](https://developer.okta.com/docs/reference/okta-expression-language/).
-          type: string
-        pushStatus:
-          $ref: '#/components/schemas/ProfileMappingPropertyPushStatus'
-    ProfileMappingPropertyPushStatus:
-      description: >-
-        Indicates whether to update target properties for user create and update
-        or just for user create.
-
-
-        - Having a pushStatus of `PUSH` causes properties in the target to be
-        updated on create and update. 
-
-        - Having a pushStatus of `DONT_PUSH` causes properties in the target to
-        be updated only on create.
-      type: string
-      enum:
-        - DONT_PUSH
-        - PUSH
-    ProfileMappingRequest:
-      description: The updated request body properties
-      type: object
-      properties:
-        properties:
-          type: object
-          $ref: '#/components/schemas/ProfileMappingProperty'
-        type: object
-      required:
-        - properties
-        - expression
-        - pushStatus
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -470,7 +468,15 @@ components:
           examples:
             APIValidationFailed:
               $ref: '#/components/examples/ErrorApiValidationFailed'
-  parameters: {}
+  parameters:
+    pathMappingId:
+      name: mappingId
+      description: '`id` of the Mapping'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: cB6u7X8mptebWkffatKA
   examples:
     ListMappingsResponse:
       summary: List all profile mappings response
@@ -500,22 +506,6 @@ components:
           _links:
             self:
               href: https://{yourOktaDomain}/api/v1/mappings/prm1k48weFSOnEUnw0g4
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     RetrieveMappingsResponse:
       summary: Retrieve a single profile mapping
       value:
@@ -552,14 +542,6 @@ components:
           self:
             href: https://{yourOktaDomain}/api/v1/mappings/prm1k48weFSOnEUnw0g4
         type: object
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     AddMappingBody:
       summary: Update an existing profile mapping by adding one or more properties
       value:
@@ -692,6 +674,30 @@ components:
           self:
             href: https://{yourOktaDomain}/api/v1/mappings/prm1k48weFSOnEUnw0g4
         type: object
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
     ErrorApiValidationFailed:
       summary: API Validation Failed
       value:
@@ -700,11 +706,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

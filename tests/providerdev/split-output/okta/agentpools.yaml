@@ -44,7 +44,7 @@ paths:
       description: Lists all agent pool updates
       operationId: listAgentPoolsUpdates
       parameters:
-        - $ref: '#/components/parameters/pathPoolId'
+        - $ref: '#/components/parameters/queryScheduled'
       responses:
         '200':
           description: OK
@@ -106,8 +106,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
   /api/v1/agentPools/{poolId}/updates/settings:
     get:
       summary: Retrieve an agent pool update's settings
@@ -135,8 +135,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
     post:
       summary: Update an agent pool update settings
       description: Updates an agent pool update instance settings
@@ -171,8 +169,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
   /api/v1/agentPools/{poolId}/updates/{updateId}:
     get:
       summary: Retrieve an agent pool update by ID
@@ -200,9 +198,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
     post:
       summary: Update an agent pool update by ID
       description: >-
@@ -239,9 +234,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
     delete:
       summary: Delete an agent pool update
       description: Deletes agent pool update
@@ -264,9 +256,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/activate:
     post:
       summary: Activate an agent pool update
@@ -294,9 +286,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/deactivate:
     post:
       summary: Deactivate an agent pool update
@@ -324,9 +316,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/pause:
     post:
       summary: Pause an agent pool update
@@ -354,9 +346,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/resume:
     post:
       summary: Resume an agent pool update
@@ -384,9 +376,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/retry:
     post:
       summary: Retry an agent pool update
@@ -416,9 +408,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
   /api/v1/agentPools/{poolId}/updates/{updateId}/stop:
     post:
       summary: Stop an agent pool update
@@ -446,9 +438,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathPoolId'
-        - $ref: '#/components/parameters/pathUpdateId'
+    parameters:
+      - $ref: '#/components/parameters/pathPoolId'
+      - $ref: '#/components/parameters/pathUpdateId'
 components:
   schemas:
     AgentPool:
@@ -482,6 +474,86 @@ components:
           $ref: '#/components/schemas/AgentType'
         _links:
           $ref: '#/components/schemas/LinksSelf'
+    AgentPoolUpdate:
+      description: Various information about agent auto-update configuration
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+        agentType:
+          $ref: '#/components/schemas/AgentType'
+        enabled:
+          type: boolean
+          description: Indicates if auto-update is enabled for the agent pool
+        id:
+          type: string
+          readOnly: true
+          description: ID of the agent pool update
+        name:
+          type: string
+          description: Name of the agent pool update
+          example: region1A.dc
+        notifyAdmin:
+          type: boolean
+          description: Indicates if the admin is notified about the update
+        reason:
+          description: Reason for the update
+          type: string
+          example: Update failed.
+        schedule:
+          $ref: '#/components/schemas/AutoUpdateSchedule'
+        sortOrder:
+          description: Specifies the sort order
+          type: integer
+        status:
+          $ref: '#/components/schemas/AgentUpdateJobStatus'
+        targetVersion:
+          type: string
+          description: The agent version to update to
+          example: 3.20.0
+        _links:
+          $ref: '#/components/schemas/LinksSelf'
+    AgentPoolUpdateSetting:
+      description: Setting for auto-update
+      type: object
+      properties:
+        agentType:
+          $ref: '#/components/schemas/AgentType'
+        continueOnError:
+          type: boolean
+          description: Continues the update even if some agents fail to update
+        latestVersion:
+          type: string
+          description: Latest version of the agent
+          example: 3.20.0
+        minimalSupportedVersion:
+          type: string
+          description: Minimal version of the agent
+          example: 3.19.0
+        poolId:
+          type: string
+          readOnly: true
+          description: ID of the agent pool that the settings apply to
+          example: 0oa3eu7ekG8tjbD9J5s6
+        poolName:
+          type: string
+          description: Pool name
+          example: iwa.dc
+        releaseChannel:
+          $ref: '#/components/schemas/ReleaseChannel'
+    AgentType:
+      description: Agent types that are being monitored
+      type: string
+      enum:
+        - AD
+        - IWA
+        - LDAP
+        - MFA
+        - OPP
+        - RUM
+        - Radius
     Agent:
       description: Agent details
       type: object
@@ -533,17 +605,6 @@ components:
         - DISRUPTED
         - INACTIVE
         - OPERATIONAL
-    AgentType:
-      description: Agent types that are being monitored
-      type: string
-      enum:
-        - AD
-        - IWA
-        - LDAP
-        - MFA
-        - OPP
-        - RUM
-        - Radius
     LinksSelf:
       description: >-
         Specifies link relations (see [Web
@@ -582,6 +643,54 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    AutoUpdateSchedule:
+      description: The schedule of auto-update configured by the admin
+      type: object
+      properties:
+        cron:
+          type: string
+          description: >-
+            The schedule of the update in cron format. The cron settings are
+            limited to only the day of the month or the nth-day-of-the-week
+            configurations. For example, `0 8 ? * 6#3` indicates every third
+            Saturday at 8:00 AM.
+          example: 0 8 ? * 6#3
+        delay:
+          description: Delay in days
+          type: integer
+        duration:
+          description: Duration in minutes
+          type: integer
+          example: 120
+        lastUpdated:
+          description: >-
+            Timestamp when the update finished (only for a successful or failed
+            update, not for a cancelled update). Null is returned if the job
+            hasn't finished once yet.
+          type: string
+          format: date-time
+        timezone:
+          type: string
+          description: Timezone of where the scheduled job takes place
+          example: America/New_York
+    AgentUpdateJobStatus:
+      description: Overall state for the auto-update job from the admin perspective
+      type: string
+      enum:
+        - Cancelled
+        - Failed
+        - InProgress
+        - Paused
+        - Scheduled
+        - Success
+    ReleaseChannel:
+      description: Release channel for auto-update
+      type: string
+      enum:
+        - BETA
+        - EA
+        - GA
+        - TEST
     AgentUpdateInstanceStatus:
       description: Status for one agent regarding the status to auto-update that agent
       type: string
@@ -645,123 +754,6 @@ components:
         - GET
         - POST
         - PUT
-    AgentPoolUpdate:
-      description: Various information about agent auto-update configuration
-      type: object
-      properties:
-        agents:
-          type: array
-          items:
-            $ref: '#/components/schemas/Agent'
-        agentType:
-          $ref: '#/components/schemas/AgentType'
-        enabled:
-          type: boolean
-          description: Indicates if auto-update is enabled for the agent pool
-        id:
-          type: string
-          readOnly: true
-          description: ID of the agent pool update
-        name:
-          type: string
-          description: Name of the agent pool update
-          example: region1A.dc
-        notifyAdmin:
-          type: boolean
-          description: Indicates if the admin is notified about the update
-        reason:
-          description: Reason for the update
-          type: string
-          example: Update failed.
-        schedule:
-          $ref: '#/components/schemas/AutoUpdateSchedule'
-        sortOrder:
-          description: Specifies the sort order
-          type: integer
-        status:
-          $ref: '#/components/schemas/AgentUpdateJobStatus'
-        targetVersion:
-          type: string
-          description: The agent version to update to
-          example: 3.20.0
-        _links:
-          $ref: '#/components/schemas/LinksSelf'
-    AutoUpdateSchedule:
-      description: The schedule of auto-update configured by the admin
-      type: object
-      properties:
-        cron:
-          type: string
-          description: >-
-            The schedule of the update in cron format. The cron settings are
-            limited to only the day of the month or the nth-day-of-the-week
-            configurations. For example, `0 8 ? * 6#3` indicates every third
-            Saturday at 8:00 AM.
-          example: 0 8 ? * 6#3
-        delay:
-          description: Delay in days
-          type: integer
-        duration:
-          description: Duration in minutes
-          type: integer
-          example: 120
-        lastUpdated:
-          description: >-
-            Timestamp when the update finished (only for a successful or failed
-            update, not for a cancelled update). Null is returned if the job
-            hasn't finished once yet.
-          type: string
-          format: date-time
-        timezone:
-          type: string
-          description: Timezone of where the scheduled job takes place
-          example: America/New_York
-    AgentUpdateJobStatus:
-      description: Overall state for the auto-update job from the admin perspective
-      type: string
-      enum:
-        - Cancelled
-        - Failed
-        - InProgress
-        - Paused
-        - Scheduled
-        - Success
-    AgentPoolUpdateSetting:
-      description: Setting for auto-update
-      type: object
-      properties:
-        agentType:
-          $ref: '#/components/schemas/AgentType'
-        continueOnError:
-          type: boolean
-          description: Continues the update even if some agents fail to update
-        latestVersion:
-          type: string
-          description: Latest version of the agent
-          example: 3.20.0
-        minimalSupportedVersion:
-          type: string
-          description: Minimal version of the agent
-          example: 3.19.0
-        poolId:
-          type: string
-          readOnly: true
-          description: ID of the agent pool that the settings apply to
-          example: 0oa3eu7ekG8tjbD9J5s6
-        poolName:
-          type: string
-          description: Pool name
-          example: iwa.dc
-        releaseChannel:
-          $ref: '#/components/schemas/ReleaseChannel'
-    ReleaseChannel:
-      description: Release channel for auto-update
-      type: string
-      enum:
-        - BETA
-        - EA
-        - GA
-        - TEST
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -825,6 +817,13 @@ components:
         your current location in the list and is obtained from the `Link`
         response header. See
         [Pagination](https://developer.okta.com/docs/api/#pagination).
+    pathPoolId:
+      name: poolId
+      in: path
+      description: ID of the agent pool for which the settings apply to
+      schema:
+        type: string
+      required: true
     queryScheduled:
       name: scheduled
       in: query
@@ -834,6 +833,13 @@ components:
       schema:
         type: boolean
       required: false
+    pathUpdateId:
+      name: updateId
+      in: path
+      description: ID of the update
+      schema:
+        type: string
+      required: true
   examples:
     ListAllAgentPoolsResponse:
       summary: List all agent pools
@@ -864,22 +870,6 @@ components:
           _links:
             self:
               href: /api/v1/agentPools/poolId1
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     ListAllAgentPoolUpdatesResponse:
       summary: List all agent pool updates
       value:
@@ -910,6 +900,22 @@ components:
           _links:
             self:
               href: /api/v1/agentPools/poolId1/updates
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
     ErrorResourceNotFound:
       summary: Resource Not Found
       value:
@@ -926,11 +932,6 @@ components:
         errorLink: E0000001
         errorId: sampleiCF-8D5rLW6myqiPItW
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

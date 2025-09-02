@@ -78,14 +78,6 @@ components:
             - invalid_issuer
             - invalid_key
             - invalid_request
-  responses: {}
-  parameters: {}
-  examples: {}
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

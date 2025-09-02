@@ -120,6 +120,10 @@ paths:
             - okta.roles.manage
       tags:
         - GovernanceBundle
+    x-okta-lifecycle:
+      lifecycle: GA
+      isGenerallyAvailable: false
+      SKUs: []
   /api/v1/iam/governance/bundles/{bundleId}:
     get:
       summary: Retrieve a governance bundle from RAMP
@@ -147,8 +151,6 @@ paths:
             - okta.roles.read
       tags:
         - GovernanceBundle
-      parameters:
-        - $ref: '#/components/parameters/pathBundleId'
     put:
       summary: Replace a governance bundle in RAMP
       description: Replaces a Governance Bundle in RAMP
@@ -190,8 +192,6 @@ paths:
             - okta.roles.manage
       tags:
         - GovernanceBundle
-      parameters:
-        - $ref: '#/components/parameters/pathBundleId'
     delete:
       summary: Delete a governance bundle from RAMP
       description: Deletes a Governance Bundle from RAMP
@@ -209,15 +209,20 @@ paths:
             - okta.roles.manage
       tags:
         - GovernanceBundle
-      parameters:
-        - $ref: '#/components/parameters/pathBundleId'
+    x-okta-lifecycle:
+      lifecycle: GA
+      isGenerallyAvailable: false
+      SKUs: []
+    parameters:
+      - $ref: '#/components/parameters/pathBundleId'
   /api/v1/iam/governance/bundles/{bundleId}/entitlements:
     get:
       summary: List all entitlements for a governance bundle
       description: Lists all Entitlements specific to a Governance Bundle
       operationId: listBundleEntitlements
       parameters:
-        - $ref: '#/components/parameters/pathBundleId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: OK
@@ -238,14 +243,20 @@ paths:
             - okta.roles.read
       tags:
         - GovernanceBundle
+    x-okta-lifecycle:
+      lifecycle: GA
+      isGenerallyAvailable: false
+      SKUs: []
+    parameters:
+      - $ref: '#/components/parameters/pathBundleId'
   /api/v1/iam/governance/bundles/{bundleId}/entitlements/{entitlementId}/values:
     get:
       summary: List all entitlement values for a bundle entitlement
       description: Lists all Entitlement Values specific to a Bundle Entitlement
       operationId: listBundleEntitlementValues
       parameters:
-        - $ref: '#/components/parameters/pathBundleId'
-        - $ref: '#/components/parameters/pathEntitlementId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: OK
@@ -266,6 +277,13 @@ paths:
             - okta.roles.read
       tags:
         - GovernanceBundle
+    x-okta-lifecycle:
+      lifecycle: GA
+      isGenerallyAvailable: false
+      SKUs: []
+    parameters:
+      - $ref: '#/components/parameters/pathBundleId'
+      - $ref: '#/components/parameters/pathEntitlementId'
   /api/v1/iam/governance/optIn:
     get:
       summary: Retrieve the opt-in status from RAMP
@@ -315,6 +333,10 @@ paths:
             - okta.roles.manage
       tags:
         - GovernanceBundle
+    x-okta-lifecycle:
+      lifecycle: GA
+      isGenerallyAvailable: false
+      SKUs: []
   /api/v1/iam/governance/optOut:
     post:
       summary: Opt out the Admin Console from RAMP
@@ -458,8 +480,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
     put:
       summary: Replace a resource set
       description: Replaces the label and description of a resource set
@@ -501,8 +521,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
     delete:
       summary: Delete a resource set
       description: Deletes a resource set by `resourceSetIdOrLabel`
@@ -533,8 +551,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/bindings:
     get:
       summary: List all role resource set bindings
@@ -548,7 +566,7 @@ paths:
         resource with pagination for the next list of bindings.
       operationId: listBindings
       parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+        - $ref: '#/components/parameters/queryAfter'
       responses:
         '200':
           description: OK
@@ -631,8 +649,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/bindings/{roleIdOrLabel}:
     get:
       summary: Retrieve a role resource set binding
@@ -666,9 +684,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
     delete:
       summary: Delete a role resource set binding
       description: >-
@@ -701,17 +716,16 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/bindings/{roleIdOrLabel}/members:
     get:
       summary: List all role resource set binding members
       description: Lists all members of a role resource set binding with pagination support
       operationId: listMembersOfBinding
       parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
+        - $ref: '#/components/parameters/queryAfter'
       responses:
         '200':
           description: OK
@@ -786,9 +800,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/bindings/{roleIdOrLabel}/members/{memberId}:
     get:
       summary: Retrieve a role resource set binding member
@@ -821,10 +835,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathMemberId'
     delete:
       summary: Unassign a role resource set binding member
       description: >-
@@ -858,10 +868,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathMemberId'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
+      - $ref: '#/components/parameters/pathMemberId'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/resources:
     get:
       summary: List all resource set resources
@@ -892,8 +902,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
     post:
       x-okta-lifecycle:
         lifecycle: GA
@@ -942,8 +950,6 @@ paths:
             - okta.roles.manage
       tags:
         - RoleCResourceSetResource
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
     patch:
       summary: Add more resources to a resource set
       description: Adds more resources to a resource set
@@ -992,8 +998,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
   /api/v1/iam/resource-sets/{resourceSetIdOrLabel}/resources/{resourceId}:
     get:
       x-okta-lifecycle:
@@ -1033,9 +1039,6 @@ paths:
             - okta.roles.read
       tags:
         - RoleCResourceSetResource
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathResourceId'
     put:
       x-okta-lifecycle:
         lifecycle: GA
@@ -1085,9 +1088,6 @@ paths:
             - okta.roles.manage
       tags:
         - RoleCResourceSetResource
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathResourceId'
     delete:
       summary: Delete a resource set resource
       description: Deletes a resource (identified by `resourceId`) from a resource set
@@ -1118,9 +1118,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
-        - $ref: '#/components/parameters/pathResourceId'
+    parameters:
+      - $ref: '#/components/parameters/pathResourceSetIdOrLabel'
+      - $ref: '#/components/parameters/pathResourceId'
   /api/v1/iam/roles:
     get:
       summary: List all custom roles
@@ -1227,8 +1227,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
     put:
       summary: Replace a custom role
       description: Replaces the label and description for a custom role by `roleIdOrLabel`
@@ -1270,8 +1268,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
     delete:
       summary: Delete a custom role
       description: Deletes a custom role by `roleIdOrLabel`
@@ -1302,8 +1298,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
   /api/v1/iam/roles/{roleIdOrLabel}/permissions:
     get:
       summary: List all custom role permissions
@@ -1334,8 +1330,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
   /api/v1/iam/roles/{roleIdOrLabel}/permissions/{permissionType}:
     get:
       summary: Retrieve a custom role permission
@@ -1370,9 +1366,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathPermissionType'
     post:
       summary: Create a custom role permission
       description: Creates a permission (specified by `permissionType`) for a custom role
@@ -1414,9 +1407,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathPermissionType'
     put:
       x-okta-lifecycle:
         lifecycle: GA
@@ -1462,9 +1452,6 @@ paths:
             - okta.roles.manage
       tags:
         - RoleECustomPermission
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathPermissionType'
     delete:
       summary: Delete a custom role permission
       description: Deletes a permission (identified by `permissionType`) from a custom role
@@ -1495,9 +1482,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathRoleIdOrLabel'
-        - $ref: '#/components/parameters/pathPermissionType'
+    parameters:
+      - $ref: '#/components/parameters/pathRoleIdOrLabel'
+      - $ref: '#/components/parameters/pathPermissionType'
 components:
   schemas:
     RoleAssignedUsers:
@@ -1534,112 +1521,6 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
-    RoleAssignedUser:
-      type: object
-      properties:
-        id:
-          type: string
-          readOnly: true
-          description: The ID of the user
-        orn:
-          type: string
-          readOnly: true
-          description: ORN representing the assignee
-        _links:
-          $ref: '#/components/schemas/LinksSelfAndRoles'
-    LinksNextForRoleAssignments:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification.
-      type: object
-      properties:
-        next:
-          allOf:
-            - $ref: '#/components/schemas/HrefObject'
-            - description: >-
-                The next page of results if [pagination](#pagination) is
-                required
-      readOnly: true
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    LinksSelfAndRoles:
-      allOf:
-        - $ref: '#/components/schemas/LinksSelf'
-        - type: object
-          properties:
-            roles:
-              $ref: '#/components/schemas/HrefObjectRoleLink'
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    HrefObjectRoleLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the role resource
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     GovernanceBundlesResponse:
       type: object
       properties:
@@ -1651,6 +1532,17 @@ components:
           anyOf:
             - $ref: '#/components/schemas/LinksSelf'
             - $ref: '#/components/schemas/LinksNext'
+    GovernanceBundleCreateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        entitlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/IAMBundleEntitlement'
+        name:
+          type: string
     GovernanceBundle:
       type: object
       properties:
@@ -1670,43 +1562,6 @@ components:
                 entitlements:
                   $ref: '#/components/schemas/HrefObject'
               type: object
-    LinksNext:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of an application using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. Use the `LinksNext` object for dynamic discovery of
-        related resources and lifecycle operations.
-      type: object
-      properties:
-        next:
-          $ref: '#/components/schemas/HrefObject'
-      readOnly: true
-    GovernanceBundleCreateRequest:
-      type: object
-      properties:
-        description:
-          type: string
-        entitlements:
-          type: array
-          items:
-            $ref: '#/components/schemas/IAMBundleEntitlement'
-        name:
-          type: string
-    IAMBundleEntitlement:
-      type: object
-      properties:
-        resourceSets:
-          type: array
-          items:
-            type: string
-        role:
-          type: string
-        targets:
-          type: array
-          items:
-            type: string
     GovernanceBundleUpdateRequest:
       type: object
       properties:
@@ -1745,23 +1600,6 @@ components:
               allOf:
                 - $ref: '#/components/schemas/HrefObject'
                 - description: Link to the bundle resource
-    BundleEntitlement:
-      type: object
-      properties:
-        description:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        role:
-          type: string
-        _links:
-          allOf:
-            - properties:
-                values:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
     EntitlementValuesResponse:
       type: object
       properties:
@@ -1779,43 +1617,6 @@ components:
                 entitlements:
                   $ref: '#/components/schemas/HrefObject'
               type: object
-    EntitlementValue:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        value:
-          type: string
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using
-            the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            group:
-              $ref: '#/components/schemas/HrefObjectGroupLink'
-            app:
-              $ref: '#/components/schemas/HrefObjectAppLink'
-            resource-set:
-              $ref: '#/components/schemas/HrefObjectResourceSetLink'
-    HrefObjectGroupLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the group resource
-    HrefObjectAppLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app resource
-    HrefObjectResourceSetLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource set resource
     OptInStatusResponse:
       type: object
       properties:
@@ -1841,6 +1642,29 @@ components:
             $ref: '#/components/schemas/ResourceSet'
         _links:
           $ref: '#/components/schemas/LinksNext'
+    CreateResourceSetRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the resource set
+        label:
+          type: string
+          description: Unique name for the resource set
+        resources:
+          type: array
+          description: >-
+            The endpoint (URL) that references all resource objects included in
+            the resource set. Resources are identified by either an Okta
+            Resource Name (ORN) or by a REST URL format. See [Okta Resource
+            Name](/openapi/okta-management/guides/roles/#okta-resource-name-orn).
+          maximum: 1000
+          items:
+            type: string
+      required:
+        - description
+        - label
+        - resources
     ResourceSet:
       type: object
       properties:
@@ -1873,37 +1697,6 @@ components:
                 bindings:
                   $ref: '#/components/schemas/HrefObjectBindingsLink'
               type: object
-    HrefObjectResourceSetResourcesLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to resource set resources
-    HrefObjectBindingsLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the bindings resource
-    CreateResourceSetRequest:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the resource set
-        label:
-          type: string
-          description: Unique name for the resource set
-        resources:
-          type: array
-          description: >-
-            The endpoint (URL) that references all resource objects included in
-            the resource set. Resources are identified by either an Okta
-            Resource Name (ORN) or by a REST URL format. See [Okta Resource
-            Name](/openapi/okta-management/guides/roles/#okta-resource-name-orn).
-          maximum: 1000
-          items:
-            type: string
-      required:
-        - description
-        - label
-        - resources
     ResourceSetBindings:
       type: object
       properties:
@@ -1928,23 +1721,6 @@ components:
                 resource-set:
                   $ref: '#/components/schemas/HrefObjectResourceSetLink'
               type: object
-    ResourceSetBindingRole:
-      type: object
-      properties:
-        id:
-          type: string
-          description: '`id` of the role'
-        _links:
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                members:
-                  $ref: '#/components/schemas/HrefObjectMembersLink'
-              type: object
-    HrefObjectMembersLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the members resource
     ResourceSetBindingCreateRequest:
       type: object
       properties:
@@ -2007,6 +1783,16 @@ components:
                 binding:
                   $ref: '#/components/schemas/HrefObjectBindingLink'
               type: object
+    ResourceSetBindingAddMembersRequest:
+      type: object
+      properties:
+        additions:
+          type: array
+          description: A list of member resources to add to the role resource set binding
+          items:
+            type: string
+            description: User or group resources
+            example: https://{yourOktaDomain}/api/v1/groups/{groupId}
     ResourceSetBindingMember:
       type: object
       properties:
@@ -2026,20 +1812,6 @@ components:
           readOnly: true
         _links:
           $ref: '#/components/schemas/LinksSelf'
-    HrefObjectBindingLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the binding resource
-    ResourceSetBindingAddMembersRequest:
-      type: object
-      properties:
-        additions:
-          type: array
-          description: A list of member resources to add to the role resource set binding
-          items:
-            type: string
-            description: User or group resources
-            example: https://{yourOktaDomain}/api/v1/groups/{groupId}
     ResourceSetResources:
       type: object
       properties:
@@ -2054,6 +1826,17 @@ components:
                 resource-set:
                   $ref: '#/components/schemas/HrefObject'
               type: object
+    ResourceSetResourcePostRequest:
+      type: object
+      properties:
+        conditions:
+          $ref: '#/components/schemas/ResourceConditions'
+        resourceOrnOrUrl:
+          type: string
+          description: Resource in ORN or REST API URL format
+      required:
+        - resourceOrnOrUrl
+        - conditions
     ResourceSetResource:
       type: object
       properties:
@@ -2101,34 +1884,6 @@ components:
                     If applicable, the REST API URL of the related users
                     resource
           type: object
-    ResourceConditions:
-      x-okta-lifecycle:
-        lifecycle: GA
-        isGenerallyAvailable: true
-      description: Conditions for further restricting a resource.
-      nullable: false
-      type: object
-      properties:
-        Exclude:
-          type: object
-          description: Specific resources to exclude
-          properties:
-            okta:ORN:
-              type: array
-              description: List of specific resources to exclude in ORN format
-              items:
-                type: string
-    ResourceSetResourcePostRequest:
-      type: object
-      properties:
-        conditions:
-          $ref: '#/components/schemas/ResourceConditions'
-        resourceOrnOrUrl:
-          type: string
-          description: Resource in ORN or REST API URL format
-      required:
-        - resourceOrnOrUrl
-        - conditions
     ResourceSetResourcePatchRequest:
       type: object
       properties:
@@ -2152,6 +1907,24 @@ components:
             $ref: '#/components/schemas/IamRole'
         _links:
           $ref: '#/components/schemas/LinksNext'
+    CreateIamRoleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the role
+        label:
+          type: string
+          description: Unique label for the role
+        permissions:
+          type: array
+          description: >-
+            Array of permissions that the role grants. See
+            [Permissions](/openapi/okta-management/guides/permissions).
+      required:
+        - label
+        - description
+        - permissions
     IamRole:
       type: object
       properties:
@@ -2185,24 +1958,6 @@ components:
       required:
         - label
         - description
-    CreateIamRoleRequest:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the role
-        label:
-          type: string
-          description: Unique label for the role
-        permissions:
-          type: array
-          description: >-
-            Array of permissions that the role grants. See
-            [Permissions](/openapi/okta-management/guides/permissions).
-      required:
-        - label
-        - description
-        - permissions
     UpdateIamRoleRequest:
       type: object
       properties:
@@ -2255,6 +2010,209 @@ components:
                 role:
                   $ref: '#/components/schemas/HrefObjectRoleLink'
               type: object
+    CreateUpdateIamRolePermissionRequest:
+      type: object
+      properties:
+        conditions:
+          $ref: '#/components/schemas/PermissionConditions'
+    RoleAssignedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: The ID of the user
+        orn:
+          type: string
+          readOnly: true
+          description: ORN representing the assignee
+        _links:
+          $ref: '#/components/schemas/LinksSelfAndRoles'
+    LinksNextForRoleAssignments:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification.
+      type: object
+      properties:
+        next:
+          allOf:
+            - $ref: '#/components/schemas/HrefObject'
+            - description: >-
+                The next page of results if [pagination](#pagination) is
+                required
+      readOnly: true
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    LinksNext:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of an application using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. Use the `LinksNext` object for dynamic discovery of
+        related resources and lifecycle operations.
+      type: object
+      properties:
+        next:
+          $ref: '#/components/schemas/HrefObject'
+      readOnly: true
+    IAMBundleEntitlement:
+      type: object
+      properties:
+        resourceSets:
+          type: array
+          items:
+            type: string
+        role:
+          type: string
+        targets:
+          type: array
+          items:
+            type: string
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    BundleEntitlement:
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        _links:
+          allOf:
+            - properties:
+                values:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
+    EntitlementValue:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using
+            the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            group:
+              $ref: '#/components/schemas/HrefObjectGroupLink'
+            app:
+              $ref: '#/components/schemas/HrefObjectAppLink'
+            resource-set:
+              $ref: '#/components/schemas/HrefObjectResourceSetLink'
+    HrefObjectResourceSetResourcesLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to resource set resources
+    HrefObjectBindingsLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the bindings resource
+    ResourceSetBindingRole:
+      type: object
+      properties:
+        id:
+          type: string
+          description: '`id` of the role'
+        _links:
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                members:
+                  $ref: '#/components/schemas/HrefObjectMembersLink'
+              type: object
+    HrefObjectResourceSetLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource set resource
+    HrefObjectMembersLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the members resource
+    HrefObjectBindingLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the binding resource
+    ResourceConditions:
+      x-okta-lifecycle:
+        lifecycle: GA
+        isGenerallyAvailable: true
+      description: Conditions for further restricting a resource.
+      nullable: false
+      type: object
+      properties:
+        Exclude:
+          type: object
+          description: Specific resources to exclude
+          properties:
+            okta:ORN:
+              type: array
+              description: List of specific resources to exclude in ORN format
+              items:
+                type: string
     PermissionConditions:
       x-okta-lifecycle:
         lifecycle: GA
@@ -2279,11 +2237,40 @@ components:
             type: object
             properties: {}
           nullable: true
-    CreateUpdateIamRolePermissionRequest:
+    HrefObjectRoleLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the role resource
+    LinksSelfAndRoles:
+      allOf:
+        - $ref: '#/components/schemas/LinksSelf'
+        - type: object
+          properties:
+            roles:
+              $ref: '#/components/schemas/HrefObjectRoleLink'
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
       type: object
       properties:
-        conditions:
-          $ref: '#/components/schemas/PermissionConditions'
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    HrefObjectGroupLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the group resource
+    HrefObjectAppLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app resource
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
   responses:
     ErrorTooManyRequests429:
       description: Too Many Requests
@@ -2341,6 +2328,62 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathBundleId:
+      name: bundleId
+      in: path
+      schema:
+        type: string
+        example: enbllojq9J9J105DL1d6
+      required: true
+      description: The `id` of a bundle
+    pathEntitlementId:
+      name: entitlementId
+      in: path
+      schema:
+        type: string
+        example: ent4rg7fltWSgrlDT8g6
+      required: true
+      description: The `id` of a bundle entitlement
+    pathResourceSetIdOrLabel:
+      name: resourceSetIdOrLabel
+      in: path
+      schema:
+        type: string
+        example: iamoJDFKaJxGIr0oamd9g
+      required: true
+      description: '`id` or `label` of the resource set'
+    pathRoleIdOrLabel:
+      name: roleIdOrLabel
+      in: path
+      schema:
+        type: string
+        example: cr0Yq6IJxGIr0ouum0g3
+      required: true
+      description: '`id` or `label` of the role'
+    pathMemberId:
+      name: memberId
+      in: path
+      schema:
+        type: string
+        example: irb1qe6PGuMc7Oh8N0g4
+      required: true
+      description: '`id` of the member'
+    pathResourceId:
+      name: resourceId
+      in: path
+      schema:
+        type: string
+        example: ire106sQKoHoXXsAe0g4
+      required: true
+      description: '`id` of the resource'
+    pathPermissionType:
+      name: permissionType
+      in: path
+      schema:
+        type: string
+        example: okta.users.manage
+      required: true
+      description: An Okta [permission](/openapi/okta-management/guides/permissions)
   examples:
     RoleAssignedUsersResponseExample:
       value:
@@ -2358,14 +2401,6 @@ components:
           next:
             href: >-
               http://your-subdomain.okta.com/api/v1/iam/assignees/users?after=00u118oQYT4TBGuay0g4&limit=1
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     GovernanceBundlesResponse:
       summary: List of governance bundles
       value:
@@ -2386,14 +2421,6 @@ components:
           next:
             href: >-
               http://your-subdomain.okta.com/api/v1/iam/governance/bundles?after=bundleId12
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
     GovernanceBundleCreateRequestStandardRole:
       summary: Create governance bundle with non-scoped standard role
       value:
@@ -2432,14 +2459,6 @@ components:
             http://your-subdomain.okta.com/api/v1/iam/governance/bundles/0bbfxqCAJWWGELFTYAAA
           entitlements: >-
             http://your-subdomain.okta.com/api/v1/iam/governance/bundles/0bbfxqCAJWWGELFTYAAA/entitlements
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     GovernanceBundleUpdateRequestStandardRole:
       summary: Update governance bundle with non-scoped standard role
       value:
@@ -2584,13 +2603,13 @@ components:
           bindings:
             href: >-
               https://{yourOktaDomain}/api/v1/iam/resource-sets/iamoJDFKaJxGIr0oamd9g/bindings
-    ErrorResourceNotFound:
-      summary: Resource Not Found
+    ErrorAccessDenied:
+      summary: Access Denied
       value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
         errorCauses: []
     ReplaceResourceSetRequest:
       value:
@@ -2914,11 +2933,30 @@ components:
           exclude:
             okta:ResourceAttribute/User/Profile:
               - zipCode
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

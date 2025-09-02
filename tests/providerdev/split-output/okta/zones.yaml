@@ -161,8 +161,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathZoneId'
     put:
       summary: Replace a network zone
       description: >-
@@ -232,8 +230,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathZoneId'
     delete:
       summary: Delete a network zone
       description: >-
@@ -268,8 +264,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathZoneId'
+    parameters:
+      - $ref: '#/components/parameters/pathZoneId'
   /api/v1/zones/{zoneId}/lifecycle/activate:
     post:
       summary: Activate a network zone
@@ -300,8 +296,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathZoneId'
+    parameters:
+      - $ref: '#/components/parameters/pathZoneId'
   /api/v1/zones/{zoneId}/lifecycle/deactivate:
     post:
       summary: Deactivate a network zone
@@ -332,8 +328,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathZoneId'
+    parameters:
+      - $ref: '#/components/parameters/pathZoneId'
 components:
   schemas:
     NetworkZone:
@@ -562,7 +558,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/NzErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathZoneId:
+      name: zoneId
+      in: path
+      schema:
+        type: string
+      required: true
+      description: '`id` of the Network Zone'
+      example: nzowc1U5Jh5xuAK0o0g3
   examples:
     RetrieveAllZonesWithFilter:
       summary: Retrieves network zones with filter
@@ -766,22 +770,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateIPPolicyNetworkZone:
       summary: Create an IP policy network zone
       value:
@@ -936,14 +924,6 @@ components:
             hints:
               allow:
                 - POST
-    NzErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000003
-        errorSummary: The request body was not well-formed.
-        errorLink: E0000003
-        errorId: samplewNxQUR9iohr4QYlD0eg
-        errorCauses: []
     RetrieveNetworkZoneIP:
       summary: IP network zone
       value:
@@ -1006,14 +986,6 @@ components:
             hints:
               allow:
                 - POST
-    NzErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: Resource not found: itd (NetworkZone)'
-        errorLink: E0000007
-        errorId: samplejCSVaKFDkCMElmKQ
-        errorCauses: []
     ReplaceNetworkZone:
       summary: Replace a network zone
       value:
@@ -1219,11 +1191,38 @@ components:
             hints:
               allow:
                 - POST
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    NzErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000003
+        errorSummary: The request body was not well-formed.
+        errorLink: E0000003
+        errorId: samplewNxQUR9iohr4QYlD0eg
+        errorCauses: []
+    NzErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: Resource not found: itd (NetworkZone)'
+        errorLink: E0000007
+        errorId: samplejCSVaKFDkCMElmKQ
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

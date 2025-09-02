@@ -151,8 +151,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTrustedOriginId'
     put:
       summary: Replace a trusted origin
       description: Replaces a trusted origin
@@ -199,8 +197,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTrustedOriginId'
     delete:
       summary: Delete a trusted origin
       description: Deletes a trusted origin
@@ -224,8 +220,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTrustedOriginId'
+    parameters:
+      - $ref: '#/components/parameters/pathTrustedOriginId'
   /api/v1/trustedOrigins/{trustedOriginId}/lifecycle/activate:
     post:
       summary: Activate a trusted origin
@@ -256,8 +252,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTrustedOriginId'
+    parameters:
+      - $ref: '#/components/parameters/pathTrustedOriginId'
   /api/v1/trustedOrigins/{trustedOriginId}/lifecycle/deactivate:
     post:
       summary: Deactivate a trusted origin
@@ -288,8 +284,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathTrustedOriginId'
+    parameters:
+      - $ref: '#/components/parameters/pathTrustedOriginId'
 components:
   schemas:
     TrustedOrigin:
@@ -325,6 +321,15 @@ components:
           $ref: '#/components/schemas/LifecycleStatus'
         _links:
           $ref: '#/components/schemas/LinksSelfAndLifecycle'
+    TrustedOriginWrite:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/TrustedOriginName'
+        origin:
+          $ref: '#/components/schemas/TrustedOriginOrigin'
+        scopes:
+          $ref: '#/components/schemas/TrustedOriginScopes'
     TrustedOriginName:
       maximum: 255
       description: Unique name for the trusted origin
@@ -480,15 +485,6 @@ components:
         - GET
         - POST
         - PUT
-    TrustedOriginWrite:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/TrustedOriginName'
-        origin:
-          $ref: '#/components/schemas/TrustedOriginOrigin'
-        scopes:
-          $ref: '#/components/schemas/TrustedOriginScopes'
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -526,7 +522,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathTrustedOriginId:
+      name: trustedOriginId
+      description: '`id` of the trusted origin'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 7j2PkU1nyNIDe26ZNufR
   examples:
     TrustedOriginsResponse:
       summary: Trusted origins response
@@ -557,22 +561,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     TrustedOriginBody:
       summary: Trusted origin request body
       value:
@@ -698,22 +686,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     TrustedOriginPutBody:
       summary: Trusted origin request body
       value:
@@ -865,11 +837,38 @@ components:
                 - GET
                 - PUT
                 - DELETE
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

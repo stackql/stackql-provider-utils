@@ -124,8 +124,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
     put:
       summary: Replace an event hook
       description: >-
@@ -176,8 +174,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
     delete:
       summary: Delete an event hook
       description: >-
@@ -206,8 +202,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathEventHookId'
   /api/v1/eventHooks/{eventHookId}/lifecycle/activate:
     post:
       summary: Activate an event hook
@@ -238,8 +234,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathEventHookId'
   /api/v1/eventHooks/{eventHookId}/lifecycle/deactivate:
     post:
       summary: Deactivate an event hook
@@ -270,8 +266,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathEventHookId'
   /api/v1/eventHooks/{eventHookId}/lifecycle/verify:
     post:
       summary: Verify an event hook
@@ -318,8 +314,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathEventHookId'
+    parameters:
+      - $ref: '#/components/parameters/pathEventHookId'
 components:
   schemas:
     EventHook:
@@ -680,7 +676,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathEventHookId:
+      name: eventHookId
+      description: '`id` of the Event Hook'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: who8vt36qfNpCGz9H1e6
   examples:
     RetrieveAllEventHooks:
       summary: Retrieves all event hooks
@@ -770,22 +774,6 @@ components:
               hints:
                 allow:
                   - POST
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateAnEventHook:
       summary: Create an event hook
       value:
@@ -923,22 +911,6 @@ components:
             hints:
               allow:
                 - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     ReplaceAnEventHookWithFilter:
       summary: Replace an event hook
       value:
@@ -1008,11 +980,38 @@ components:
             hints:
               allow:
                 - POST
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

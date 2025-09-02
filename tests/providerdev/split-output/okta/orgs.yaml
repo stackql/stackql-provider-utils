@@ -346,7 +346,6 @@ components:
           examples:
             InternalServerError:
               $ref: '#/components/examples/ErrorInternalServer'
-  parameters: {}
   examples:
     CreateChildOrgRequestEx:
       summary: Create org request
@@ -449,11 +448,6 @@ components:
         errorLink: E0000000
         errorId: sampleAlJ82XS2SDB_vaNIWgcA
         errorCauses: []
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
 servers:
   - url: https://{yourOktaDomain}
     variables:

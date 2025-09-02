@@ -317,8 +317,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathKid'
     put:
       summary: Replace an IdP key credential
       description: Replaces an identity provider (IdP) key credential by `kid`
@@ -360,8 +358,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathKid'
     delete:
       summary: Delete an IdP key credential
       description: >-
@@ -387,8 +383,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathKid'
+    parameters:
+      - $ref: '#/components/parameters/pathKid'
   /api/v1/idps/{idpId}:
     get:
       summary: Retrieve an IdP
@@ -421,8 +417,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
     put:
       summary: Replace an IdP
       description: Replaces an identity provider (IdP) integration by `idpId`
@@ -465,8 +459,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
     delete:
       summary: Delete an IdP
       description: >-
@@ -497,8 +489,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/credentials/csrs:
     get:
       summary: List all certificate signing requests
@@ -533,8 +525,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
     post:
       summary: Generate a certificate signing request
       description: >-
@@ -586,8 +576,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/credentials/csrs/{idpCsrId}:
     get:
       summary: Retrieve a certificate signing request
@@ -624,9 +614,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathIdpCsrId'
     delete:
       summary: Revoke a certificate signing request
       description: >-
@@ -652,9 +639,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathIdpCsrId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathIdpCsrId'
   /api/v1/idps/{idpId}/credentials/csrs/{idpCsrId}/lifecycle/publish:
     post:
       summary: Publish a certificate signing request
@@ -730,9 +717,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathIdpCsrId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathIdpCsrId'
   /api/v1/idps/{idpId}/credentials/keys:
     get:
       summary: List all signing key credentials for IdP
@@ -766,8 +753,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/credentials/keys/active:
     get:
       summary: List the active signing key credential for IdP
@@ -800,8 +787,8 @@ paths:
         isCorsEnabled: true
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/credentials/keys/generate:
     post:
       summary: Generate a new signing key credential for IdP
@@ -817,7 +804,15 @@ paths:
         credential](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/IdentityProvider/#tag/IdentityProvider/operation/replaceIdentityProvider!path=protocol/0/credentials/signing/kid&t=request).
       operationId: generateIdentityProviderSigningKey
       parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+        - name: validityYears
+          in: query
+          description: expiry of the IdP key credential
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 2
+            maximum: 10
       responses:
         '200':
           description: Success
@@ -843,6 +838,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/credentials/keys/{kid}:
     get:
       summary: Retrieve a signing key credential for IdP
@@ -873,9 +870,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathKid'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathKid'
   /api/v1/idps/{idpId}/credentials/keys/{kid}/clone:
     post:
       summary: Clone a signing key credential for IdP
@@ -891,8 +888,12 @@ paths:
         for the target IdP, you receive a 400 error response.
       operationId: cloneIdentityProviderKey
       parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathKid'
+        - name: targetIdpId
+          in: query
+          required: true
+          description: '`id` of the target IdP'
+          schema:
+            type: string
       responses:
         '201':
           description: Created
@@ -918,6 +919,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathKid'
   /api/v1/idps/{idpId}/lifecycle/activate:
     post:
       summary: Activate an IdP
@@ -948,8 +952,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/lifecycle/deactivate:
     post:
       summary: Deactivate an IdP
@@ -980,15 +984,23 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/users:
     get:
       summary: List all users for IdP
       description: Lists all the users linked to an identity provider (IdP)
       operationId: listIdentityProviderApplicationUsers
       parameters:
-        - $ref: '#/components/parameters/pathIdpId'
+        - $ref: '#/components/parameters/queryFilter'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
+        - name: expand
+          in: query
+          description: Expand user data
+          schema:
+            type: string
+            example: user
       responses:
         '200':
           description: Success
@@ -1016,6 +1028,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
   /api/v1/idps/{idpId}/users/{userId}:
     get:
       summary: Retrieve a user for IdP
@@ -1046,9 +1060,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathUserId'
     post:
       summary: Link a user to IdP
       description: >-
@@ -1098,9 +1109,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathUserId'
     delete:
       summary: Unlink a user from IdP
       description: >-
@@ -1127,9 +1135,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathUserId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathUserId'
   /api/v1/idps/{idpId}/users/{userId}/credentials/tokens:
     get:
       summary: List all tokens from OIDC IdP
@@ -1170,9 +1178,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathIdpId'
-        - $ref: '#/components/parameters/pathUserId'
+    parameters:
+      - $ref: '#/components/parameters/pathIdpId'
+      - $ref: '#/components/parameters/pathUserId'
 components:
   schemas:
     IdentityProviderType:
@@ -1454,6 +1462,220 @@ components:
                   allOf:
                     - $ref: '#/components/schemas/HrefObject'
               type: object
+    IdPKeyCredential:
+      description: >-
+        A [JSON Web Key](https://tools.ietf.org/html/rfc7517) for a signature or
+        encryption credential for an IdP
+      additionalProperties: true
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/Created'
+        e:
+          description: The exponent value for the RSA public key
+          type: string
+          example: AQAB
+        expiresAt:
+          $ref: '#/components/schemas/ExpiresAt'
+        kid:
+          description: Unique identifier for the key
+          type: string
+          example: your-key-id
+        kty:
+          description: Identifies the cryptographic algorithm family used with the key
+          type: string
+          example: RSA
+        lastUpdated:
+          $ref: '#/components/schemas/LastUpdated'
+        'n':
+          description: The modulus value for the RSA public key
+          type: string
+          example: >-
+            101438407598598116085679865987760095721749307901605456708912786847324207000576780508113360584555007890315805735307890113536927352312915634368993759211767770602174860126854831344273970871509573365292777620005537635317282520456901584213746937262823585533063042033441296629204165064680610660631365266976782082747
+        use:
+          description: Intended use of the public key
+          type: string
+          example: sig
+        x5c:
+          $ref: '#/components/schemas/X5c'
+        x5t#S256:
+          description: >-
+            Base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509
+            certificate
+          type: string
+          example: wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE
+    IdPCertificateCredential:
+      type: object
+      properties:
+        x5c:
+          $ref: '#/components/schemas/X5c'
+      required:
+        - x5c
+    IdPCsr:
+      description: Defines a CSR for a signature or decryption credential for an IdP
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/Created'
+        csr:
+          description: Base64-encoded CSR in DER format
+          type: string
+          readOnly: true
+          example: >-
+            MIIC4DCCAcgCAQAwcTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xEzARBgNVBAoMCk9rdGEsIEluYy4xDDAKBgNVBAsMA0RldjESMBAGA1UEAwwJU1AgSXNzdWVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6m8jHVCr9/tKvvbFN59T4raoCs/78KRm4fSefHQOv1TKLXo4wTLbsqYWRWc5u0sd5orUMQgPQOyj3i6qh13mALY4BzrT057EG1BUNjGg29QgYlnOk2iX890e5BIDMQQEIKFrvOi2V8cLUkLvE2ydRn0VO1Q1frbUkYeStJYC5Api2JQsYRwa+1ZeDH1ITnIzUaugWhW2WB2lSnwZkenne5KtffxMPYVu+IhNRHoKaRA6Z51YNhMJIx17JM2hs/H4Ka3drk6kzDf7ofk/yBpb9yBWyU7CTSQhdoHidxqFprMDaT66W928t3AeOENHBuwn8c2K9WeGG+bELNyQRJVmawIDAQABoCowKAYJKoZIhvcNAQkOMRswGTAXBgNVHREEEDAOggxkZXYub2t0YS5jb20wDQYJKoZIhvcNAQELBQADggEBAA2hsVJRVM+A83X9MekjTnIbt19UNT8wX7wlE9jUKirWsxceLiZBpVGn9qfKhhVIpvdaIRSeoFYS2Kg/m1G6bCvjmZLcrQ5FcEBjZH2NKfNppGVnfC2ugtUkBtCB+UUzOhKhRKJtGugenKbP33zRWWIqnd2waF6Cy8TIuqQVPbwEDN9bCbAs7ND6CFYNguY7KYjWzQOeAR716eqpEEXuPYAS4nx/ty4ylonR8cv+gpq51rvq80A4k/36aoeM0Y6I4w64vhTfuvWW2UYFUD+/+y2FA2CSP4JfctySrf1s525v6fzTFZ3qZbB5OZQtP2b8xYWktMzywsxGKDoVDB4wkH4=
+        id:
+          description: Unique identifier for the CSR
+          type: string
+          readOnly: true
+          example: h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
+        kty:
+          description: Cryptographic algorithm family for the CSR's keypair
+          type: string
+          example: RSA
+        _links:
+          type: object
+          additionalProperties: true
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                publish:
+                  description: Publish the CSR
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+              type: object
+    CsrMetadata:
+      type: object
+      properties:
+        subject:
+          $ref: '#/components/schemas/CsrMetadataSubject'
+        subjectAltNames:
+          $ref: '#/components/schemas/CsrMetadataSubjectAltNames'
+    IdPCsrPkcs10:
+      description: Base64URL-encoded CSR in DER format
+      format: base64
+      type: string
+    IdentityProviderApplicationUser:
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/Created'
+        externalId:
+          type: string
+          description: Unique IdP-specific identifier for the user
+          readOnly: true
+          maxLength: 512
+          example: saml.jackson@example.com
+        id:
+          type: string
+          description: Unique key of the user
+          readOnly: true
+        lastUpdated:
+          $ref: '#/components/schemas/LastUpdated'
+        profile:
+          type: object
+          description: >-
+            IdP-specific profile for the user. 
+
+
+            IdP user profiles are IdP-specific but may be customized by the
+            Profile Editor in the Admin Console.
+
+
+            > **Note:** Okta variable names have reserved characters that may
+            conflict with the name of an IdP assertion attribute. You can use
+            the **External name** to define the attribute name as defined in an
+            IdP assertion such as a SAML attribute name.
+          additionalProperties:
+            type: object
+            properties: {}
+          example:
+            lastName: Jackson
+            subjectNameQualifier: example.com
+            subjectSpNameQualifier: urn:federation:example
+            authnContextClassRef: null
+            subjectNameId: saml.jackson@example.com
+            subjectConfirmationAddress: null
+            displayName: Saml Jackson
+            mobilePhone: +1-415-555-5141
+            email: saml.jackson@example.com
+            subjectNameFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            firstName: Saml
+            subjectSpProvidedId: null
+            subjectConfirmationMethod: null
+        _embedded:
+          type: object
+          description: Embedded resources related to the IdP user
+          additionalProperties:
+            type: object
+            properties: {}
+          readOnly: true
+        _links:
+          type: object
+          additionalProperties: true
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - $ref: '#/components/schemas/LinksNext'
+            - properties:
+                idp:
+                  description: The IdP instance
+                  example:
+                    href: https://{yourOktaDomain}/api/v1/idps/0oa1k5d68qR2954hb0g4
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                user:
+                  description: The linked Okta user
+                  example:
+                    href: https://{yourOktaDomain}/api/v1/users/00ulwodIu7wCfdiVR0g3
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+              type: object
+    UserIdentityProviderLinkRequest:
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: Unique IdP-specific identifier for a user
+          example: '121749775026145'
+    SocialAuthToken:
+      description: >-
+        The social authentication token object provides the tokens and
+        associated metadata provided by social providers during social
+        authentication.
+      type: object
+      properties:
+        expiresAt:
+          $ref: '#/components/schemas/ExpiresAt'
+        id:
+          type: string
+          description: Unique identifier for the token
+          readOnly: true
+          example: NXp9GaX1eOA-XVF_H9fn2Q
+        scopes:
+          type: array
+          description: The scopes that the token is good for
+          readOnly: true
+          items:
+            type: string
+          example:
+            - openid
+            - foo
+        token:
+          type: string
+          description: The raw token
+          readOnly: true
+          example: JBTWGV22G4ZGKV3N
+        tokenAuthScheme:
+          type: string
+          readOnly: true
+          description: The token authentication scheme as defined by the social provider
+          example: Bearer
+        tokenType:
+          type: string
+          readOnly: true
+          description: >-
+            The type of token defined by the [OAuth Token Exchange
+            Spec](https://tools.ietf.org/html/draft-ietf-oauth-token-exchange-07#section-3)
+          example: urn:ietf:params:oauth:token-type:access_token
     Created:
       format: date-time
       description: Timestamp when the object was created
@@ -1768,6 +1990,70 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    ExpiresAt:
+      format: date-time
+      description: Timestamp when the object expires
+      example: '2016-01-03T18:15:47.000Z'
+      type: string
+      readOnly: true
+    X5c:
+      description: Base64-encoded X.509 certificate chain with DER encoding
+      items:
+        type: string
+        example: >-
+          MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMMB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCBjzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/DwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/IYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93sDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9
+      type: array
+    CsrMetadataSubject:
+      type: object
+      properties:
+        commonName:
+          type: string
+          description: Common name of the subject
+          example: SP Issuer
+        countryName:
+          type: string
+          description: Country name or code
+          example: US
+        localityName:
+          type: string
+          description: Locality (city) name
+          example: San Francisco
+        organizationalUnitName:
+          type: string
+          description: >-
+            Name of the smaller organization, for example, the department or the
+            division
+          example: Dev
+        organizationName:
+          type: string
+          description: Large organization name
+          example: Okta, Inc.
+        stateOrProvinceName:
+          type: string
+          description: State or province name
+          example: California
+    CsrMetadataSubjectAltNames:
+      type: object
+      properties:
+        dnsNames:
+          type: array
+          description: DNS names of the subject
+          items:
+            type: string
+            example: dev.okta.com
+    LinksNext:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
+        current status of an application using the [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. Use the `LinksNext` object for dynamic discovery of
+        related resources and lifecycle operations.
+      type: object
+      properties:
+        next:
+          $ref: '#/components/schemas/HrefObject'
+      readOnly: true
     PolicyAccountLink:
       description: Specifies the behavior for linking an IdP user to an existing Okta user
       type: object
@@ -2710,284 +2996,6 @@ components:
         - RS256
         - RS384
         - RS512
-    IdPKeyCredential:
-      description: >-
-        A [JSON Web Key](https://tools.ietf.org/html/rfc7517) for a signature or
-        encryption credential for an IdP
-      additionalProperties: true
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/Created'
-        e:
-          description: The exponent value for the RSA public key
-          type: string
-          example: AQAB
-        expiresAt:
-          $ref: '#/components/schemas/ExpiresAt'
-        kid:
-          description: Unique identifier for the key
-          type: string
-          example: your-key-id
-        kty:
-          description: Identifies the cryptographic algorithm family used with the key
-          type: string
-          example: RSA
-        lastUpdated:
-          $ref: '#/components/schemas/LastUpdated'
-        'n':
-          description: The modulus value for the RSA public key
-          type: string
-          example: >-
-            101438407598598116085679865987760095721749307901605456708912786847324207000576780508113360584555007890315805735307890113536927352312915634368993759211767770602174860126854831344273970871509573365292777620005537635317282520456901584213746937262823585533063042033441296629204165064680610660631365266976782082747
-        use:
-          description: Intended use of the public key
-          type: string
-          example: sig
-        x5c:
-          $ref: '#/components/schemas/X5c'
-        x5t#S256:
-          description: >-
-            Base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509
-            certificate
-          type: string
-          example: wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE
-    ExpiresAt:
-      format: date-time
-      description: Timestamp when the object expires
-      example: '2016-01-03T18:15:47.000Z'
-      type: string
-      readOnly: true
-    X5c:
-      description: Base64-encoded X.509 certificate chain with DER encoding
-      items:
-        type: string
-        example: >-
-          MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMMB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCBjzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/DwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/IYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93sDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9
-      type: array
-    IdPCertificateCredential:
-      type: object
-      properties:
-        x5c:
-          $ref: '#/components/schemas/X5c'
-      required:
-        - x5c
-    IdPCsr:
-      description: Defines a CSR for a signature or decryption credential for an IdP
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/Created'
-        csr:
-          description: Base64-encoded CSR in DER format
-          type: string
-          readOnly: true
-          example: >-
-            MIIC4DCCAcgCAQAwcTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xEzARBgNVBAoMCk9rdGEsIEluYy4xDDAKBgNVBAsMA0RldjESMBAGA1UEAwwJU1AgSXNzdWVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6m8jHVCr9/tKvvbFN59T4raoCs/78KRm4fSefHQOv1TKLXo4wTLbsqYWRWc5u0sd5orUMQgPQOyj3i6qh13mALY4BzrT057EG1BUNjGg29QgYlnOk2iX890e5BIDMQQEIKFrvOi2V8cLUkLvE2ydRn0VO1Q1frbUkYeStJYC5Api2JQsYRwa+1ZeDH1ITnIzUaugWhW2WB2lSnwZkenne5KtffxMPYVu+IhNRHoKaRA6Z51YNhMJIx17JM2hs/H4Ka3drk6kzDf7ofk/yBpb9yBWyU7CTSQhdoHidxqFprMDaT66W928t3AeOENHBuwn8c2K9WeGG+bELNyQRJVmawIDAQABoCowKAYJKoZIhvcNAQkOMRswGTAXBgNVHREEEDAOggxkZXYub2t0YS5jb20wDQYJKoZIhvcNAQELBQADggEBAA2hsVJRVM+A83X9MekjTnIbt19UNT8wX7wlE9jUKirWsxceLiZBpVGn9qfKhhVIpvdaIRSeoFYS2Kg/m1G6bCvjmZLcrQ5FcEBjZH2NKfNppGVnfC2ugtUkBtCB+UUzOhKhRKJtGugenKbP33zRWWIqnd2waF6Cy8TIuqQVPbwEDN9bCbAs7ND6CFYNguY7KYjWzQOeAR716eqpEEXuPYAS4nx/ty4ylonR8cv+gpq51rvq80A4k/36aoeM0Y6I4w64vhTfuvWW2UYFUD+/+y2FA2CSP4JfctySrf1s525v6fzTFZ3qZbB5OZQtP2b8xYWktMzywsxGKDoVDB4wkH4=
-        id:
-          description: Unique identifier for the CSR
-          type: string
-          readOnly: true
-          example: h9zkutaSe7fZX0SwN1GqDApofgD1OW8g2B5l2azha50
-        kty:
-          description: Cryptographic algorithm family for the CSR's keypair
-          type: string
-          example: RSA
-        _links:
-          type: object
-          additionalProperties: true
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                publish:
-                  description: Publish the CSR
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-              type: object
-    CsrMetadata:
-      type: object
-      properties:
-        subject:
-          $ref: '#/components/schemas/CsrMetadataSubject'
-        subjectAltNames:
-          $ref: '#/components/schemas/CsrMetadataSubjectAltNames'
-    IdPCsrPkcs10:
-      description: Base64URL-encoded CSR in DER format
-      format: base64
-      type: string
-    CsrMetadataSubject:
-      type: object
-      properties:
-        commonName:
-          type: string
-          description: Common name of the subject
-          example: SP Issuer
-        countryName:
-          type: string
-          description: Country name or code
-          example: US
-        localityName:
-          type: string
-          description: Locality (city) name
-          example: San Francisco
-        organizationalUnitName:
-          type: string
-          description: >-
-            Name of the smaller organization, for example, the department or the
-            division
-          example: Dev
-        organizationName:
-          type: string
-          description: Large organization name
-          example: Okta, Inc.
-        stateOrProvinceName:
-          type: string
-          description: State or province name
-          example: California
-    CsrMetadataSubjectAltNames:
-      type: object
-      properties:
-        dnsNames:
-          type: array
-          description: DNS names of the subject
-          items:
-            type: string
-            example: dev.okta.com
-    IdentityProviderApplicationUser:
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/Created'
-        externalId:
-          type: string
-          description: Unique IdP-specific identifier for the user
-          readOnly: true
-          maxLength: 512
-          example: saml.jackson@example.com
-        id:
-          type: string
-          description: Unique key of the user
-          readOnly: true
-        lastUpdated:
-          $ref: '#/components/schemas/LastUpdated'
-        profile:
-          type: object
-          description: >-
-            IdP-specific profile for the user. 
-
-
-            IdP user profiles are IdP-specific but may be customized by the
-            Profile Editor in the Admin Console.
-
-
-            > **Note:** Okta variable names have reserved characters that may
-            conflict with the name of an IdP assertion attribute. You can use
-            the **External name** to define the attribute name as defined in an
-            IdP assertion such as a SAML attribute name.
-          additionalProperties:
-            type: object
-            properties: {}
-          example:
-            lastName: Jackson
-            subjectNameQualifier: example.com
-            subjectSpNameQualifier: urn:federation:example
-            authnContextClassRef: null
-            subjectNameId: saml.jackson@example.com
-            subjectConfirmationAddress: null
-            displayName: Saml Jackson
-            mobilePhone: +1-415-555-5141
-            email: saml.jackson@example.com
-            subjectNameFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
-            firstName: Saml
-            subjectSpProvidedId: null
-            subjectConfirmationMethod: null
-        _embedded:
-          type: object
-          description: Embedded resources related to the IdP user
-          additionalProperties:
-            type: object
-            properties: {}
-          readOnly: true
-        _links:
-          type: object
-          additionalProperties: true
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - $ref: '#/components/schemas/LinksNext'
-            - properties:
-                idp:
-                  description: The IdP instance
-                  example:
-                    href: https://{yourOktaDomain}/api/v1/idps/0oa1k5d68qR2954hb0g4
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                user:
-                  description: The linked Okta user
-                  example:
-                    href: https://{yourOktaDomain}/api/v1/users/00ulwodIu7wCfdiVR0g3
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-              type: object
-    LinksNext:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available for the
-        current status of an application using the [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. Use the `LinksNext` object for dynamic discovery of
-        related resources and lifecycle operations.
-      type: object
-      properties:
-        next:
-          $ref: '#/components/schemas/HrefObject'
-      readOnly: true
-    UserIdentityProviderLinkRequest:
-      type: object
-      properties:
-        externalId:
-          type: string
-          description: Unique IdP-specific identifier for a user
-          example: '121749775026145'
-    SocialAuthToken:
-      description: >-
-        The social authentication token object provides the tokens and
-        associated metadata provided by social providers during social
-        authentication.
-      type: object
-      properties:
-        expiresAt:
-          $ref: '#/components/schemas/ExpiresAt'
-        id:
-          type: string
-          description: Unique identifier for the token
-          readOnly: true
-          example: NXp9GaX1eOA-XVF_H9fn2Q
-        scopes:
-          type: array
-          description: The scopes that the token is good for
-          readOnly: true
-          items:
-            type: string
-          example:
-            - openid
-            - foo
-        token:
-          type: string
-          description: The raw token
-          readOnly: true
-          example: JBTWGV22G4ZGKV3N
-        tokenAuthScheme:
-          type: string
-          readOnly: true
-          description: The token authentication scheme as defined by the social provider
-          example: Bearer
-        tokenType:
-          type: string
-          readOnly: true
-          description: >-
-            The type of token defined by the [OAuth Token Exchange
-            Spec](https://tools.ietf.org/html/draft-ietf-oauth-token-exchange-07#section-3)
-          example: urn:ietf:params:oauth:token-type:access_token
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -3045,12 +3053,44 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathKid:
+      name: kid
+      description: Unique `id` of the IdP key credential
+      in: path
+      required: true
+      schema:
+        type: string
+        example: KmMo85SSsU7TZzOShcGb
+    pathIdpId:
+      name: idpId
+      description: '`id` of IdP'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oa62bfdjnK55Z5x80h7
+    pathIdpCsrId:
+      name: idpCsrId
+      description: '`id` of the IdP CSR'
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1uEhyE65oV3H6KM9gYcN
     queryFilter:
       name: q
       in: query
       description: Searches the records for matching value
       schema:
         type: string
+    pathUserId:
+      name: userId
+      description: ID of an existing Okta user
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00ub0oNGTSWTBKOLGLNR
   examples:
     MultipleIdPsResponse:
       summary: Multiple IdPs
@@ -3480,22 +3520,6 @@ components:
               hints:
                 allow:
                   - GET
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     CreateGenericOidcIdPRequest:
       summary: Create generic OpenID Connect IdP
       value:
@@ -4520,14 +4544,6 @@ components:
           hints:
             allow:
               - POST
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     MultipleIdPKeyCredentialsResponse:
       summary: IdP key credentials
       value:
@@ -4574,14 +4590,6 @@ components:
           - >-
             MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMMB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCBjzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/DwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/IYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93sDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9
         x5t#S256: wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     IdPKeyCredentialRequest:
       summary: IdP key credential
       value:
@@ -5005,11 +5013,38 @@ components:
           token: JBTWGV22G4ZJBRXJ
           tokenType: urn:ietf:params:oauth:token-type:id_token
           tokenAuthScheme: null
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

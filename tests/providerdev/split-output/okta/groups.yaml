@@ -398,7 +398,11 @@ paths:
       description: Retrieves a specific group rule by ID from your org
       operationId: getGroupRule
       parameters:
-        - $ref: '#/components/parameters/pathGroupRuleId'
+        - name: expand
+          in: query
+          description: If specified as `groupIdToGroupNameMap`, then show group names
+          schema:
+            type: string
       responses:
         '200':
           description: Success
@@ -470,14 +474,17 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupRuleId'
     delete:
       summary: Delete a group rule
       description: Deletes a specific group rule by `groupRuleId`
       operationId: deleteGroupRule
       parameters:
-        - $ref: '#/components/parameters/pathGroupRuleId'
+        - name: removeUsers
+          in: query
+          description: If set to `true`, removes users from groups assigned by this rule
+          schema:
+            type: boolean
+            default: false
       responses:
         '202':
           description: Accepted
@@ -497,6 +504,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupRuleId'
   /api/v1/groups/rules/{groupRuleId}/lifecycle/activate:
     post:
       summary: Activate a group rule
@@ -521,8 +530,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupRuleId'
   /api/v1/groups/rules/{groupRuleId}/lifecycle/deactivate:
     post:
       summary: Deactivate a group rule
@@ -547,8 +556,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupRuleId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupRuleId'
   /api/v1/groups/{groupId}:
     get:
       summary: Retrieve a group
@@ -579,8 +588,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
     put:
       summary: Replace a group
       description: >-
@@ -631,8 +638,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
     delete:
       summary: Delete a group
       description: >-
@@ -660,8 +665,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/groups/{groupId}/apps:
     get:
       summary: List all assigned apps
@@ -670,7 +675,18 @@ paths:
         API](/openapi/okta-management/management/tag/ApplicationGroups/).
       operationId: listAssignedApplicationsForGroup
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+        - name: after
+          in: query
+          description: Specifies the pagination cursor for the next page of apps
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Specifies the number of app results for a page
+          schema:
+            type: integer
+            format: int32
+            default: 20
       responses:
         '200':
           description: Success
@@ -698,13 +714,33 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/groups/{groupId}/owners:
     get:
       summary: List all group owners
       description: Lists all owners for a specific group
       operationId: listGroupOwners
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+        - name: search
+          in: query
+          description: >-
+            SCIM filter expression for group owners. Allows you to filter owners
+            by type.
+          schema:
+            type: string
+        - name: after
+          in: query
+          description: Specifies the pagination cursor for the next page of owners
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Specifies the number of owner results in a page
+          schema:
+            type: integer
+            format: int32
+            default: 1000
       responses:
         '200':
           description: Success
@@ -776,6 +812,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/groups/{groupId}/owners/{ownerId}:
     delete:
       summary: Delete a group owner
@@ -800,16 +838,16 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathOwnerId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathOwnerId'
   /api/v1/groups/{groupId}/roles:
     get:
       summary: List all group role assignments
       description: Lists all assigned roles of a group by `groupId`
       operationId: listGroupAssignedRoles
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+        - $ref: '#/components/parameters/pathQueryRoleExpand'
       responses:
         '200':
           description: Success
@@ -867,7 +905,12 @@ paths:
         assignments is similar to the custom role's assignment response.
       operationId: assignRoleToGroup
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+        - name: disableNotifications
+          in: query
+          description: Grants the group third-party admin status when set to `true`
+          schema:
+            type: boolean
+            default: false
       x-codegen-request-body-name: assignRoleRequest
       requestBody:
         content:
@@ -914,6 +957,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}:
     get:
       summary: Retrieve a group role assignment
@@ -954,9 +999,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
     delete:
       summary: Unassign a group role
       description: >-
@@ -982,9 +1024,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}/targets/catalog/apps:
     get:
       summary: List all group role app targets
@@ -995,8 +1037,8 @@ paths:
         OIN-cataloged app doesn't.
       operationId: listApplicationTargetsForApplicationAdministratorRoleForGroup
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: Success
@@ -1021,6 +1063,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}/targets/catalog/apps/{appName}:
     put:
       summary: Assign a group role app target
@@ -1053,10 +1098,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
     delete:
       summary: Unassign a group role app target
       description: >
@@ -1090,10 +1131,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathAppName'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}/targets/catalog/apps/{appName}/{appId}:
     put:
       summary: Assign a group role app instance target
@@ -1133,11 +1174,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
-        - $ref: '#/components/parameters/pathAppId'
     delete:
       summary: Unassign a group role app instance target
       description: >-
@@ -1172,11 +1208,11 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathAppName'
+      - $ref: '#/components/parameters/pathAppId'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}/targets/groups:
     get:
       summary: List all group role group targets
@@ -1190,8 +1226,8 @@ paths:
         empty array `[]`.
       operationId: listGroupTargetsForGroupRole
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: Success
@@ -1216,6 +1252,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /api/v1/groups/{groupId}/roles/{roleAssignmentId}/targets/groups/{targetGroupId}:
     put:
       summary: Assign a group role group target
@@ -1248,10 +1287,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathTargetGroupId'
     delete:
       summary: Unassign a group role group target
       description: >-
@@ -1279,10 +1314,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathTargetGroupId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathTargetGroupId'
   /api/v1/groups/{groupId}/users:
     get:
       summary: List all member users
@@ -1295,7 +1330,14 @@ paths:
         `limit=200`.
       operationId: listGroupUsers
       parameters:
-        - $ref: '#/components/parameters/pathGroupId'
+        - $ref: '#/components/parameters/queryAfter'
+        - name: limit
+          in: query
+          description: Specifies the number of user results in a page
+          schema:
+            type: integer
+            format: int32
+            default: 1000
       responses:
         '200':
           description: Success
@@ -1323,6 +1365,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
   /api/v1/groups/{groupId}/users/{userId}:
     put:
       summary: Assign a user to a group
@@ -1353,9 +1397,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathUserId'
     delete:
       summary: Unassign a user from a group
       description: >-
@@ -1388,9 +1429,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathGroupId'
-        - $ref: '#/components/parameters/pathUserId'
+    parameters:
+      - $ref: '#/components/parameters/pathGroupId'
+      - $ref: '#/components/parameters/pathUserId'
 components:
   schemas:
     Group:
@@ -1452,111 +1493,6 @@ components:
                 users:
                   $ref: '#/components/schemas/HrefObject'
               type: object
-    GroupProfile:
-      description: >-
-        Specifies required and optional properties for a group. The
-        `objectClass` of a group determines which additional properties are
-        available.
-
-
-        You can extend group profiles with custom properties, but you must first
-        add the properties to the group profile schema before you can reference
-        them. Use the Profile Editor in the Admin Console or the [Schemas
-        API](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Schema/)to
-        manage schema extensions.
-
-
-        Custom properties can contain HTML tags. It is the client's
-        responsibility to escape or encode this data before displaying it. Use
-        [best-practices](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
-        to prevent cross-site scripting.
-      anyOf:
-        - $ref: '#/components/schemas/OktaUserGroupProfile'
-        - $ref: '#/components/schemas/OktaActiveDirectoryGroupProfile'
-    GroupType:
-      description: Determines how a group's profile and memberships are managed
-      type: string
-      enum:
-        - APP_GROUP
-        - BUILT_IN
-        - OKTA_GROUP
-      x-enumDescriptions:
-        APP_GROUP: >-
-          Group profile and memberships are imported and must be managed within
-          the app (such as Active Directory or LDAP) that imported the group
-        BUILT_IN: >-
-          Group profile and memberships are managed by Okta and can't be
-          modified
-        OKTA_GROUP: >-
-          Group profile and memberships are directly managed in Okta via static
-          assignments or indirectly through group rules
-    LinksSelf:
-      description: >-
-        Specifies link relations (see [Web
-        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
-        [JSON Hypertext Application
-        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-        specification. This object is used for dynamic discovery of related
-        resources and lifecycle operations.
-      type: object
-      properties:
-        self:
-          $ref: '#/components/schemas/HrefObjectSelfLink'
-      readOnly: true
-    HrefObject:
-      title: Link Object
-      additionalProperties: true
-      type: object
-      properties:
-        hints:
-          $ref: '#/components/schemas/HrefHints'
-          readOnly: true
-        href:
-          type: string
-          description: Link URI
-        name:
-          type: string
-          description: Link name
-          readOnly: true
-        templated:
-          type: boolean
-          description: >-
-            Indicates whether the link object's `href` property is a URI
-            template.
-          readOnly: true
-        type:
-          type: string
-          description: >-
-            The media type of the link. If omitted, it is implicitly
-            `application/json`.
-          readOnly: true
-      required:
-        - href
-    Error:
-      title: Error
-      type: object
-      properties:
-        errorCauses:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
-        errorCode:
-          type: string
-          description: An Okta code for this type of error
-        errorId:
-          type: string
-          description: >-
-            A unique identifier for this error. This can be used by Okta Support
-            to help with troubleshooting.
-        errorLink:
-          type: string
-          description: An Okta code for this type of error
-        errorSummary:
-          type: string
-          description: >-
-            A short description of what caused this error. Sometimes this
-            contains dynamically-generated information about your specific
-            error.
     OktaUserGroupProfile:
       description: >-
         Profile for any group that is not imported from Active Directory.
@@ -1577,61 +1513,6 @@ components:
           example: West Coast users
           description: Name of the group
       x-okta-extensible: true
-    OktaActiveDirectoryGroupProfile:
-      description: |-
-        Profile for a group that is imported from Active Directory.
-
-        The `objectClass` for such groups is `okta:windows_security_principal`.
-      type: object
-      properties:
-        description:
-          type: string
-          example: All users in the engineering department
-          description: Description of the Windows group
-        dn:
-          type: string
-          example: CN=West Coast users,OU=West Coast,DC=example,DC=com
-          description: The distinguished name of the Windows group
-        externalId:
-          type: string
-          example: VKzYZ1C+IkSZxIWlrW5ITg==
-          description: Base-64 encoded GUID (`objectGUID`) of the Windows group
-        name:
-          type: string
-          example: West Coast users
-          description: Name of the Windows group
-        samAccountName:
-          type: string
-          example: West Coast users
-          description: Pre-Windows 2000 name of the Windows group
-        windowsDomainQualifiedName:
-          type: string
-          example: EXAMPLE\\West Coast users
-          description: Fully qualified name of the Windows group
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
-    HrefHints:
-      description: Describes allowed HTTP verbs for the `href`
-      type: object
-      properties:
-        allow:
-          type: array
-          items:
-            $ref: '#/components/schemas/HttpMethod'
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
-    HttpMethod:
-      type: string
-      enum:
-        - DELETE
-        - GET
-        - POST
-        - PUT
     GroupRule:
       type: object
       properties:
@@ -1665,75 +1546,6 @@ components:
           description: >-
             Type to indicate a group rule operation. Only `group_rule` is
             allowed.
-    GroupRuleAction:
-      description: Defines which users and groups to assign
-      type: object
-      properties:
-        assignUserToGroups:
-          $ref: '#/components/schemas/GroupRuleGroupAssignment'
-    GroupRuleConditions:
-      description: Defines group rule conditions
-      type: object
-      properties:
-        expression:
-          $ref: '#/components/schemas/GroupRuleExpression'
-        people:
-          $ref: '#/components/schemas/GroupRulePeopleCondition'
-    GroupRuleStatus:
-      description: Status of group rule
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-        - INVALID
-    GroupRuleGroupAssignment:
-      description: Contains the `groupIds` array
-      type: object
-      properties:
-        groupIds:
-          description: Array of `groupIds` to which users are added
-          type: array
-          items:
-            type: string
-    GroupRuleExpression:
-      description: >-
-        Defines Okta specific [group-rules
-        expression](https://developer.okta.com/docs/reference/okta-expression-language/#expressions-in-group-rules)
-      type: object
-      properties:
-        type:
-          type: string
-          description: Expression type. Only valid value is '`urn:okta:expression:1.0`'.
-        value:
-          type: string
-          description: Okta expression that would result in a Boolean value
-          example: user.role==\"Engineer\"
-    GroupRulePeopleCondition:
-      description: Defines conditions for `people` in a group rule
-      type: object
-      properties:
-        groups:
-          $ref: '#/components/schemas/GroupRuleGroupCondition'
-        users:
-          $ref: '#/components/schemas/GroupRuleUserCondition'
-    GroupRuleGroupCondition:
-      description: Currently not supported
-      type: object
-      properties:
-        exclude:
-          type: array
-          description: Currently not supported
-          items:
-            type: string
-    GroupRuleUserCondition:
-      description: Defines conditions specific to user exclusion
-      type: object
-      properties:
-        exclude:
-          type: array
-          description: Excluded `userIds` when processing rules
-          items:
-            type: string
     CreateGroupRuleRequest:
       type: object
       properties:
@@ -1992,6 +1804,541 @@ components:
           SAML_2_0: '#/components/schemas/SamlApplication'
           SECURE_PASSWORD_STORE: '#/components/schemas/SecurePasswordStoreApplication'
           WS_FEDERATION: '#/components/schemas/WsFederationApplication'
+    GroupOwner:
+      type: object
+      properties:
+        displayName:
+          description: The display name of the group owner
+          type: string
+          readOnly: true
+        id:
+          description: The `id` of the group owner
+          type: string
+        lastUpdated:
+          description: Timestamp when the group owner was last updated
+          type: string
+          format: date-time
+          readOnly: true
+        originId:
+          description: >-
+            The ID of the app instance if the `originType` is `APPLICATION`.
+            This value is `NULL` if `originType` is `OKTA_DIRECTORY`.
+          type: string
+        originType:
+          $ref: '#/components/schemas/GroupOwnerOriginType'
+        resolved:
+          description: >-
+            If `originType`is APPLICATION, this parameter is set to `FALSE`
+            until the owner's `originId` is reconciled with an associated Okta
+            ID.
+          type: boolean
+        type:
+          $ref: '#/components/schemas/GroupOwnerType'
+    AssignGroupOwnerRequestBody:
+      type: object
+      properties:
+        id:
+          description: The `id` of the group owner
+          type: string
+        type:
+          $ref: '#/components/schemas/GroupOwnerType'
+    StandardRole:
+      title: Standard Role Assignment
+      type: object
+      properties:
+        assignmentType:
+          $ref: '#/components/schemas/RoleAssignmentType'
+        created:
+          type: string
+          description: Timestamp when the object was created
+          format: date-time
+          readOnly: true
+        id:
+          type: string
+          description: Role assignment ID
+          readOnly: true
+        label:
+          type: string
+          description: Label for the role assignment
+          readOnly: true
+        lastUpdated:
+          type: string
+          description: Timestamp when the object was last updated
+          format: date-time
+          readOnly: true
+        status:
+          allOf:
+            - $ref: '#/components/schemas/LifecycleStatus'
+            - description: Status of the role assignment
+        type:
+          $ref: '#/components/schemas/RoleType'
+        _embedded:
+          type: object
+          description: Optional embedded resources for the role assignment
+          properties:
+            targets:
+              type: object
+              description: Targets configured for the role assignment
+              properties:
+                groups:
+                  type: array
+                  description: Group targets
+                  items:
+                    $ref: '#/components/schemas/Group'
+                catalog:
+                  description: App targets
+                  properties:
+                    apps:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/CatalogApplication'
+                  type: object
+        _links:
+          $ref: '#/components/schemas/LinksAssignee'
+    CustomRole:
+      title: Custom role assignment
+      type: object
+      properties:
+        assignmentType:
+          $ref: '#/components/schemas/RoleAssignmentType'
+        created:
+          type: string
+          description: Timestamp when the object was created
+          format: date-time
+          readOnly: true
+        id:
+          type: string
+          description: Binding object ID
+          readOnly: true
+        label:
+          type: string
+          description: Label for the custom role assignment
+          readOnly: true
+        lastUpdated:
+          type: string
+          description: Timestamp when the object was last updated
+          format: date-time
+          readOnly: true
+        resource-set:
+          type: string
+          description: Resource set ID
+          readOnly: true
+        role:
+          type: string
+          description: Custom role ID
+          readOnly: true
+        status:
+          allOf:
+            - $ref: '#/components/schemas/LifecycleStatus'
+            - description: Status of the custom role assignment
+        type:
+          type: string
+          description: CUSTOM for a custom role
+          enum:
+            - CUSTOM
+        _links:
+          $ref: '#/components/schemas/LinksCustomRoleResponse'
+    StandardRoleAssignmentSchema:
+      title: Standard Role
+      type: object
+      properties:
+        type:
+          type: string
+          description: >-
+            Specify the standard or IAM-based role type. See [standard
+            roles](/openapi/okta-management/guides/roles/#standard-roles).
+    CustomRoleAssignmentSchema:
+      title: Custom Role
+      type: object
+      properties:
+        resource-set:
+          type: string
+          description: Resource set ID
+        role:
+          type: string
+          description: Custom role ID
+        type:
+          type: string
+          description: The type of role. Specify `CUSTOM` for a custom role.
+          enum:
+            - CUSTOM
+    CatalogApplication:
+      description: An app in the OIN catalog
+      type: object
+      properties:
+        category:
+          type: string
+          description: Category for the app in the OIN catalog
+          example: SOCIAL
+          readOnly: true
+        description:
+          type: string
+          description: Description of the app in the OIN catalog
+          readOnly: true
+        displayName:
+          type: string
+          description: OIN catalog app display name
+          readOnly: true
+        features:
+          type: array
+          readOnly: true
+          description: >-
+            Features supported by the app. See app
+            [features](/openapi/okta-management/management/tag/Application/#tag/Application/operation/listApplications!c=200&path=0/features&t=response).
+          items:
+            type: string
+        id:
+          type: string
+          readOnly: true
+          description: >-
+            ID of the app instance. Okta returns this property only for apps not
+            in the OIN catalog.
+        lastUpdated:
+          type: string
+          description: Timestamp when the object was last updated
+          format: date-time
+          readOnly: true
+          example: '2024-09-19T23:37:37.000Z'
+        name:
+          type: string
+          description: >-
+            App key name. For OIN catalog apps, this is a unique key for the app
+            definition.
+        signOnModes:
+          type: array
+          description: >-
+            Authentication mode for the app. See app
+            [signOnMode](/openapi/okta-management/management/tag/Application/#tag/Application/operation/listApplications!c=200&path=0/signOnMode&t=response).
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/CatalogApplicationStatus'
+        verificationStatus:
+          type: string
+          description: OIN verification status of the catalog app
+          example: OKTA_VERIFIED
+        website:
+          type: string
+          description: Website of the OIN catalog app
+        _links:
+          type: object
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using
+            the [JSON Hypertext Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          readOnly: true
+          properties:
+            logo:
+              type: array
+              description: List of app logo resources
+              items:
+                $ref: '#/components/schemas/HrefObjectLogoLink'
+            self:
+              $ref: '#/components/schemas/HrefObjectSelfLink'
+    User:
+      type: object
+      properties:
+        activated:
+          type: string
+          description: The timestamp when the user status transitioned to `ACTIVE`
+          format: date-time
+          readOnly: true
+          nullable: true
+        created:
+          type: string
+          description: The timestamp when the user was created
+          format: date-time
+          readOnly: true
+        credentials:
+          $ref: '#/components/schemas/UserCredentials'
+        id:
+          type: string
+          description: The unique key for the user
+          readOnly: true
+        lastLogin:
+          type: string
+          description: The timestamp of the last login
+          format: date-time
+          readOnly: true
+          nullable: true
+        lastUpdated:
+          type: string
+          description: The timestamp when the user was last updated
+          format: date-time
+          readOnly: true
+        passwordChanged:
+          type: string
+          description: The timestamp when the user's password was last updated
+          format: date-time
+          readOnly: true
+          nullable: true
+        profile:
+          $ref: '#/components/schemas/UserProfile'
+        realmId:
+          type: string
+          description: >-
+            The ID of the realm in which the user is residing. See
+            [Realms](/openapi/okta-management/management/tag/Realm/).
+          example: guo1bfiNtSnZYILxO0g4
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        statusChanged:
+          type: string
+          description: The timestamp when the status of the user last changed
+          format: date-time
+          readOnly: true
+          nullable: true
+        transitioningToStatus:
+          type: string
+          description: >-
+            The target status of an in-progress asynchronous status transition.
+            This property is only returned if the user's state is transitioning.
+          readOnly: true
+          nullable: true
+          enum:
+            - ACTIVE
+            - DEPROVISIONED
+            - PROVISIONED
+        type:
+          type: object
+          description: >-
+            The user type that determines the schema for the user's profile. The
+            `type` property is a map that identifies the [User
+            Types](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UserType/#tag/UserType).
+
+
+            Currently it contains a single element, `id`. It can be specified
+            when creating a new user, and ca be updated by an admin on a full
+            replace of an existing user (but not a partial update).
+          properties:
+            id:
+              type: string
+              description: The ID of the user type
+        _embedded:
+          type: object
+          description: >-
+            Embedded resources related to the user using the [JSON Hypertext
+            Application
+            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+            specification
+          additionalProperties:
+            type: object
+            properties: {}
+          readOnly: true
+        _links:
+          description: >-
+            Specifies link relations (see [Web
+            Linking](https://datatracker.ietf.org/doc/html/rfc8288) available
+            for the current status of a user.
+
+            The links object is used for dynamic discovery of related resources,
+            lifecycle operations, and credential operations. The links object is
+            read-only.
+
+
+            For an individual user result, the links object contains a full set
+            of link relations available for that user as determined by your
+            policies.
+
+            For a collection of users, the links object contains only the `self`
+            link. Operations that return a collection of users include [List all
+            users](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/listUsers)
+            and [List all group member
+            users](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/#tag/Group/operation/listGroupUsers).
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - type: object
+              properties:
+                self:
+                  description: URL to the individual user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                activate:
+                  description: URL to activate the user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                resetPassword:
+                  description: URL to reset the user's password
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                resetFactors:
+                  description: URL to reset the user's factors
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                expirePassword:
+                  description: URL to expire the user's password
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                forgotPassword:
+                  description: URL to initiate a forgot password operation
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                changeRecoveryQuestion:
+                  description: URL to change the user's recovery question
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                deactivate:
+                  description: URL to deactivate a user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                reactivate:
+                  description: URL to reactivate the user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                changePassword:
+                  description: URL to change the user's password
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                schema:
+                  description: URL to the user's profile schema
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                suspend:
+                  description: URL to suspend the user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                unsuspend:
+                  description: URL to unsuspend the user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                unlock:
+                  description: URL to unlock the locked-out user
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+                type:
+                  description: URL to the user type
+                  allOf:
+                    - $ref: '#/components/schemas/HrefObject'
+            - readOnly: true
+    GroupProfile:
+      description: >-
+        Specifies required and optional properties for a group. The
+        `objectClass` of a group determines which additional properties are
+        available.
+
+
+        You can extend group profiles with custom properties, but you must first
+        add the properties to the group profile schema before you can reference
+        them. Use the Profile Editor in the Admin Console or the [Schemas
+        API](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Schema/)to
+        manage schema extensions.
+
+
+        Custom properties can contain HTML tags. It is the client's
+        responsibility to escape or encode this data before displaying it. Use
+        [best-practices](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
+        to prevent cross-site scripting.
+      anyOf:
+        - $ref: '#/components/schemas/OktaUserGroupProfile'
+        - $ref: '#/components/schemas/OktaActiveDirectoryGroupProfile'
+    GroupType:
+      description: Determines how a group's profile and memberships are managed
+      type: string
+      enum:
+        - APP_GROUP
+        - BUILT_IN
+        - OKTA_GROUP
+      x-enumDescriptions:
+        APP_GROUP: >-
+          Group profile and memberships are imported and must be managed within
+          the app (such as Active Directory or LDAP) that imported the group
+        BUILT_IN: >-
+          Group profile and memberships are managed by Okta and can't be
+          modified
+        OKTA_GROUP: >-
+          Group profile and memberships are directly managed in Okta via static
+          assignments or indirectly through group rules
+    LinksSelf:
+      description: >-
+        Specifies link relations (see [Web
+        Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using the
+        [JSON Hypertext Application
+        Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
+        specification. This object is used for dynamic discovery of related
+        resources and lifecycle operations.
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/HrefObjectSelfLink'
+      readOnly: true
+    HrefObject:
+      title: Link Object
+      additionalProperties: true
+      type: object
+      properties:
+        hints:
+          $ref: '#/components/schemas/HrefHints'
+          readOnly: true
+        href:
+          type: string
+          description: Link URI
+        name:
+          type: string
+          description: Link name
+          readOnly: true
+        templated:
+          type: boolean
+          description: >-
+            Indicates whether the link object's `href` property is a URI
+            template.
+          readOnly: true
+        type:
+          type: string
+          description: >-
+            The media type of the link. If omitted, it is implicitly
+            `application/json`.
+          readOnly: true
+      required:
+        - href
+    Error:
+      title: Error
+      type: object
+      properties:
+        errorCauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        errorCode:
+          type: string
+          description: An Okta code for this type of error
+        errorId:
+          type: string
+          description: >-
+            A unique identifier for this error. This can be used by Okta Support
+            to help with troubleshooting.
+        errorLink:
+          type: string
+          description: An Okta code for this type of error
+        errorSummary:
+          type: string
+          description: >-
+            A short description of what caused this error. Sometimes this
+            contains dynamically-generated information about your specific
+            error.
+    GroupRuleAction:
+      description: Defines which users and groups to assign
+      type: object
+      properties:
+        assignUserToGroups:
+          $ref: '#/components/schemas/GroupRuleGroupAssignment'
+    GroupRuleConditions:
+      description: Defines group rule conditions
+      type: object
+      properties:
+        expression:
+          $ref: '#/components/schemas/GroupRuleExpression'
+        people:
+          $ref: '#/components/schemas/GroupRulePeopleCondition'
+    GroupRuleStatus:
+      description: Status of group rule
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - INVALID
     ApplicationAccessibility:
       description: Specifies access settings for the app
       type: object
@@ -2196,87 +2543,6 @@ components:
           $ref: '#/components/schemas/UsersLink'
       readOnly: true
       type: object
-    ApplicationVisibilityHide:
-      description: Hides the app for specific end-user apps
-      type: object
-      properties:
-        iOS:
-          type: boolean
-          description: Okta Mobile for iOS or Android (pre-dates Android)
-          default: false
-          example: false
-        web:
-          type: boolean
-          description: Okta End-User Dashboard on a web browser
-          default: false
-          example: true
-    AccessPolicyLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app access policy resource
-    HrefObjectActivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to activate the resource
-    HrefObjectDeactivateLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to deactivate the resource
-    GroupsLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [Application
-            Groups](/openapi/okta-management/management/tag/ApplicationGroups/#tag/ApplicationGroups/operation/listApplicationGroupAssignments)
-            resource
-    HelpLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the app help resource
-    MetadataLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [SAML
-            metadata](/openapi/okta-management/management/tag/ApplicationSSO/#tag/ApplicationSSO/operation/previewSAMLmetadataForApplication)
-            for SSO
-    UsersLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: >-
-            Link to the [Application
-            Users](/openapi/okta-management/management/tag/ApplicationUsers/#tag/ApplicationUsers/operation/listApplicationUsers)
-            resource
-    GroupOwner:
-      type: object
-      properties:
-        displayName:
-          description: The display name of the group owner
-          type: string
-          readOnly: true
-        id:
-          description: The `id` of the group owner
-          type: string
-        lastUpdated:
-          description: Timestamp when the group owner was last updated
-          type: string
-          format: date-time
-          readOnly: true
-        originId:
-          description: >-
-            The ID of the app instance if the `originType` is `APPLICATION`.
-            This value is `NULL` if `originType` is `OKTA_DIRECTORY`.
-          type: string
-        originType:
-          $ref: '#/components/schemas/GroupOwnerOriginType'
-        resolved:
-          description: >-
-            If `originType`is APPLICATION, this parameter is set to `FALSE`
-            until the owner's `originId` is reconciled with an associated Okta
-            ID.
-          type: boolean
-        type:
-          $ref: '#/components/schemas/GroupOwnerType'
     GroupOwnerOriginType:
       description: The source where group ownership is managed
       type: string
@@ -2289,110 +2555,6 @@ components:
       enum:
         - GROUP
         - USER
-    AssignGroupOwnerRequestBody:
-      type: object
-      properties:
-        id:
-          description: The `id` of the group owner
-          type: string
-        type:
-          $ref: '#/components/schemas/GroupOwnerType'
-    StandardRole:
-      title: Standard Role Assignment
-      type: object
-      properties:
-        assignmentType:
-          $ref: '#/components/schemas/RoleAssignmentType'
-        created:
-          type: string
-          description: Timestamp when the object was created
-          format: date-time
-          readOnly: true
-        id:
-          type: string
-          description: Role assignment ID
-          readOnly: true
-        label:
-          type: string
-          description: Label for the role assignment
-          readOnly: true
-        lastUpdated:
-          type: string
-          description: Timestamp when the object was last updated
-          format: date-time
-          readOnly: true
-        status:
-          allOf:
-            - $ref: '#/components/schemas/LifecycleStatus'
-            - description: Status of the role assignment
-        type:
-          $ref: '#/components/schemas/RoleType'
-        _embedded:
-          type: object
-          description: Optional embedded resources for the role assignment
-          properties:
-            targets:
-              type: object
-              description: Targets configured for the role assignment
-              properties:
-                groups:
-                  type: array
-                  description: Group targets
-                  items:
-                    $ref: '#/components/schemas/Group'
-                catalog:
-                  description: App targets
-                  properties:
-                    apps:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/CatalogApplication'
-                  type: object
-        _links:
-          $ref: '#/components/schemas/LinksAssignee'
-    CustomRole:
-      title: Custom role assignment
-      type: object
-      properties:
-        assignmentType:
-          $ref: '#/components/schemas/RoleAssignmentType'
-        created:
-          type: string
-          description: Timestamp when the object was created
-          format: date-time
-          readOnly: true
-        id:
-          type: string
-          description: Binding object ID
-          readOnly: true
-        label:
-          type: string
-          description: Label for the custom role assignment
-          readOnly: true
-        lastUpdated:
-          type: string
-          description: Timestamp when the object was last updated
-          format: date-time
-          readOnly: true
-        resource-set:
-          type: string
-          description: Resource set ID
-          readOnly: true
-        role:
-          type: string
-          description: Custom role ID
-          readOnly: true
-        status:
-          allOf:
-            - $ref: '#/components/schemas/LifecycleStatus'
-            - description: Status of the custom role assignment
-        type:
-          type: string
-          description: CUSTOM for a custom role
-          enum:
-            - CUSTOM
-        _links:
-          $ref: '#/components/schemas/LinksCustomRoleResponse'
     RoleAssignmentType:
       description: Role assignment type
       type: string
@@ -2444,81 +2606,6 @@ components:
         WORKFLOWS_ADMIN: Workflows Administrator
         ACCESS_CERTIFICATIONS_ADMIN: Access Certifications Administrator (predefined resource sets)
         ACCESS_REQUESTS_ADMIN: Access Requests Administrator (predefined resource sets)
-    CatalogApplication:
-      description: An app in the OIN catalog
-      type: object
-      properties:
-        category:
-          type: string
-          description: Category for the app in the OIN catalog
-          example: SOCIAL
-          readOnly: true
-        description:
-          type: string
-          description: Description of the app in the OIN catalog
-          readOnly: true
-        displayName:
-          type: string
-          description: OIN catalog app display name
-          readOnly: true
-        features:
-          type: array
-          readOnly: true
-          description: >-
-            Features supported by the app. See app
-            [features](/openapi/okta-management/management/tag/Application/#tag/Application/operation/listApplications!c=200&path=0/features&t=response).
-          items:
-            type: string
-        id:
-          type: string
-          readOnly: true
-          description: >-
-            ID of the app instance. Okta returns this property only for apps not
-            in the OIN catalog.
-        lastUpdated:
-          type: string
-          description: Timestamp when the object was last updated
-          format: date-time
-          readOnly: true
-          example: '2024-09-19T23:37:37.000Z'
-        name:
-          type: string
-          description: >-
-            App key name. For OIN catalog apps, this is a unique key for the app
-            definition.
-        signOnModes:
-          type: array
-          description: >-
-            Authentication mode for the app. See app
-            [signOnMode](/openapi/okta-management/management/tag/Application/#tag/Application/operation/listApplications!c=200&path=0/signOnMode&t=response).
-          items:
-            type: string
-        status:
-          $ref: '#/components/schemas/CatalogApplicationStatus'
-        verificationStatus:
-          type: string
-          description: OIN verification status of the catalog app
-          example: OKTA_VERIFIED
-        website:
-          type: string
-          description: Website of the OIN catalog app
-        _links:
-          type: object
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://www.rfc-editor.org/rfc/rfc8288)) available using
-            the [JSON Hypertext Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          readOnly: true
-          properties:
-            logo:
-              type: array
-              description: List of app logo resources
-              items:
-                $ref: '#/components/schemas/HrefObjectLogoLink'
-            self:
-              $ref: '#/components/schemas/HrefObjectSelfLink'
     LinksAssignee:
       description: >-
         Specifies link relations (see [Web
@@ -2560,226 +2647,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
         - description: Link to the logo resource
-    HrefObjectAssigneeLink:
+    HrefObjectSelfLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the assignee resource
-    HrefObjectMemberLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the member resource
-    HrefObjectPermissionsLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the permissions resource
-    HrefObjectResourceSetLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource set resource
-    HrefObjectRoleLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the role resource
-    StandardRoleAssignmentSchema:
-      title: Standard Role
-      type: object
-      properties:
-        type:
-          type: string
-          description: >-
-            Specify the standard or IAM-based role type. See [standard
-            roles](/openapi/okta-management/guides/roles/#standard-roles).
-    CustomRoleAssignmentSchema:
-      title: Custom Role
-      type: object
-      properties:
-        resource-set:
-          type: string
-          description: Resource set ID
-        role:
-          type: string
-          description: Custom role ID
-        type:
-          type: string
-          description: The type of role. Specify `CUSTOM` for a custom role.
-          enum:
-            - CUSTOM
-    User:
-      type: object
-      properties:
-        activated:
-          type: string
-          description: The timestamp when the user status transitioned to `ACTIVE`
-          format: date-time
-          readOnly: true
-          nullable: true
-        created:
-          type: string
-          description: The timestamp when the user was created
-          format: date-time
-          readOnly: true
-        credentials:
-          $ref: '#/components/schemas/UserCredentials'
-        id:
-          type: string
-          description: The unique key for the user
-          readOnly: true
-        lastLogin:
-          type: string
-          description: The timestamp of the last login
-          format: date-time
-          readOnly: true
-          nullable: true
-        lastUpdated:
-          type: string
-          description: The timestamp when the user was last updated
-          format: date-time
-          readOnly: true
-        passwordChanged:
-          type: string
-          description: The timestamp when the user's password was last updated
-          format: date-time
-          readOnly: true
-          nullable: true
-        profile:
-          $ref: '#/components/schemas/UserProfile'
-        realmId:
-          type: string
-          description: >-
-            The ID of the realm in which the user is residing. See
-            [Realms](/openapi/okta-management/management/tag/Realm/).
-          example: guo1bfiNtSnZYILxO0g4
-          readOnly: true
-        status:
-          $ref: '#/components/schemas/UserStatus'
-        statusChanged:
-          type: string
-          description: The timestamp when the status of the user last changed
-          format: date-time
-          readOnly: true
-          nullable: true
-        transitioningToStatus:
-          type: string
-          description: >-
-            The target status of an in-progress asynchronous status transition.
-            This property is only returned if the user's state is transitioning.
-          readOnly: true
-          nullable: true
-          enum:
-            - ACTIVE
-            - DEPROVISIONED
-            - PROVISIONED
-        type:
-          type: object
-          description: >-
-            The user type that determines the schema for the user's profile. The
-            `type` property is a map that identifies the [User
-            Types](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UserType/#tag/UserType).
-
-
-            Currently it contains a single element, `id`. It can be specified
-            when creating a new user, and ca be updated by an admin on a full
-            replace of an existing user (but not a partial update).
-          properties:
-            id:
-              type: string
-              description: The ID of the user type
-        _embedded:
-          type: object
-          description: >-
-            Embedded resources related to the user using the [JSON Hypertext
-            Application
-            Language](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-06)
-            specification
-          additionalProperties:
-            type: object
-            properties: {}
-          readOnly: true
-        _links:
-          description: >-
-            Specifies link relations (see [Web
-            Linking](https://datatracker.ietf.org/doc/html/rfc8288) available
-            for the current status of a user.
-
-            The links object is used for dynamic discovery of related resources,
-            lifecycle operations, and credential operations. The links object is
-            read-only.
-
-
-            For an individual user result, the links object contains a full set
-            of link relations available for that user as determined by your
-            policies.
-
-            For a collection of users, the links object contains only the `self`
-            link. Operations that return a collection of users include [List all
-            users](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/listUsers)
-            and [List all group member
-            users](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Group/#tag/Group/operation/listGroupUsers).
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - type: object
-              properties:
-                self:
-                  description: URL to the individual user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                activate:
-                  description: URL to activate the user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                resetPassword:
-                  description: URL to reset the user's password
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                resetFactors:
-                  description: URL to reset the user's factors
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                expirePassword:
-                  description: URL to expire the user's password
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                forgotPassword:
-                  description: URL to initiate a forgot password operation
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                changeRecoveryQuestion:
-                  description: URL to change the user's recovery question
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                deactivate:
-                  description: URL to deactivate a user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                reactivate:
-                  description: URL to reactivate the user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                changePassword:
-                  description: URL to change the user's password
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                schema:
-                  description: URL to the user's profile schema
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                suspend:
-                  description: URL to suspend the user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                unsuspend:
-                  description: URL to unsuspend the user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                unlock:
-                  description: URL to unlock the locked-out user
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-                type:
-                  description: URL to the user type
-                  allOf:
-                    - $ref: '#/components/schemas/HrefObject'
-            - readOnly: true
+        - description: Link to the resource (self)
     UserCredentials:
       description: >-
         Specifies primary authentication and recovery credentials for a user.
@@ -3046,6 +2917,151 @@ components:
         - STAGED
         - SUSPENDED
       readOnly: true
+    OktaActiveDirectoryGroupProfile:
+      description: |-
+        Profile for a group that is imported from Active Directory.
+
+        The `objectClass` for such groups is `okta:windows_security_principal`.
+      type: object
+      properties:
+        description:
+          type: string
+          example: All users in the engineering department
+          description: Description of the Windows group
+        dn:
+          type: string
+          example: CN=West Coast users,OU=West Coast,DC=example,DC=com
+          description: The distinguished name of the Windows group
+        externalId:
+          type: string
+          example: VKzYZ1C+IkSZxIWlrW5ITg==
+          description: Base-64 encoded GUID (`objectGUID`) of the Windows group
+        name:
+          type: string
+          example: West Coast users
+          description: Name of the Windows group
+        samAccountName:
+          type: string
+          example: West Coast users
+          description: Pre-Windows 2000 name of the Windows group
+        windowsDomainQualifiedName:
+          type: string
+          example: EXAMPLE\\West Coast users
+          description: Fully qualified name of the Windows group
+    HrefHints:
+      description: Describes allowed HTTP verbs for the `href`
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethod'
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
+    GroupRuleGroupAssignment:
+      description: Contains the `groupIds` array
+      type: object
+      properties:
+        groupIds:
+          description: Array of `groupIds` to which users are added
+          type: array
+          items:
+            type: string
+    GroupRuleExpression:
+      description: >-
+        Defines Okta specific [group-rules
+        expression](https://developer.okta.com/docs/reference/okta-expression-language/#expressions-in-group-rules)
+      type: object
+      properties:
+        type:
+          type: string
+          description: Expression type. Only valid value is '`urn:okta:expression:1.0`'.
+        value:
+          type: string
+          description: Okta expression that would result in a Boolean value
+          example: user.role==\"Engineer\"
+    GroupRulePeopleCondition:
+      description: Defines conditions for `people` in a group rule
+      type: object
+      properties:
+        groups:
+          $ref: '#/components/schemas/GroupRuleGroupCondition'
+        users:
+          $ref: '#/components/schemas/GroupRuleUserCondition'
+    ApplicationVisibilityHide:
+      description: Hides the app for specific end-user apps
+      type: object
+      properties:
+        iOS:
+          type: boolean
+          description: Okta Mobile for iOS or Android (pre-dates Android)
+          default: false
+          example: false
+        web:
+          type: boolean
+          description: Okta End-User Dashboard on a web browser
+          default: false
+          example: true
+    AccessPolicyLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app access policy resource
+    HrefObjectActivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to activate the resource
+    HrefObjectDeactivateLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to deactivate the resource
+    GroupsLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [Application
+            Groups](/openapi/okta-management/management/tag/ApplicationGroups/#tag/ApplicationGroups/operation/listApplicationGroupAssignments)
+            resource
+    HelpLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the app help resource
+    MetadataLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [SAML
+            metadata](/openapi/okta-management/management/tag/ApplicationSSO/#tag/ApplicationSSO/operation/previewSAMLmetadataForApplication)
+            for SSO
+    UsersLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: >-
+            Link to the [Application
+            Users](/openapi/okta-management/management/tag/ApplicationUsers/#tag/ApplicationUsers/operation/listApplicationUsers)
+            resource
+    HrefObjectAssigneeLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the assignee resource
+    HrefObjectMemberLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the member resource
+    HrefObjectPermissionsLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the permissions resource
+    HrefObjectResourceSetLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource set resource
+    HrefObjectRoleLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the role resource
     PasswordCredential:
       description: >-
         Specifies a password for a user.
@@ -3118,6 +3134,31 @@ components:
           minimum: 1
           maximum: 100
           example: what is your favourite movie?
+    HttpMethod:
+      type: string
+      enum:
+        - DELETE
+        - GET
+        - POST
+        - PUT
+    GroupRuleGroupCondition:
+      description: Currently not supported
+      type: object
+      properties:
+        exclude:
+          type: array
+          description: Currently not supported
+          items:
+            type: string
+    GroupRuleUserCondition:
+      description: Defines conditions specific to user exclusion
+      type: object
+      properties:
+        exclude:
+          type: array
+          description: Excluded `userIds` when processing rules
+          items:
+            type: string
     PasswordCredentialHash:
       description: >-
         Specifies a hashed password to import into Okta. This allows an existing
@@ -3278,6 +3319,14 @@ components:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
   parameters:
+    pathGroupRuleId:
+      name: groupRuleId
+      description: The `id` of the group rule
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0pr3f7zMZZHPgUoWO0g4
     pathGroupId:
       name: groupId
       description: The `id` of the group
@@ -3286,6 +3335,14 @@ components:
       schema:
         type: string
         example: 00g1emaKYZTWRYYRRTSK
+    pathOwnerId:
+      description: The `id` of the group owner
+      name: ownerId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00u1emaK22TWRYd3TtG
     pathQueryRoleExpand:
       name: expand
       description: >-
@@ -3303,6 +3360,14 @@ components:
         appTarget:
           value: targets/catalog/apps
           summary: Return app targets
+    pathRoleAssignmentId:
+      name: roleAssignmentId
+      description: The `id` of the role assignment
+      in: path
+      required: true
+      schema:
+        type: string
+        example: JBCUYUC7IRCVGS27IFCE2SKO
     queryAfter:
       name: after
       in: query
@@ -3322,6 +3387,37 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathAppName:
+      name: appName
+      description: Name of the app definition (the OIN catalog app key name)
+      in: path
+      required: true
+      schema:
+        type: string
+        example: google
+    pathAppId:
+      name: appId
+      description: Application ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oafxqCAJWWGELFTYASJ
+    pathTargetGroupId:
+      name: targetGroupId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00g1e9dfjHeLAsdX983d
+    pathUserId:
+      name: userId
+      description: ID of an existing Okta user
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00ub0oNGTSWTBKOLGLNR
   examples:
     list-groups-examples:
       summary: List all groups example
@@ -3386,22 +3482,6 @@ components:
                 https://{yourOktaDomain}/api/v1/groups/00garwpuyxHaWOkdV0g4/users
             apps:
               href: https://{yourOktaDomain}/api/v1/groups/00garwpuyxHaWOkdV0g4/apps
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     group-example:
       summary: Group example
       description: Example of a group
@@ -3428,14 +3508,6 @@ components:
             href: https://{yourOktaDomain}/api/v1/groups/00g1emaKYZTWRYYRRTSK/users
           apps:
             href: https://{yourOktaDomain}/api/v1/groups/00g1emaKYZTWRYYRRTSK/apps
-    ErrorApiValidationFailed:
-      summary: API Validation Failed
-      value:
-        errorCode: E0000001
-        errorSummary: 'Api validation failed: {0}'
-        errorLink: E0000001
-        errorId: sampleiCF-8D5rLW6myqiPItW
-        errorCauses: []
     list-group-rules-example:
       summary: List group rules example
       description: List all group rules example
@@ -3503,14 +3575,6 @@ components:
           assignUserToGroups:
             groupIds:
               - 00gjitX9HqABSoqTB0g3
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
     list-apps-example:
       summary: List apps example
       description: List all apps example
@@ -3747,11 +3811,38 @@ components:
           _links:
             self:
               href: http://your-subdomain.okta.com/api/v1/users/00u118oQYT4TBGuay0g4
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorApiValidationFailed:
+      summary: API Validation Failed
+      value:
+        errorCode: E0000001
+        errorSummary: 'Api validation failed: {0}'
+        errorLink: E0000001
+        errorId: sampleiCF-8D5rLW6myqiPItW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

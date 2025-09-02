@@ -40,8 +40,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
     post:
       summary: Assign a client role
       description: >-
@@ -110,8 +108,8 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}:
     get:
       summary: Retrieve a client role
@@ -150,9 +148,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
     delete:
       summary: Unassign a client role
       description: >-
@@ -178,9 +173,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}/targets/catalog/apps:
     get:
       summary: List all client role app targets
@@ -189,8 +184,8 @@ paths:
         client (by `clientId`).
       operationId: listAppTargetRoleToClient
       parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: Success
@@ -220,6 +215,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}/targets/catalog/apps/{appName}:
     put:
       summary: Assign a client role app target
@@ -258,10 +256,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
     delete:
       summary: Unassign a client role app target
       description: >-
@@ -295,10 +289,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathAppName'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}/targets/catalog/apps/{appName}/{appId}:
     put:
       summary: Assign a client role app instance target
@@ -338,11 +332,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
-        - $ref: '#/components/parameters/pathAppId'
     delete:
       summary: Unassign a client role app instance target
       description: >-
@@ -376,11 +365,11 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathAppName'
-        - $ref: '#/components/parameters/pathAppId'
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathAppName'
+      - $ref: '#/components/parameters/pathAppId'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}/targets/groups:
     get:
       summary: List all client role group targets
@@ -392,8 +381,8 @@ paths:
         an empty array `[]`.
       operationId: listGroupTargetRoleForClient
       parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
+        - $ref: '#/components/parameters/queryAfter'
+        - $ref: '#/components/parameters/queryLimit'
       responses:
         '200':
           description: Success
@@ -418,6 +407,9 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
   /oauth2/v1/clients/{clientId}/roles/{roleAssignmentId}/targets/groups/{groupId}:
     put:
       summary: Assign a client role group target
@@ -448,10 +440,6 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathGroupId'
     delete:
       summary: Unassign a client role group target
       description: >-
@@ -484,10 +472,10 @@ paths:
       x-okta-lifecycle:
         lifecycle: GA
         isGenerallyAvailable: true
-      parameters:
-        - $ref: '#/components/parameters/pathClientId'
-        - $ref: '#/components/parameters/pathRoleAssignmentId'
-        - $ref: '#/components/parameters/pathGroupId'
+    parameters:
+      - $ref: '#/components/parameters/pathClientId'
+      - $ref: '#/components/parameters/pathRoleAssignmentId'
+      - $ref: '#/components/parameters/pathGroupId'
 components:
   schemas:
     StandardRole:
@@ -586,116 +574,30 @@ components:
             - CUSTOM
         _links:
           $ref: '#/components/schemas/LinksCustomRoleResponse'
-    RoleAssignmentType:
-      description: Role assignment type
-      type: string
-      enum:
-        - CLIENT
-        - GROUP
-        - USER
-      x-enumDescriptions:
-        USER: The role is assigned to a user
-        GROUP: The role is assigned to a group
-        CLIENT: The role is assigned to a client app
-    LifecycleStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    RoleType:
-      description: Standard role type
-      type: string
-      enum:
-        - ACCESS_CERTIFICATIONS_ADMIN
-        - ACCESS_REQUESTS_ADMIN
-        - API_ACCESS_MANAGEMENT_ADMIN
-        - API_ADMIN
-        - APP_ADMIN
-        - CUSTOM
-        - GROUP_MEMBERSHIP_ADMIN
-        - HELP_DESK_ADMIN
-        - MOBILE_ADMIN
-        - ORG_ADMIN
-        - READ_ONLY_ADMIN
-        - REPORT_ADMIN
-        - SUPER_ADMIN
-        - USER_ADMIN
-        - WORKFLOWS_ADMIN
-      x-enumDescriptions:
-        API_ACCESS_MANAGEMENT_ADMIN: Access Management Administrator
-        API_ADMIN: Access Management Administrator
-        APP_ADMIN: Application Administrator
-        CUSTOM: Custom label specified by the client
-        GROUP_MEMBERSHIP_ADMIN: Group Membership Administrator
-        HELP_DESK_ADMIN: Help Desk Administrator
-        MOBILE_ADMIN: Mobile Administrator
-        ORG_ADMIN: Organizational Administrator
-        READ_ONLY_ADMIN: Read-Only Administrator
-        REPORT_ADMIN: Report Administrator
-        SUPER_ADMIN: Super Administrator
-        USER_ADMIN: Group Administrator
-        WORKFLOWS_ADMIN: Workflows Administrator
-        ACCESS_CERTIFICATIONS_ADMIN: Access Certifications Administrator (predefined resource sets)
-        ACCESS_REQUESTS_ADMIN: Access Requests Administrator (predefined resource sets)
-    Group:
+    StandardRoleAssignmentSchema:
+      title: Standard Role
       type: object
       properties:
-        created:
-          type: string
-          format: date-time
-          readOnly: true
-          description: Timestamp when the group was created
-        id:
-          type: string
-          readOnly: true
-          example: 0gabcd1234
-          description: Unique ID for the group
-        lastMembershipUpdated:
-          type: string
-          format: date-time
-          readOnly: true
-          description: Timestamp when the groups memberships were last updated
-        lastUpdated:
-          type: string
-          format: date-time
-          readOnly: true
-          description: Timestamp when the group's profile was last updated
-        objectClass:
-          type: array
-          readOnly: true
-          description: Determines the group's `profile`
-          items:
-            type: string
-        profile:
-          $ref: '#/components/schemas/GroupProfile'
         type:
-          $ref: '#/components/schemas/GroupType'
-        _embedded:
-          type: object
-          description: Embedded resources related to the group
-          additionalProperties:
-            type: object
-            properties: {}
-          readOnly: true
-        _links:
+          type: string
           description: >-
-            [Discoverable
-            resources](/openapi/okta-management/management/tag/Group/#tag/Group/operation/listGroups!c=200&path=_links&t=response)
-            related to the group
-          allOf:
-            - $ref: '#/components/schemas/LinksSelf'
-            - properties:
-                apps:
-                  $ref: '#/components/schemas/HrefObject'
-                logo:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/HrefObject'
-                source:
-                  $ref: '#/components/schemas/HrefObject'
-                users:
-                  $ref: '#/components/schemas/HrefObject'
-              type: object
+            Specify the standard or IAM-based role type. See [standard
+            roles](/openapi/okta-management/guides/roles/#standard-roles).
+    CustomRoleAssignmentSchema:
+      title: Custom Role
+      type: object
+      properties:
+        resource-set:
+          type: string
+          description: Resource set ID
+        role:
+          type: string
+          description: Custom role ID
+        type:
+          type: string
+          description: The type of role. Specify `CUSTOM` for a custom role.
+          enum:
+            - CUSTOM
     CatalogApplication:
       description: An app in the OIN catalog
       type: object
@@ -771,6 +673,116 @@ components:
                 $ref: '#/components/schemas/HrefObjectLogoLink'
             self:
               $ref: '#/components/schemas/HrefObjectSelfLink'
+    Group:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the group was created
+        id:
+          type: string
+          readOnly: true
+          example: 0gabcd1234
+          description: Unique ID for the group
+        lastMembershipUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the groups memberships were last updated
+        lastUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the group's profile was last updated
+        objectClass:
+          type: array
+          readOnly: true
+          description: Determines the group's `profile`
+          items:
+            type: string
+        profile:
+          $ref: '#/components/schemas/GroupProfile'
+        type:
+          $ref: '#/components/schemas/GroupType'
+        _embedded:
+          type: object
+          description: Embedded resources related to the group
+          additionalProperties:
+            type: object
+            properties: {}
+          readOnly: true
+        _links:
+          description: >-
+            [Discoverable
+            resources](/openapi/okta-management/management/tag/Group/#tag/Group/operation/listGroups!c=200&path=_links&t=response)
+            related to the group
+          allOf:
+            - $ref: '#/components/schemas/LinksSelf'
+            - properties:
+                apps:
+                  $ref: '#/components/schemas/HrefObject'
+                logo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HrefObject'
+                source:
+                  $ref: '#/components/schemas/HrefObject'
+                users:
+                  $ref: '#/components/schemas/HrefObject'
+              type: object
+    RoleAssignmentType:
+      description: Role assignment type
+      type: string
+      enum:
+        - CLIENT
+        - GROUP
+        - USER
+      x-enumDescriptions:
+        USER: The role is assigned to a user
+        GROUP: The role is assigned to a group
+        CLIENT: The role is assigned to a client app
+    LifecycleStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    RoleType:
+      description: Standard role type
+      type: string
+      enum:
+        - ACCESS_CERTIFICATIONS_ADMIN
+        - ACCESS_REQUESTS_ADMIN
+        - API_ACCESS_MANAGEMENT_ADMIN
+        - API_ADMIN
+        - APP_ADMIN
+        - CUSTOM
+        - GROUP_MEMBERSHIP_ADMIN
+        - HELP_DESK_ADMIN
+        - MOBILE_ADMIN
+        - ORG_ADMIN
+        - READ_ONLY_ADMIN
+        - REPORT_ADMIN
+        - SUPER_ADMIN
+        - USER_ADMIN
+        - WORKFLOWS_ADMIN
+      x-enumDescriptions:
+        API_ACCESS_MANAGEMENT_ADMIN: Access Management Administrator
+        API_ADMIN: Access Management Administrator
+        APP_ADMIN: Application Administrator
+        CUSTOM: Custom label specified by the client
+        GROUP_MEMBERSHIP_ADMIN: Group Membership Administrator
+        HELP_DESK_ADMIN: Help Desk Administrator
+        MOBILE_ADMIN: Mobile Administrator
+        ORG_ADMIN: Organizational Administrator
+        READ_ONLY_ADMIN: Read-Only Administrator
+        REPORT_ADMIN: Report Administrator
+        SUPER_ADMIN: Super Administrator
+        USER_ADMIN: Group Administrator
+        WORKFLOWS_ADMIN: Workflows Administrator
+        ACCESS_CERTIFICATIONS_ADMIN: Access Certifications Administrator (predefined resource sets)
+        ACCESS_REQUESTS_ADMIN: Access Requests Administrator (predefined resource sets)
     LinksAssignee:
       description: >-
         Specifies link relations (see [Web
@@ -827,6 +839,20 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    CatalogApplicationStatus:
+      description: App status
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    HrefObjectLogoLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the logo resource
+    HrefObjectSelfLink:
+      allOf:
+        - $ref: '#/components/schemas/HrefObject'
+        - description: Link to the resource (self)
     GroupProfile:
       description: >-
         Specifies required and optional properties for a group. The
@@ -907,20 +933,6 @@ components:
           readOnly: true
       required:
         - href
-    CatalogApplicationStatus:
-      description: App status
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-    HrefObjectLogoLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the logo resource
-    HrefObjectSelfLink:
-      allOf:
-        - $ref: '#/components/schemas/HrefObject'
-        - description: Link to the resource (self)
     HrefObjectAssigneeLink:
       allOf:
         - $ref: '#/components/schemas/HrefObject'
@@ -1012,30 +1024,6 @@ components:
         - GET
         - POST
         - PUT
-    StandardRoleAssignmentSchema:
-      title: Standard Role
-      type: object
-      properties:
-        type:
-          type: string
-          description: >-
-            Specify the standard or IAM-based role type. See [standard
-            roles](/openapi/okta-management/guides/roles/#standard-roles).
-    CustomRoleAssignmentSchema:
-      title: Custom Role
-      type: object
-      properties:
-        resource-set:
-          type: string
-          description: Resource set ID
-        role:
-          type: string
-          description: Custom role ID
-        type:
-          type: string
-          description: The type of role. Specify `CUSTOM` for a custom role.
-          enum:
-            - CUSTOM
   responses:
     ErrorAccessDenied403:
       description: Forbidden
@@ -1065,6 +1053,22 @@ components:
             TooManyRequests:
               $ref: '#/components/examples/ErrorTooManyRequests'
   parameters:
+    pathClientId:
+      name: clientId
+      description: Client app ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 52Uy4BUWVBOjFItcg2jWsmnd83Ad8dD
+    pathRoleAssignmentId:
+      name: roleAssignmentId
+      description: The `id` of the role assignment
+      in: path
+      required: true
+      schema:
+        type: string
+        example: JBCUYUC7IRCVGS27IFCE2SKO
     queryAfter:
       name: after
       in: query
@@ -1084,6 +1088,30 @@ components:
         maximum: 200
         default: 20
       description: A limit on the number of objects to return
+    pathAppName:
+      name: appName
+      description: Name of the app definition (the OIN catalog app key name)
+      in: path
+      required: true
+      schema:
+        type: string
+        example: google
+    pathAppId:
+      name: appId
+      description: Application ID
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 0oafxqCAJWWGELFTYASJ
+    pathGroupId:
+      name: groupId
+      description: The `id` of the group
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 00g1emaKYZTWRYYRRTSK
   examples:
     StandardRolesListResponseClient:
       value:
@@ -1149,30 +1177,6 @@ components:
             permissions:
               href: >-
                 https://{yourOktaDomain}/api/v1/iam/permission-sets/OKTA_IAM_TEST_DELIVERED_ROLE/permissionsZ
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorResourceNotFound:
-      summary: Resource Not Found
-      value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     StandardRoleAssignmentRequest:
       value:
         type: HELP_DESK_ADMIN
@@ -1274,11 +1278,30 @@ components:
           _links:
             self:
               href: https://{yourOktaDomain}/api/v1/apps/0oasrudLtMlzAsTxk0g3
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorAccessDenied:
+      summary: Access Denied
+      value:
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:

@@ -184,8 +184,6 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
     delete:
       summary: Delete a device
       description: >-
@@ -230,8 +228,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
   /api/v1/devices/{deviceId}/lifecycle/activate:
     post:
       summary: Activate a device
@@ -259,8 +257,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
   /api/v1/devices/{deviceId}/lifecycle/deactivate:
     post:
       summary: Deactivate a device
@@ -295,8 +293,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
   /api/v1/devices/{deviceId}/lifecycle/suspend:
     post:
       summary: Suspend a Device
@@ -329,8 +327,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
   /api/v1/devices/{deviceId}/lifecycle/unsuspend:
     post:
       summary: Unsuspend a Device
@@ -358,8 +356,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
   /api/v1/devices/{deviceId}/users:
     get:
       summary: List all users for a device
@@ -395,8 +393,8 @@ paths:
         isGenerallyAvailable: false
         SKUs:
           - Okta Identity Engine
-      parameters:
-        - $ref: '#/components/parameters/pathDeviceId'
+    parameters:
+      - $ref: '#/components/parameters/pathDeviceId'
 components:
   schemas:
     DeviceList:
@@ -457,30 +455,6 @@ components:
           $ref: '#/components/schemas/DeviceStatus'
         _links:
           $ref: '#/components/schemas/LinksSelfAndFullUsersLifecycle'
-    DeviceUser:
-      type: object
-      properties:
-        created:
-          type: string
-          description: Timestamp when device was created
-        managementStatus:
-          type: string
-          description: The management status of the device
-          enum:
-            - MANAGED
-            - NOT_MANAGED
-          x-enumDescriptions:
-            MANAGED: The device has management software installed
-            NOT_MANAGED: The device doesn't have management software installed
-        screenLockType:
-          type: string
-          description: Screen lock type of the device
-          enum:
-            - NONE
-            - PASSCODE
-            - BIOMETRIC
-        user:
-          $ref: '#/components/schemas/User'
     Error:
       title: Error
       type: object
@@ -506,6 +480,30 @@ components:
             A short description of what caused this error. Sometimes this
             contains dynamically-generated information about your specific
             error.
+    DeviceUser:
+      type: object
+      properties:
+        created:
+          type: string
+          description: Timestamp when device was created
+        managementStatus:
+          type: string
+          description: The management status of the device
+          enum:
+            - MANAGED
+            - NOT_MANAGED
+          x-enumDescriptions:
+            MANAGED: The device has management software installed
+            NOT_MANAGED: The device doesn't have management software installed
+        screenLockType:
+          type: string
+          description: Screen lock type of the device
+          enum:
+            - NONE
+            - PASSCODE
+            - BIOMETRIC
+        user:
+          $ref: '#/components/schemas/User'
     DeviceProfile:
       type: object
       properties:
@@ -617,6 +615,11 @@ components:
               description: Link to device users
               allOf:
                 - $ref: '#/components/schemas/HrefObject'
+    ErrorCause:
+      type: object
+      properties:
+        errorSummary:
+          type: string
     User:
       type: object
       properties:
@@ -793,11 +796,6 @@ components:
                   allOf:
                     - $ref: '#/components/schemas/HrefObject'
             - readOnly: true
-    ErrorCause:
-      type: object
-      properties:
-        errorSummary:
-          type: string
     DiskEncryptionTypeDef:
       description: >-
         Type of encryption used on the device
@@ -1408,7 +1406,15 @@ components:
           examples:
             ResourceNotFound:
               $ref: '#/components/examples/ErrorResourceNotFound'
-  parameters: {}
+  parameters:
+    pathDeviceId:
+      name: deviceId
+      in: path
+      schema:
+        type: string
+        example: guo4a5u7JHHhjXrMK0g4
+      required: true
+      description: '`id` of the device'
   examples:
     APIDevicesListAllUserSummaryResponse:
       summary: List all devices with embedded user summaries
@@ -1657,22 +1663,6 @@ components:
                     deactivate:
                       href: >-
                         https://{yourOktaDomain}/api/v1/users/00u17vh0q8ov8IU881d7/lifecycle/deactivate
-    ErrorAccessDenied:
-      summary: Access Denied
-      value:
-        errorCode: E0000006
-        errorSummary: You do not have permission to perform the requested action
-        errorLink: E0000006
-        errorId: sampleNUSD_8fdkFd8fs8SDBK
-        errorCauses: []
-    ErrorTooManyRequests:
-      summary: Too Many Requests
-      value:
-        errorCode: E0000047
-        errorSummary: API call exceeded rate limit due to too many requests.
-        errorLink: E0000047
-        errorId: sampleQPivGUj_ND5v78vbYWW
-        errorCauses: []
     DeviceResponse:
       value:
         id: guo8jx5vVoxfvJeLb0w4
@@ -1722,13 +1712,13 @@ components:
             hints:
               allow:
                 - POST
-    ErrorResourceNotFound:
-      summary: Resource Not Found
+    ErrorAccessDenied:
+      summary: Access Denied
       value:
-        errorCode: E0000007
-        errorSummary: 'Not found: {0}'
-        errorLink: E0000007
-        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCode: E0000006
+        errorSummary: You do not have permission to perform the requested action
+        errorLink: E0000006
+        errorId: sampleNUSD_8fdkFd8fs8SDBK
         errorCauses: []
     APIDevicesListAllUsersResponse:
       summary: Response example
@@ -1800,11 +1790,22 @@ components:
                 href: >-
                   https://{yourOktaDomain}/api/v1/users/00u17vh0q8ov8IU881d7/lifecycle/deactivate
                 method: POST
-  requestBodies: {}
-  headers: {}
-  securitySchemes: {}
-  links: {}
-  callbacks: {}
+    ErrorTooManyRequests:
+      summary: Too Many Requests
+      value:
+        errorCode: E0000047
+        errorSummary: API call exceeded rate limit due to too many requests.
+        errorLink: E0000047
+        errorId: sampleQPivGUj_ND5v78vbYWW
+        errorCauses: []
+    ErrorResourceNotFound:
+      summary: Resource Not Found
+      value:
+        errorCode: E0000007
+        errorSummary: 'Not found: {0}'
+        errorLink: E0000007
+        errorId: sampleMlLvGUj_YD5v16vkYWY
+        errorCauses: []
 servers:
   - url: https://{yourOktaDomain}
     variables:
