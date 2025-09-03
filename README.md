@@ -1,42 +1,32 @@
 # StackQL Provider Utils
 
-A comprehensive toolkit for transforming OpenAPI specs into StackQL providers. Includes parsing, mapping, validation, testing, and documentation generation utilities.
+![NPM Version](https://img.shields.io/npm/v/%40stackql%2Fprovider-utils) | ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/stackql/stackql/total?style=plastic&label=stackql%20downloads)
+
+A comprehensive toolkit for transforming OpenAPI specifications into StackQL providers. This library streamlines the process of parsing, mapping, validating, testing, and generating documentation for StackQL providers.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Local Development Setup](#local-development-setup)
-- [Testing with Node.js](#testing-with-nodejs)
-- [Using the Documentation Generator](#using-the-documentation-generator)
-- [API Reference](#api-reference)
+- [Directory Structure](#directory-structure)
+- [Provider Development Workflow](#provider-development-workflow)
+  - [`providerdev.split`](docs/split.md) - Divide a large OpenAPI specification into smaller, service-specific files
+  - [`providerdev.analyze`](docs/analyze.md) - Examine split API specifications to generate mapping recommendations
+  - [`providerdev.generate`](docs/generate.md) - Create StackQL provider extensions from specifications and mappings
+  - [`docgen.generateDocs`](docs/docgen.md) - Generate comprehensive documentation for StackQL providers
 - [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
 
 ## Prerequisites
 
-### For Node.js
 - Node.js >= 20
-- npm or yarn
-- StackQL server (for documentation generation)
-
-### Installing StackQL
-
-Download and install StackQL from [stackql.io/downloads](https://stackql.io/downloads)
-
-```bash
-# macOS
-brew install stackql
-
-# Linux
-curl -L https://bit.ly/stackql-zip -O && unzip stackql-zip
-
-# Windows
-# Download from https://stackql.io/downloads
-```
+- `npm` or `yarn`
+- [`stackql`](https://stackql.io/docs/installing-stackql) for testing 
 
 ## Installation
 
-### For Node.js Projects
+Add `@stackql/provider-utils` to your `package.json`:
 
 ```bash
 npm install @stackql/provider-utils
@@ -44,229 +34,55 @@ npm install @stackql/provider-utils
 yarn add @stackql/provider-utils
 ```
 
-## Local Development Setup
+## Directory Structure
 
-1. Clone the repository:
-```bash
-git clone https://github.com/stackql/stackql-provider-utils.git
-cd stackql-provider-utils
-```
-
-2. Install dependencies (Node.js):
-```bash
-npm install
-```
-
-## Testing with Node.js
-
-### 1. Create a Test Script
-
-Create a file `test-docgen.js`:
-
-```javascript
-import { docgen } from './src/index.js';
-
-// Test the documentation generator
-async function testDocGen() {
-    try {
-        const result = await docgen.generateDocs({
-            providerName: 'myservice',
-            providerDir: './test-data/output/src/myservice/v00.00.00000',
-            outputDir: './test-output',
-            providerDataDir: './test-data/provider-data',
-        });
-        
-        console.log('Documentation generated successfully:', result);
-    } catch (error) {
-        console.error('Error generating documentation:', error);
-    }
-}
-
-testDocGen();
-```
-
-### 2. Set Up Test Data
-
-Create the required directory structure:
+A typical project structure for the development of a `stackql` provider would be...
 
 ```bash
-mkdir -p test-data/output/src/myservice/v00.00.00000/services
-mkdir -p test-data/provider-data
+.
+├── bin # convinience scripts
+│   ├── ... 
+├── provider-dev                            
+│   ├── config
+│   │   └── all_services.csv  # mappings generated or updated by the `providerdev.analyze` function, used by `providerdev.generate`
+│   ├── docgen
+│   │   └── provider-data  # provider metadata used by `docgen.generateDocs`
+│   │       ├── headerContent1.txt
+│   │       └── headerContent2.txt
+│   ├── downloaded # used to store the original spec for the provider
+│   │   └── management-minimal.yaml
+│   ├── openapi # output from `providerdev.generate`, this is the stackql provider
+│   │   └── src
+│   │       └── okta
+│   │           └── v00.00.00000
+│   │               ├── provider.yaml
+│   │               └── services
+│   │                   ├── agentpools.yaml
+│   │                   ├── ...
+│   ├── scripts # optional scripts for pre or post processing if required
+│   │   └── post_processing.sh
+│   └── source  # output from `providerdev.split` if used, this is the source used with the mappings to generate the provider
+│       ├── agentpools.yaml
+│       ├── ...
+└── website # docusaurus site
+    ├── docs # output from `docgen.generateDocs`
+    │   ├── ...
 ```
 
-Add test files:
+> see [__stackql-provider-okta__](https://github.com/stackql/stackql-provider-okta) for a working example.
 
-`test-data/provider-data/headerContent1.txt`:
-```
----
-title: myservice
-hide_title: false
-hide_table_of_contents: false
-keywords:
-  - myservice
-  - stackql
-  - infrastructure-as-code
-  - configuration-as-data
-description: Query and manage myservice resources using SQL
----
+## Provider Development Workflow
 
-# myservice Provider
+The library provides a streamlined workflow for creating StackQL providers from OpenAPI specifications:
 
-The myservice provider for StackQL allows you to query, deploy, and manage myservice resources using SQL.
-```
-
-`test-data/provider-data/headerContent2.txt`:
-```
-See the [myservice provider documentation](https://myservice.com/docs) for more information.
-```
-
-`test-data/output/src/myservice/v00.00.00000/services/example.yaml`:
-```yaml
-openapi: 3.0.0
-info:
-  title: Example Service
-  version: 1.0.0
-paths:
-  /examples:
-    get:
-      operationId: listExamples
-      responses:
-        '200':
-          description: Success
-components:
-  x-stackQL-resources:
-    examples:
-      id: myservice.example.examples
-      name: examples
-      title: Examples
-      methods:
-        list:
-          operation:
-            $ref: '#/paths/~1examples/get'
-          response:
-            mediaType: application/json
-            openAPIDocKey: '200'
-      sqlVerbs:
-        select:
-          - $ref: '#/components/x-stackQL-resources/examples/methods/list'
-```
-
-### 3. Run the Test
-
-```bash
-node tests/docgen/test-docgen.js snowflake
-node tests/docgen/test-docgen.js google
-node tests/docgen/test-docgen.js homebrew
-```
-
-
-node tests/providerdev/test-split.js okta tests/providerdev/split-source/okta/management-minimal.yaml path
-node tests/providerdev/test-analyze.js okta
-node tests/providerdev/test-generate.js okta
-
-## Using the Documentation Generator
-
-### Basic Example
-
-```javascript
-import { docgen } from '@stackql/provider-utils';
-
-const options = {
-    providerName: 'github',
-    providerDir: './output/src/github/v00.00.00000',
-    outputDir: './docs',
-    providerDataDir: './config/provider-data',
-};
-
-const result = await docgen.generateDocs(options);
-console.log(`Generated docs for ${result.totalServices} services and ${result.totalResources} resources`);
-console.log(`Output location: ${result.outputPath}`);
-```
-
-### Options
-
-| Option | Type | Description | Default |
-|--------|------|-------------|---------|
-| `providerName` | string | Name of the provider (e.g., 'github', 'aws') | Required |
-| `providerDir` | string | Path to provider spec directory | Required |
-| `outputDir` | string | Directory for generated documentation | Required |
-| `providerDataDir` | string | Directory containing provider header files | Required |
-
-## Directory Structure Requirements
-
-### Provider Data Directory
-```
-provider-data/
-├── headerContent1.txt    # Provider introduction
-├── headerContent2.txt    # Additional provider info
-```
-
-### Provider Spec Directory
-```
-output/src/{provider}/v00.00.00000/
-├── provider.yaml
-└── services/
-    ├── service1.yaml
-    ├── service2.yaml
-    └── ...
-```
-
-### Generated Output
-```
-docs/{provider}-docs/
-├── index.md
-└── {service}/
-    ├── index.md
-    └── {resource}/
-        └── index.md
-```
-
-## Troubleshooting
-
-### Missing Provider Data
-- Ensure `headerContent1.txt` and `headerContent2.txt` exist in provider data directory
-- Check file permissions
-
-### Empty Documentation
-- Verify provider specs have `x-stackQL-resources` components
-- Check that resources have proper method definitions
-
-## API Reference
-
-### `docgen.generateDocs(options)`
-
-Generates documentation for a StackQL provider.
-
-**Parameters:**
-- `options` (Object): Configuration options
-
-**Returns:**
-- Promise<Object>: Result object containing:
-  - `totalServices`: Number of services processed
-  - `totalResources`: Number of resources documented
-  - `outputPath`: Path to generated documentation
-
-**Example:**
-```javascript
-const result = await docgen.generateDocs({
-    providerName: 'aws',
-    providerDir: './providers/src/aws/v00.00.00000',
-    outputDir: './documentation',
-    providerDataDir: './config/aws',
-});
-```
-
-### `docgen.createResourceIndexContent(...)`
-
-Creates markdown content for a single resource. This is a lower-level function used internally by `generateDocs`.
+1. [`providerdev.split`](docs/split.md) - Divide a large OpenAPI specification into smaller, service-specific files
+2. [`providerdev.analyze`](docs/analyze.md) - Examine split API specifications to generate mapping recommendations
+3. [`providerdev.generate`](docs/generate.md) - Create StackQL provider extensions from specifications and mappings
+4. [`docgen.generateDocs`](docs/docgen.md) - Generate comprehensive documentation for StackQL providers
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome!
 
 ## License
 
@@ -276,4 +92,5 @@ MIT
 
 - [StackQL Documentation](https://stackql.io/docs)
 - [GitHub Issues](https://github.com/stackql/stackql-provider-utils/issues)
-- [StackQL Discord](https://discord.gg/stackql)
+- [StackQL Community Slack](https://stackqlcommunity.slack.com/join/shared_invite/zt-1cbdq9s5v-CkY65IMAesCgFqjN6FU6hg)
+- [StackQL Discord](https://discord.com/invite/xVXZ9d5NxN)

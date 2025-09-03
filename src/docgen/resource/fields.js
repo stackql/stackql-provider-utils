@@ -7,6 +7,13 @@ import { docView } from './view.js';
 
 const mdCodeAnchor = "`";
 
+// List of meaningless descriptions to filter out (all lowercase)
+const meaninglessDescriptions = [
+    'ok',
+    'successful response',
+    'success'
+];
+
 export function createFieldsSection(resourceType, resourceData, dereferencedAPI) {
     let content = '## Fields\n\n';
 
@@ -41,14 +48,14 @@ export function createFieldsSection(resourceType, resourceData, dereferencedAPI)
                 // Start the TabItem
                 content += `<TabItem value="${methodName}">\n\n`;
                 
-                // Add the method description if available
-                if (methodData.respDescription 
-                    && methodData.respDescription.trim().toUpperCase() !== 'OK' 
-                    && methodData.respDescription.trim() !== 'Successful response'
-                ) {
+                // Add the method description if available and not in the meaningless list
+                if (methodData.respDescription && 
+                    !meaninglessDescriptions.includes(methodData.respDescription.trim().toLowerCase()) &&
+                    methodData.respDescription.trim().length > 0) {
                     content += `${sanitizeHtml(methodData.respDescription)}\n\n`;
                 }
                 
+
                 // Add the table header
                 content += `<table>
 <thead>
