@@ -31,7 +31,9 @@ export function sanitizeHtml(text) {
     .replace(/</g, '&lt;')
     // edge case
     .replace(/&#125;_&#123;/g, '&#125;&#95;&#123;')
+    .replace(/\n/g, '<br />')
 }
+
 
 export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sqlVerb) {
     const methods = {};
