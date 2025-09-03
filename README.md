@@ -1,6 +1,7 @@
 # StackQL Provider Utils
 
-![NPM Version](https://img.shields.io/npm/v/%40stackql%2Fprovider-utils) | ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/stackql/stackql/total?style=plastic&label=stackql%20downloads)
+![NPM Version](https://img.shields.io/npm/v/%40stackql%2Fprovider-utils)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/stackql/stackql/total?style=plastic&label=stackql%20downloads)
 
 A comprehensive toolkit for transforming OpenAPI specifications into StackQL providers. This library streamlines the process of parsing, mapping, validating, testing, and generating documentation for StackQL providers.
 
