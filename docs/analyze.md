@@ -79,15 +79,20 @@ The generated `all_services.csv` file includes the following columns:
 
 | Column | Description |
 |--------|-------------|
-| `service_name` | Name of the service from the spec |
-| `operation_id` | ID of the operation from the spec |
-| `http_method` | HTTP method (GET, POST, PUT, DELETE, etc.) |
+| `filename` | Name of the service file |
 | `path` | API endpoint path |
+| `operationId` | Original operation ID from the spec |
+| `formatted_op_id` | Operation ID formatted as snake_case |
+| `verb` | HTTP method (GET, POST, PUT, DELETE, etc.) |
+| `response_object` | Main response object schema reference |
+| `tags` | Original tags from the operation |
+| `formatted_tags` | Tags formatted as snake_case |
 | `stackql_resource_name` | Suggested StackQL resource name (to be filled in) |
 | `stackql_method_name` | Suggested StackQL method name (to be filled in) |
 | `stackql_verb` | Suggested SQL verb (SELECT, INSERT, UPDATE, DELETE) (to be filled in) |
+| `op_description` | Operation summary or description from the spec |
 
-The last three columns (`stackql_resource_name`, `stackql_method_name`, `stackql_verb`) are initially empty and need to be filled in manually based on your desired StackQL provider structure.
+The last three columns (`stackql_resource_name`, `stackql_method_name`, `stackql_verb`) are initially empty or populated with existing mappings if found in the spec. They can be updated manually based on your desired StackQL provider structure.
 
 ## Working with the Mapping File
 
@@ -96,6 +101,7 @@ The last three columns (`stackql_resource_name`, `stackql_method_name`, `stackql
    - Assign appropriate resource names (e.g., `users`, `groups`, `applications`)
    - Assign method names (e.g., `list`, `get`, `create`, `update`, `delete`)
    - Map HTTP methods to SQL verbs (e.g., GET → SELECT, POST → INSERT, PUT/PATCH → UPDATE, DELETE → DELETE)
+   - Use the `op_description` column to understand what each operation does
 3. **Naming conventions**:
    - Resources are typically plural nouns (e.g., `users` not `user`)
    - Methods are typically verbs (e.g., `list`, `get`, `create`)

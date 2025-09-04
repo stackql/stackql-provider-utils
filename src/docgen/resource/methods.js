@@ -4,6 +4,24 @@ import {
     sanitizeHtml
 } from '../helpers.js';
 
+const getRequiredBodyParams = (methodDetails, accessType) => {
+    // Only process request body for insert, update, replace, and exec
+    if (!['insert', 'update', 'replace', 'exec'].includes(accessType)) {
+        return [];
+    }
+    
+    // Get required body params if they exist
+    const requiredBodyProps = methodDetails.requestBody?.required ? methodDetails.requestBody.required : [];
+    
+    // For insert, update, and replace, prefix with data__
+    if (['insert', 'update', 'replace'].includes(accessType)) {
+        return requiredBodyProps.map(prop => `data__${prop}`);
+    } else {
+        // For exec, don't prefix
+        return requiredBodyProps;
+    }
+};
+
 export function createMethodsSection(resourceData, dereferencedAPI) {
     
     let content = `\n## Methods\n\n`;
@@ -37,10 +55,16 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
         for (const [methodName, methodDetails] of Object.entries(methods)) {
             console.info(`Adding ${accessType} method to table: ${methodName}`);
             
+            // Get required params from both the standard params and the request body
+            const reqParamsArr = Object.keys(methodDetails.requiredParams || {});
+            const reqBodyParamsArr = getRequiredBodyParams(methodDetails, accessType);
+            
+            // Combine both types of required parameters
+            const allReqParamsArr = [...reqParamsArr, ...reqBodyParamsArr];
+            
             // Format required params as comma-delimited list with hyperlinks
-            const requiredParamsArr = Object.keys(methodDetails.requiredParams || {});
-            const requiredParamsStr = requiredParamsArr.length > 0 
-                ? requiredParamsArr.map(param => `<a href="#parameter-${param}"><code>${param}</code></a>`).join(', ') 
+            const requiredParamsStr = allReqParamsArr.length > 0 
+                ? allReqParamsArr.map(param => `<a href="#parameter-${param}"><code>${param}</code></a>`).join(', ') 
                 : '';
             
             // Format optional params as comma-delimited list with hyperlinks
@@ -48,7 +72,7 @@ export function createMethodsSection(resourceData, dereferencedAPI) {
             const optionalParamsStr = optionalParamsArr.length > 0 
                 ? optionalParamsArr.map(param => `<a href="#parameter-${param}"><code>${param}</code></a>`).join(', ') 
                 : '';
-            
+
             // Add the method row to the table
             content += `
 <tr>

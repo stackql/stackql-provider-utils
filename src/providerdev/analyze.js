@@ -96,6 +96,23 @@ function findExistingMapping(spec, pathRef) {
 }
 
 /**
+ * Escape and sanitize a CSV field value
+ * @param {string} value - Field value to escape
+ * @returns {string} - Escaped value
+ */
+function escapeCsvField(value) {
+  if (!value) return '';
+  
+  // If the value contains commas, double quotes, or newlines, wrap it in quotes
+  // and escape any existing double quotes by doubling them
+  if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  
+  return value;
+}
+
+/**
  * Analyze OpenAPI specs and generate mapping CSV
  * @param {Object} options - Options for analysis
  * @returns {Promise<boolean>} - Success status
@@ -159,7 +176,7 @@ export async function analyze(options) {
 
     // Only write header if creating a new file
     if (!fileExists) {
-      writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb\n');
+      writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb,op_description\n');
     }
     
     const files = fs.readdirSync(inputDir);
@@ -216,15 +233,27 @@ export async function analyze(options) {
           // Find existing mapping if available
           const { resourceName, methodName, sqlVerb } = findExistingMapping(spec, pathRef);
           
-          // Escape commas in fields
-          const escapedPath = pathKey.includes(',') ? `"${pathKey}"` : pathKey;
-          const escapedOperationId = operationId.includes(',') ? `"${operationId}"` : operationId;
-          const escapedFormattedOpId = formattedOpId.includes(',') ? `"${formattedOpId}"` : formattedOpId;
-          const escapedTags = tagsStr.includes(',') ? `"${tagsStr}"` : tagsStr;
-          const escapedFormattedTags = formattedTags.includes(',') ? `"${formattedTags}"` : formattedTags;
+          // Get operation description
+          const opDescription = operation.summary || operation.description || '';
+          
+          // Escape fields that might contain commas, quotes, or other special characters
+          const escapedFields = {
+            filename: escapeCsvField(filename),
+            path: escapeCsvField(pathKey),
+            operationId: escapeCsvField(operationId),
+            formattedOpId: escapeCsvField(formattedOpId),
+            verb: escapeCsvField(verb),
+            responseRef: escapeCsvField(responseRef),
+            tagsStr: escapeCsvField(tagsStr),
+            formattedTags: escapeCsvField(formattedTags),
+            resourceName: escapeCsvField(resourceName),
+            methodName: escapeCsvField(methodName),
+            sqlVerb: escapeCsvField(sqlVerb),
+            opDescription: escapeCsvField(opDescription)
+          };
           
           // Write row
-          writer.write(`${filename},${escapedPath},${escapedOperationId},${escapedFormattedOpId},${verb},${responseRef},${escapedTags},${escapedFormattedTags},${resourceName},${methodName},${sqlVerb}\n`);
+          writer.write(`${escapedFields.filename},${escapedFields.path},${escapedFields.operationId},${escapedFields.formattedOpId},${escapedFields.verb},${escapedFields.responseRef},${escapedFields.tagsStr},${escapedFields.formattedTags},${escapedFields.resourceName},${escapedFields.methodName},${escapedFields.sqlVerb},${escapedFields.opDescription}\n`);
         }
       }
     }

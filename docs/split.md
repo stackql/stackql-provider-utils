@@ -24,6 +24,7 @@ async function split(options) {
 | `svcDiscriminator` | string | Yes | Method for determining services ('tag' or 'path') |
 | `overwrite` | boolean | No | Whether to overwrite existing files (default: false) |
 | `verbose` | boolean | No | Whether to output detailed logs (default: false) |
+| `svcNameOverrides` | object | No | Map of service names to override (default: {}) |
 
 ## Service Discriminators
 
@@ -32,6 +33,27 @@ The `svcDiscriminator` parameter determines how services are identified:
 - **tag**: Uses OpenAPI tags to group operations into services. This is ideal for well-organized APIs where operations are properly tagged by service or resource type.
 
 - **path**: Uses URL path patterns to determine service boundaries. This is useful for APIs that follow a consistent URL structure but may not have proper tagging.
+
+## Service Name Overrides
+
+The `svcNameOverrides` parameter allows you to rename services during the split process. This is useful when:
+
+- The automatically generated service names are not descriptive enough
+- You want to standardize service naming across different providers
+- You need to merge similar services under a common name
+
+The parameter takes an object where:
+- Keys are the original service names (as determined by the service discriminator)
+- Values are the new service names to use
+
+For example:
+```javascript
+{
+  "user_management": "users",
+  "user_authentication": "auth",
+  "compute_instances": "compute"
+}
+```
 
 ## Return Value
 
@@ -59,7 +81,11 @@ async function splitExample() {
       outputDir: './output/split/okta',
       svcDiscriminator: 'path',
       overwrite: true,
-      verbose: true
+      verbose: true,
+      svcNameOverrides: {
+        'users': 'identity',
+        'apps': 'applications'
+      }
     });
     
     console.log(`Split operation completed successfully!`);

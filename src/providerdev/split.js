@@ -11,7 +11,6 @@ import {
 
 // Constants
 const OPERATIONS = ["get", "post", "put", "delete", "patch", "options", "head", "trace"];
-const NON_OPERATIONS = ["parameters", "servers", "summary", "description"];
 const COMPONENTS_CHILDREN = ["schemas", "responses", "parameters", "examples", "requestBodies", "headers", "securitySchemes", "links", "callbacks"];
 
 /**
@@ -42,9 +41,10 @@ function isOperationExcluded(exclude, opItem) {
  * @param {string} svcDiscriminator - Service discriminator
  * @param {Object[]} allTags - All tags from API doc
  * @param {boolean} debug - Debug flag
+ * @param {Object} svcNameOverrides - Service name overrides
  * @returns {[string, string]} - [service name, service description]
  */
-function retServiceNameAndDesc(providerName, opItem, pathKey, svcDiscriminator, allTags, debug) {
+function retServiceNameAndDesc(providerName, opItem, pathKey, svcDiscriminator, allTags, debug, svcNameOverrides) {
   let service = "default";
   let serviceDesc = `${providerName} API`;
   
@@ -84,8 +84,24 @@ function retServiceNameAndDesc(providerName, opItem, pathKey, svcDiscriminator, 
     return ["skip", ""];
   }
   
+  // Apply service name overrides if present
+  if (svcNameOverrides && svcNameOverrides[service]) {
+    const newName = svcNameOverrides[service];
+    if (debug) {
+      logger.debug(`Overriding service name: ${service} -> ${newName}`);
+    }
+    
+    // Update service description for path-based services
+    if (svcDiscriminator === "path") {
+      serviceDesc = `${providerName} ${newName} API`;
+    }
+    
+    service = newName;
+  }
+  
   return [service, serviceDesc];
 }
+
 
 /**
  * Initialize service map
@@ -190,43 +206,6 @@ function getPathLevelRefs(pathItem) {
   }
   
   return refs;
-}
-
-/**
- * Add referenced components to service
- * @param {Set<string>} refs - Set of refs
- * @param {Object} service - Service object
- * @param {Object} components - Components from API doc
- * @param {boolean} debug - Debug flag
- */
-function addRefsToComponents(refs, service, components, debug) {
-  for (const ref of refs) {
-    const parts = ref.split('/');
-    
-    // Only process refs that point to components
-    if (parts.length >= 4 && parts[1] === "components") {
-      const componentType = parts[2];
-      const componentName = parts[3];
-      
-      // Check if component type exists in service
-      if (!service.components[componentType]) {
-        service.components[componentType] = {};
-      }
-      
-      // Skip if component already added
-      if (service.components[componentType][componentName]) {
-        continue;
-      }
-      
-      // Add component if it exists in source document
-      if (components[componentType] && components[componentType][componentName]) {
-        service.components[componentType][componentName] = components[componentType][componentName];
-        if (debug) {
-          logger.debug(`Added component ${componentType}/${componentName}`);
-        }
-      }
-    }
-  }
 }
 
 /**
@@ -338,7 +317,8 @@ export async function split(options) {
     svcDiscriminator = "tag",
     exclude = null,
     overwrite = true,
-    verbose = false
+    verbose = false,
+    svcNameOverrides = {}  // Add this new parameter with default empty object
   } = options;
   
   // Setup logging based on verbosity
@@ -350,6 +330,13 @@ export async function split(options) {
   logger.info(`API Doc: ${apiDoc}`);
   logger.info(`Output: ${outputDir}`);
   logger.info(`Service Discriminator: ${svcDiscriminator}`);
+  
+  if (Object.keys(svcNameOverrides).length > 0) {
+    logger.info(`Using ${Object.keys(svcNameOverrides).length} service name overrides`);
+    if (verbose) {
+      logger.debug(`Service name overrides: ${JSON.stringify(svcNameOverrides, null, 2)}`);
+    }
+  }
   
   // Process exclude list
   const excludeList = exclude ? exclude.split(",") : [];
@@ -409,12 +396,11 @@ export async function split(options) {
         continue;
       }
       
-      // Determine service name
       const [service, serviceDesc] = retServiceNameAndDesc(
         providerName, opItem, pathKey, svcDiscriminator, 
-        apiDocObj.tags || [], verbose
-      );
-      
+        apiDocObj.tags || [], verbose, svcNameOverrides
+      );      
+
       // Skip if service is marked to skip
       if (service === 'skip') {
         logger.warn(`⭐️ Skipping service: ${service}`);
