@@ -23,17 +23,43 @@ export function getIndefiniteArticle(resourceName) {
   return article;
 }
 
+/**
+ * Sanitizes HTML with special handling for allowed tags and backticked content
+ * @param {string} text - The text to sanitize
+ * @return {string} - The sanitized text
+ */
 export function sanitizeHtml(text) {
-  return text
+  if (!text) return '';
+  
+  // First apply the general sanitization
+  let result = text
     .replace(/{/g, '&#123;')
     .replace(/}/g, '&#125;')
     .replace(/>/g, '&gt;')
     .replace(/</g, '&lt;')
     // edge case
     .replace(/&#125;_&#123;/g, '&#125;&#95;&#123;')
-    .replace(/\n/g, '<br />')
+    .replace(/\n/g, '<br />');
+  
+  // Fix 1: Replace &lt;br&gt;, &lt;br/&gt;, &lt;p&gt;, &lt;/p&gt; back to their literal HTML tags
+  // Make sure <br> is always self-closing for MDX compatibility
+  result = result
+    .replace(/&lt;br\s*\/?&gt;/gi, '<br />')
+    .replace(/&lt;p&gt;/gi, '<p>')
+    .replace(/&lt;\/p&gt;/gi, '</p>');
+  
+  // Fix 2: Find any &lt; or &gt; inside backticks and convert them back to < and >
+  // We need to handle the backtick content by finding pairs of backticks
+  result = result.replace(/`([^`]*)`/g, (match, content) => {
+    // Convert &lt; and &gt; back to < and > only within backticked content
+    const fixedContent = content
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+    return '`' + fixedContent + '`';
+  });
+  
+  return result;
 }
-
 
 export function getSqlMethodsWithOrderedFields(resourceData, dereferencedAPI, sqlVerb) {
     const methods = {};
