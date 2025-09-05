@@ -52,6 +52,108 @@ function extractMain2xxResponse(responseObj) {
 }
 
 /**
+ * Detect if an object should have an objectKey and determine what it should be
+ * @param {Object} spec - Full OpenAPI spec
+ * @param {Object} operation - Operation object
+ * @returns {string} - Suggested objectKey or empty string if none
+ */
+function detectObjectKey(spec, operation) {
+  // Only applicable for GET operations
+  if (!operation || !operation.responses) {
+    return '';
+  }
+  
+  let responseObject = null;
+  let responseCode = null;
+  
+  // Find the first 2xx response
+  for (const [code, response] of Object.entries(operation.responses)) {
+    if (code.startsWith('2')) {
+      responseCode = code;
+      // Handle direct response or reference
+      if (response.$ref) {
+        // Resolve reference
+        const refParts = response.$ref.split('/');
+        const componentType = refParts[2];
+        const responseName = refParts[3];
+        responseObject = spec.components?.[componentType]?.[responseName];
+      } else {
+        responseObject = response;
+      }
+      break;
+    }
+  }
+  
+  if (!responseObject) {
+    return '';
+  }
+  
+  // Get the schema from the response
+  let schema = null;
+  
+  // If it's a direct response object
+  if (responseObject.content?.['application/json']?.schema) {
+    schema = responseObject.content['application/json'].schema;
+  } 
+  
+  // If the schema is a reference, resolve it
+  if (schema && schema.$ref) {
+    const refParts = schema.$ref.split('/');
+    const componentType = refParts[2];
+    const schemaName = refParts[3];
+    schema = spec.components?.[componentType]?.[schemaName];
+  }
+  
+  // Handle allOf case (like in the droplets_list example)
+  if (schema && schema.allOf) {
+    // Look at the first object in allOf that has properties
+    for (const subSchema of schema.allOf) {
+      if (subSchema.properties && Object.keys(subSchema.properties).length === 1) {
+        const key = Object.keys(subSchema.properties)[0];
+        return `$.${key}`;
+      }
+    }
+  }
+  
+  // Handle direct properties case (like in the droplets_get example)
+  if (schema && schema.properties) {
+    // If there's only one property at the top level, and it's not a primitive
+    const propKeys = Object.keys(schema.properties);
+    if (propKeys.length === 1) {
+      const key = propKeys[0];
+      const prop = schema.properties[key];
+      
+      // Check if the property is an object or array, not a primitive
+      if (prop.$ref || 
+          prop.type === 'object' || 
+          prop.type === 'array' ||
+          (prop.properties && Object.keys(prop.properties).length > 0)) {
+        return `$.${key}`;
+      }
+    }
+  }
+  
+  return '';
+}
+
+/**
+ * Map HTTP verb to SQL verb
+ * @param {string} httpVerb - HTTP verb (get, post, put, etc)
+ * @returns {string} - Corresponding SQL verb
+ */
+function mapToSqlVerb(httpVerb) {
+  const verbMap = {
+    'get': 'select',
+    'post': 'insert',
+    'delete': 'delete',
+    'put': 'replace',
+    'patch': 'update'
+  };
+  
+  return verbMap[httpVerb] || 'exec';
+}
+
+/**
  * Find existing mapping in x-stackQL-resources
  * @param {Object} spec - OpenAPI spec
  * @param {string} pathRef - Reference to path item
@@ -77,10 +179,14 @@ function findExistingMapping(spec, pathRef) {
           }
         }
         
+        // Get objectKey if present
+        const objectKey = method.response?.objectKey || '';
+        
         return {
           resourceName,
           methodName,
-          sqlVerb
+          sqlVerb,
+          objectKey
         };
       }
     }
@@ -91,7 +197,8 @@ function findExistingMapping(spec, pathRef) {
   return {
     resourceName: '',
     methodName: '',
-    sqlVerb: ''
+    sqlVerb: '',
+    objectKey: ''
   };
 }
 
@@ -150,7 +257,8 @@ export async function analyze(options) {
                 existingMappings[key] = {
                   resourceName: row.stackql_resource_name || '',
                   methodName: row.stackql_method_name || '',
-                  sqlVerb: row.stackql_verb || ''
+                  sqlVerb: row.stackql_verb || '',
+                  objectKey: row.stackql_object_key || ''
                 };
               }
             })
@@ -176,7 +284,7 @@ export async function analyze(options) {
 
     // Only write header if creating a new file
     if (!fileExists) {
-      writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb,op_description\n');
+      writer.write('filename,path,operationId,formatted_op_id,verb,response_object,tags,formatted_tags,stackql_resource_name,stackql_method_name,stackql_verb,stackql_object_key,op_description\n');
     }
     
     const files = fs.readdirSync(inputDir);
@@ -231,7 +339,22 @@ export async function analyze(options) {
           const pathRef = `#/paths/${encodedPath}/${verb}`;
           
           // Find existing mapping if available
-          const { resourceName, methodName, sqlVerb } = findExistingMapping(spec, pathRef);
+          let { resourceName, methodName, sqlVerb, objectKey } = findExistingMapping(spec, pathRef);
+          
+          // CHANGE 1: Default methodName to formattedOpId if not found
+          if (!methodName) {
+            methodName = formattedOpId;
+          }
+          
+          // CHANGE 2: Default sqlVerb based on HTTP verb if not found
+          if (!sqlVerb) {
+            sqlVerb = mapToSqlVerb(verb);
+          }
+
+          // CHANGE 3: Detect and set objectKey for GET operations if not already set
+          if (!objectKey && verb === 'get') {
+            objectKey = detectObjectKey(spec, operation);
+          }
           
           // Get operation description
           const opDescription = operation.summary || operation.description || '';
@@ -249,11 +372,12 @@ export async function analyze(options) {
             resourceName: escapeCsvField(resourceName),
             methodName: escapeCsvField(methodName),
             sqlVerb: escapeCsvField(sqlVerb),
+            objectKey: escapeCsvField(objectKey),
             opDescription: escapeCsvField(opDescription)
           };
           
           // Write row
-          writer.write(`${escapedFields.filename},${escapedFields.path},${escapedFields.operationId},${escapedFields.formattedOpId},${escapedFields.verb},${escapedFields.responseRef},${escapedFields.tagsStr},${escapedFields.formattedTags},${escapedFields.resourceName},${escapedFields.methodName},${escapedFields.sqlVerb},${escapedFields.opDescription}\n`);
+          writer.write(`${escapedFields.filename},${escapedFields.path},${escapedFields.operationId},${escapedFields.formattedOpId},${escapedFields.verb},${escapedFields.responseRef},${escapedFields.tagsStr},${escapedFields.formattedTags},${escapedFields.resourceName},${escapedFields.methodName},${escapedFields.sqlVerb},${escapedFields.objectKey},${escapedFields.opDescription}\n`);
         }
       }
     }

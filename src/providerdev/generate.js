@@ -1,4 +1,3 @@
-// src/providerdev/generate.js
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -75,14 +74,15 @@ function getSuccessResponseInfo(operation) {
     .sort();
 
   if (twoXxCodes.length === 0) {
-    return { mediaType: '', openAPIDocKey: '' };
+    throw new Error('No 2xx response found, openAPIDocKey is required');
   }
 
   const lowest2xx = twoXxCodes[0];
   const content = responses[lowest2xx]?.content || {};
   const mediaTypes = Object.keys(content);
 
-  const mediaType = mediaTypes.length > 0 ? mediaTypes[0] : '';
+  // Default to 'application/json' if mediaType is not found
+  const mediaType = mediaTypes.length > 0 ? mediaTypes[0] : 'application/json';
 
   return {
     mediaType,
@@ -97,6 +97,71 @@ function getSuccessResponseInfo(operation) {
  */
 function snakeCase(name) {
   return name.replace(/-/g, '_');
+}
+
+/**
+ * Count the number of path parameters in a path
+ * @param {string} path - HTTP path
+ * @returns {number} - Number of path parameters
+ */
+function countPathParams(path) {
+  // Match all path parameters like {param_name}
+  const matches = path.match(/\{[^}]+\}/g);
+  return matches ? matches.length : 0;
+}
+
+/**
+ * Sort operations from most specific to least specific based on path parameters
+ * @param {Object} resources - Resources object containing methods and sqlVerbs
+ * @param {Object} spec - Full OpenAPI specification
+ * @returns {Object} - Resources with sorted sqlVerbs
+ */
+function sortOperationsBySpecificity(resources, spec) {
+  // For each resource
+  for (const resourceName in resources) {
+    const resource = resources[resourceName];
+    const methods = resource.methods;
+    
+    // Create a map of method references to their specificity (path param count)
+    const methodSpecificityMap = {};
+    
+    // For each method, find its operation ref and count path params
+    for (const methodName in methods) {
+      const method = methods[methodName];
+      const operationRef = method.operation.$ref;
+      
+      // Extract path and verb from the reference
+      // Reference format: '#/paths/{encodedPath}/{verb}'
+      const refParts = operationRef.split('/');
+      const verb = refParts.pop();
+      // Remove '#/paths/' and the verb, then decode the path
+      const encodedPath = refParts.slice(2).join('/');
+      const path = encodedPath.replace(/~1/g, '/');
+      
+      // Count path parameters
+      const paramCount = countPathParams(path);
+      
+      // Store the method reference and its path parameter count
+      const methodRef = `#/components/x-stackQL-resources/${resourceName}/methods/${methodName}`;
+      methodSpecificityMap[methodRef] = paramCount;
+    }
+    
+    // For each SQL verb, sort the operations by specificity
+    for (const verbName in resource.sqlVerbs) {
+      const operations = resource.sqlVerbs[verbName];
+      
+      if (operations && operations.length > 0) {
+        // Sort operations from most specific (more path params) to least specific
+        operations.sort((a, b) => {
+          const aRef = a.$ref;
+          const bRef = b.$ref;
+          return methodSpecificityMap[bRef] - methodSpecificityMap[aRef];
+        });
+      }
+    }
+  }
+  
+  return resources;
 }
 
 /**
@@ -234,6 +299,11 @@ export async function generate(options) {
             response: responseInfo
           };
 
+          // Add objectKey to the response info if it exists in the manifest and is for a GET operation
+          if (entry.stackql_object_key && verb === 'get') {
+            methodEntry.response.objectKey = entry.stackql_object_key;
+          }
+
           resources[resource].methods[method] = methodEntry;
           if (sqlverb && sqlverb === 'exec') {
             logger.info(`exec method skipped:  ${resource}.${method}`);
@@ -247,11 +317,14 @@ export async function generate(options) {
         }
       }
       
+      // Sort operations by specificity before injecting into spec
+      const sortedResources = sortOperationsBySpecificity(resources, spec);
+      
       // Inject into spec
       if (!spec.components) {
         spec.components = {};
       }
-      spec.components['x-stackQL-resources'] = resources;
+      spec.components['x-stackQL-resources'] = sortedResources;
       
       // Inject servers if provided
       if (servers) {
