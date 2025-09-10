@@ -65,11 +65,11 @@ function retServiceNameAndDesc(providerName, opItem, pathKey, svcDiscriminator, 
   else if (svcDiscriminator === "path") {
     const pathParts = pathKey.replace(/^\//, '').split('/');
     if (pathParts.length > 0) {
-      // Find the first path segment that is not 'api' or 'v{number}'
+      // Find the first path segment that is not 'api', 'v{number}', or '{apiVersion}'
       for (const part of pathParts) {
         const lowerPart = part.toLowerCase();
-        // Skip if it's 'api' or matches version pattern 'v1', 'v2', etc.
-        if (lowerPart === 'api' || /^v\d+$/.test(lowerPart)) {
+        // Skip if it's 'api', matches version pattern 'v1', 'v2', etc., or is '{apiVersion}'
+        if (lowerPart === 'api' || /^v\d+$/.test(lowerPart) || /^\{.*version\}$/i.test(part)) {
           continue;
         }
         service = lowerPart.replace(/-/g, '_').replace(/ /g, '_').replace(/\./g, '_');
@@ -78,7 +78,7 @@ function retServiceNameAndDesc(providerName, opItem, pathKey, svcDiscriminator, 
       serviceDesc = `${providerName} ${service} API`;
     }
   }
-  
+
   // Check if service should be skipped
   if (service === "skip") {
     return ["skip", ""];

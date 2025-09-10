@@ -9,7 +9,7 @@ import logger from './logger.js';
  */
 export function camelToSnake(name) {
   const s1 = name.replace(/([a-z0-9])([A-Z][a-z]+)/g, '$1_$2');
-  return s1.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  return s1.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().replace(/-/g, '_');
 }
 
 /**

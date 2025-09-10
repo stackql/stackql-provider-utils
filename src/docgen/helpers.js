@@ -31,8 +31,15 @@ export function getIndefiniteArticle(resourceName) {
 export function sanitizeHtml(text) {
   if (!text) return '';
   
-  // First apply the general sanitization
+  // Special handling for code tags - temporarily replace them with placeholders
+  // that won't get escaped in the general sanitization
   let result = text
+    // Replace <code> tags with a safe placeholder
+    .replace(/<code>/g, '___CODE_OPEN___')
+    .replace(/<\/code>/g, '___CODE_CLOSE___');
+  
+  // Then apply the general sanitization
+  result = result
     .replace(/{/g, '&#123;')
     .replace(/}/g, '&#125;')
     .replace(/>/g, '&gt;')
@@ -57,6 +64,11 @@ export function sanitizeHtml(text) {
       .replace(/&gt;/g, '>');
     return '`' + fixedContent + '`';
   });
+  
+  // Finally, restore the code tags
+  result = result
+    .replace(/___CODE_OPEN___/g, '<code>')
+    .replace(/___CODE_CLOSE___/g, '</code>');
   
   return result;
 }
@@ -241,7 +253,12 @@ function formatProperties(respProps) {
             if (typeof fieldValue != 'string') {
                 continue;
             } else {
-                additionalDescriptionPaths.push(`${fieldName}: ${String(fieldValue)}`);
+                // Specifically wrap pattern fields in code tags
+                if (fieldName === 'pattern') {
+                    additionalDescriptionPaths.push(`${fieldName}: <code>${String(fieldValue)}</code>`);
+                } else {
+                    additionalDescriptionPaths.push(`${fieldName}: ${String(fieldValue)}`);
+                }
             }
         }
         
@@ -250,7 +267,6 @@ function formatProperties(respProps) {
         // Store formatted property details
         allProperties[propName] = {
             type: typeString,
-            // description: escapeHtml(fullDescription),
             description: fullDescription
         };
     }
