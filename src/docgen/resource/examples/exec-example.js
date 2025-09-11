@@ -113,7 +113,7 @@ export function createExecExamples(providerName, serviceName, resourceName, reso
             content += '}\'';
         }
         
-        content += ';\n```\n</TabItem>\n';
+        content += '\n;\n```\n</TabItem>\n';
     });
     
     // Close tabs

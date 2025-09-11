@@ -87,9 +87,9 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
             }
             
             if (isNumber || isBoolean) {
-                return '{{ ' + paramName + ' }}' + (isRequiredBodyParam ? ' --required' : '');
+                return '{{ ' + paramName + ' }}' + (isRequiredBodyParam ? ' /* required */' : '');
             } else {
-                return '\'{{ ' + paramName + ' }}\'' + (isRequiredBodyParam ? ' --required' : '');
+                return '\'{{ ' + paramName + ' }}\'' + (isRequiredBodyParam ? ' /* required */' : '');
             }
         });
         

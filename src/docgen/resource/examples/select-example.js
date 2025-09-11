@@ -67,7 +67,7 @@ export function createSelectExamples(providerName, serviceName, resourceName, re
             });
         }
         
-        content += ';\n```\n</TabItem>\n';
+        content += '\n;\n```\n</TabItem>\n';
     });
     
     // Close tabs
