@@ -161,9 +161,17 @@ export function createInsertExamples(providerName, serviceName, resourceName, re
         content += '      value: ' + type + '\n';
         
         if (description) {
-            // Format multi-line descriptions
-            const wrappedDesc = description.replace(/(.{1,80})(\\s+|$)/g, '$1\n        ');
-            content += '      description: >\n        ' + wrappedDesc + '\n';
+            content += '      description: |\n';
+            
+            // Split by lines and remove empty lines
+            const lines = description
+                .split(/\n/)
+                .filter(line => line.trim() !== ''); // Remove completely empty lines
+            
+            // Process each line with proper indentation
+            lines.forEach(line => {
+                content += '        ' + line.trim() + '\n'; // trim each line to remove extra spaces
+            });
         }
         
         // Add enum values if available
