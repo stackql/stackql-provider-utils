@@ -84,56 +84,59 @@ export function createUpdateExamples(providerName, serviceName, resourceName, re
                 methodDetails.requestBody.properties[prop].readOnly !== true)
             : [];
         
-        content += '\nWHERE \n';
-        
-        // Add required parameters
-        let clauseCount = 0;
-        
-        // Add required query/path/header params
-        requiredParams.forEach(param => {
-            if (clauseCount > 0) content += '\nAND ';
-            content += param + ' = \'{{ ' + param + ' }}\' --required';
-            clauseCount++;
-        });
-        
-        // Add required body params (only non-readonly ones)
-        requiredBodyProps.forEach(prop => {
-            if (clauseCount > 0) content += '\nAND ';
+        if (requiredParams.length > 0 || requiredBodyProps.length > 0 || optionalParams.length > 0) {
+
+            content += '\nWHERE \n';
             
-            const propDetails = methodDetails.requestBody.properties[prop];
-            const isBoolean = propDetails.type === 'boolean';
+            // Add required parameters
+            let clauseCount = 0;
             
-            if (isBoolean) {
-                content += 'data__' + prop + ' = {{ ' + prop + ' }} --required';
-            } else {
-                content += 'data__' + prop + ' = \'{{ ' + prop + ' }}\' --required';
-            }
+            // Add required query/path/header params
+            requiredParams.forEach(param => {
+                if (clauseCount > 0) content += '\nAND ';
+                content += param + ' = \'{{ ' + param + ' }}\' --required';
+                clauseCount++;
+            });
             
-            clauseCount++;
-        });
-        
-        // Add optional parameters
-        optionalParams.forEach(param => {
-            if (clauseCount > 0) content += '\nAND ';
+            // Add required body params (only non-readonly ones)
+            requiredBodyProps.forEach(prop => {
+                if (clauseCount > 0) content += '\nAND ';
+                
+                const propDetails = methodDetails.requestBody.properties[prop];
+                const isBoolean = propDetails.type === 'boolean';
+                
+                if (isBoolean) {
+                    content += 'data__' + prop + ' = {{ ' + prop + ' }} --required';
+                } else {
+                    content += 'data__' + prop + ' = \'{{ ' + prop + ' }}\' --required';
+                }
+                
+                clauseCount++;
+            });
             
-            // For boolean parameters, we can add a comment about their default value
-            const paramDetails = methodDetails.optionalParams[param];
-            const isBoolean = paramDetails.type === 'boolean';
-            const defaultValue = paramDetails.default;
-            
-            if (isBoolean) {
-                content += param + ' = {{ ' + param + '}}';
-            } else {
-                content += param + ' = \'{{ ' + param + '}}\'';
-            }
-            
-            if (isBoolean && defaultValue !== undefined) {
-                content += ' -- default: ' + defaultValue;
-            }
-            
-            clauseCount++;
-        });
-        
+            // Add optional parameters
+            optionalParams.forEach(param => {
+                if (clauseCount > 0) content += '\nAND ';
+                
+                // For boolean parameters, we can add a comment about their default value
+                const paramDetails = methodDetails.optionalParams[param];
+                const isBoolean = paramDetails.type === 'boolean';
+                const defaultValue = paramDetails.default;
+                
+                if (isBoolean) {
+                    content += param + ' = {{ ' + param + '}}';
+                } else {
+                    content += param + ' = \'{{ ' + param + '}}\'';
+                }
+                
+                if (isBoolean && defaultValue !== undefined) {
+                    content += ' -- default: ' + defaultValue;
+                }
+                
+                clauseCount++;
+            });
+        }
+
         // returning clause if properties exist
         if (methodDetails.properties && Object.keys(methodDetails.properties).length > 0) {
             content += '\nRETURNING\n';
@@ -148,7 +151,7 @@ export function createUpdateExamples(providerName, serviceName, resourceName, re
             });
         }
 
-        content += '\n;\n```\n</TabItem>\n';
+        content += ';\n```\n</TabItem>\n';
     });
     
     // Close tabs
