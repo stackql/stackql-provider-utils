@@ -38,6 +38,11 @@ export function sanitizeHtml(text) {
     .replace(/<code>/g, '___CODE_OPEN___')
     .replace(/<\/code>/g, '___CODE_CLOSE___');
   
+ // Remove <nobr> tags completely
+  result = result
+    .replace(/<nobr>/g, '')
+    .replace(/<\/nobr>/g, '');
+
   // Then apply the general sanitization
   result = result
     .replace(/{/g, '&#123;')
@@ -69,7 +74,7 @@ export function sanitizeHtml(text) {
   result = result
     .replace(/___CODE_OPEN___/g, '<code>')
     .replace(/___CODE_CLOSE___/g, '</code>');
-  
+
   return result;
 }
 
@@ -371,8 +376,8 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
         throw new Error(`HTTP verb '${httpVerb}' not found for path '${path}'`);
     }
     
-    // Get operation description and replace curly braces with HTML entities
-    const opDescription = (dereferencedAPI.paths[path][httpVerb].description || '');   // .replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+    // Get operation description
+    const opDescription = (dereferencedAPI.paths[path][httpVerb].description || '');
 
     // Extract request body if it exists
     let requestBody = {};
@@ -384,19 +389,69 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
         if (contentTypes.length > 0) {
             const firstContentType = contentTypes[0];
             const reqBodySchema = dereferencedAPI.paths[path][httpVerb].requestBody.content[firstContentType].schema;
+            
             if (reqBodySchema) {
-                // If schema is a reference, use it directly
-                if (reqBodySchema.$ref) {
+                // Handle polymorphic schemas (anyOf/oneOf) - pick the first one but preserve original structure
+                if ((reqBodySchema.anyOf && reqBodySchema.anyOf.length > 0) || 
+                    (reqBodySchema.oneOf && reqBodySchema.oneOf.length > 0)) {
+                    
+                    // Start with the original schema to preserve its structure
+                    requestBody = { ...reqBodySchema };
+                    
+                    // Select the first schema
+                    const schemas = reqBodySchema.anyOf || reqBodySchema.oneOf;
+                    const firstSchema = schemas[0];
+                    
+                    // Extract properties from first schema
+                    if (firstSchema.$ref) {
+                        // If it's a reference, we need to add it as a property
+                        requestBody.$firstSchema = firstSchema;
+                    } else if (firstSchema.properties) {
+                        // If it has properties, use them as our main properties
+                        requestBody.properties = firstSchema.properties;
+                        requestBody.required = firstSchema.required || [];
+                    } else {
+                        // Otherwise, merge all properties from first schema
+                        Object.assign(requestBody, firstSchema);
+                    }
+                    
+                    // Additional check: if there's an example, use it to extract properties
+                    // that might be expected by other parts of the code
+                    const example = dereferencedAPI.paths[path][httpVerb].requestBody.content[firstContentType].example;
+                    if (example) {
+                        // Ensure properties object exists
+                        if (!requestBody.properties) {
+                            requestBody.properties = {};
+                        }
+                        
+                        // Add properties from example that aren't already defined
+                        Object.keys(example).forEach(key => {
+                            if (!requestBody.properties[key]) {
+                                // Create a simple property definition based on the example value
+                                const value = example[key];
+                                const type = typeof value === 'number' ? 'number' : 
+                                            typeof value === 'boolean' ? 'boolean' : 'string';
+                                
+                                requestBody.properties[key] = {
+                                    type: type,
+                                    example: value
+                                };
+                            }
+                        });
+                    }
+                }
+                // If schema is a reference, use it directly (unchanged)
+                else if (reqBodySchema.$ref) {
                     requestBody = reqBodySchema;
                 } 
-                // If schema is an object with properties, get them
+                // If schema is an object with properties, get them (unchanged)
                 else if (reqBodySchema.properties) {
                     requestBody = {
                         properties: reqBodySchema.properties,
                         required: reqBodySchema.required || []
                     };
                 }
-                // If schema is something else, use it as is
+                // If schema is something else, use it as is (unchanged)
                 else {
                     requestBody = reqBodySchema;
                 }
@@ -404,7 +459,7 @@ function getHttpOperationInfo(dereferencedAPI, path, httpVerb, mediaType, openAP
         }
     }
 
-    // Check if the response exists
+    // Rest of the function remains unchanged
     if (!dereferencedAPI.paths[path][httpVerb].responses || 
         !dereferencedAPI.paths[path][httpVerb].responses[openAPIDocKey]) {
         console.warn(`Response '${openAPIDocKey}' not found for ${path}/${httpVerb}`);
