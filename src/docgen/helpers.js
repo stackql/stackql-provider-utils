@@ -28,21 +28,69 @@ export function getIndefiniteArticle(resourceName) {
  * @param {string} text - The text to sanitize
  * @return {string} - The sanitized text
  */
+// export function sanitizeHtml(text) {
+//   if (!text) return '';
+  
+//   // Special handling for code tags - temporarily replace them with placeholders
+//   // that won't get escaped in the general sanitization
+//   let result = text
+//     // Replace <code> tags with a safe placeholder
+//     .replace(/<code>/g, '___CODE_OPEN___')
+//     .replace(/<\/code>/g, '___CODE_CLOSE___');
+  
+//  // Remove <nobr> tags completely
+//   result = result
+//     .replace(/<nobr>/g, '')
+//     .replace(/<\/nobr>/g, '');
+
+//   // Then apply the general sanitization
+//   result = result
+//     .replace(/{/g, '&#123;')
+//     .replace(/}/g, '&#125;')
+//     .replace(/>/g, '&gt;')
+//     .replace(/</g, '&lt;')
+//     // edge case
+//     .replace(/&#125;_&#123;/g, '&#125;&#95;&#123;')
+//     .replace(/\n/g, '<br />');
+  
+//   // Fix 1: Replace &lt;br&gt;, &lt;br/&gt;, &lt;p&gt;, &lt;/p&gt; back to their literal HTML tags
+//   // Make sure <br> is always self-closing for MDX compatibility
+//   result = result
+//     .replace(/&lt;br\s*\/?&gt;/gi, '<br />')
+//     .replace(/&lt;p&gt;/gi, '<p>')
+//     .replace(/&lt;\/p&gt;/gi, '</p>');
+  
+//   // Fix 2: Find any &lt; or &gt; inside backticks and convert them back to < and >
+//   // We need to handle the backtick content by finding pairs of backticks
+//   result = result.replace(/`([^`]*)`/g, (match, content) => {
+//     // Convert &lt; and &gt; back to < and > only within backticked content
+//     const fixedContent = content
+//       .replace(/&lt;/g, '<')
+//       .replace(/&gt;/g, '>');
+//     return '`' + fixedContent + '`';
+//   });
+  
+//   // Finally, restore the code tags
+//   result = result
+//     .replace(/___CODE_OPEN___/g, '<code>')
+//     .replace(/___CODE_CLOSE___/g, '</code>');
+
+//   return result;
+// }
 export function sanitizeHtml(text) {
   if (!text) return '';
   
   // Special handling for code tags - temporarily replace them with placeholders
-  // that won't get escaped in the general sanitization
   let result = text
     // Replace <code> tags with a safe placeholder
     .replace(/<code>/g, '___CODE_OPEN___')
     .replace(/<\/code>/g, '___CODE_CLOSE___');
-  
- // Remove <nobr> tags completely
+    
+  // Remove <nobr> tags completely
   result = result
     .replace(/<nobr>/g, '')
     .replace(/<\/nobr>/g, '');
-
+  
   // Then apply the general sanitization
   result = result
     .replace(/{/g, '&#123;')
@@ -51,17 +99,18 @@ export function sanitizeHtml(text) {
     .replace(/</g, '&lt;')
     // edge case
     .replace(/&#125;_&#123;/g, '&#125;&#95;&#123;')
+    // Handle all types of line breaks - very important!
+    .replace(/\r\n/g, '<br />')
+    .replace(/\r/g, '<br />')
     .replace(/\n/g, '<br />');
   
   // Fix 1: Replace &lt;br&gt;, &lt;br/&gt;, &lt;p&gt;, &lt;/p&gt; back to their literal HTML tags
-  // Make sure <br> is always self-closing for MDX compatibility
   result = result
     .replace(/&lt;br\s*\/?&gt;/gi, '<br />')
     .replace(/&lt;p&gt;/gi, '<p>')
     .replace(/&lt;\/p&gt;/gi, '</p>');
   
-  // Fix 2: Find any &lt; or &gt; inside backticks and convert them back to < and >
-  // We need to handle the backtick content by finding pairs of backticks
+  // Fix 2: Handle backticked content more carefully
   result = result.replace(/`([^`]*)`/g, (match, content) => {
     // Convert &lt; and &gt; back to < and > only within backticked content
     const fixedContent = content
@@ -70,11 +119,16 @@ export function sanitizeHtml(text) {
     return '`' + fixedContent + '`';
   });
   
+  // IMPORTANT: Explicitly sanitize any <location> tags that might be in the text
+  // This ensures they get properly escaped even if added later
+  result = result.replace(/<location>/g, '&lt;location&gt;')
+                .replace(/<\/location>/g, '&lt;/location&gt;');
+  
   // Finally, restore the code tags
   result = result
     .replace(/___CODE_OPEN___/g, '<code>')
     .replace(/___CODE_CLOSE___/g, '</code>');
-
+  
   return result;
 }
 
